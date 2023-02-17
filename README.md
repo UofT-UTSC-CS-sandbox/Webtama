@@ -10,72 +10,6 @@ This README.md is to be replaced by your project proposal:
 
 - Project title and team name
 
-Project Title: Non Profit Patreon
-
-Team name: JJK
-
-- Your focus (frontend focused or backend focused)
-
-N/A
-
-- Team members with student numbers
-
-  - Jason Dai 1005231189
-
-  - Jeffrey He 1007955438
-
-  - Keia Rahmati 1005502252
-
-- Description of the web application
-
-A patreon like collection of charity orgs that can be browsed by tags and donated/subbed to:
-
-- What complexity points will this project contain
-
-  - Stripe - 2
-
-  - Auth0 - 1
-
-  - SendGrid (email )- 1
-
-  - Web Audio- 1
-
-  - Facebook/twitter api’s For login and sharing
-
-  - Google translate api
-
-  - YouTube api -embedded videos
-
-  - Google analytics
-
-  - Google Ads
-
-- (optional) What complexity points will be attempted as bonus for the challenge factor
-
-  - Push Web API - 3
-
-
-- What you aim to complete for the alpha version, beta version, and final version
-
-alpha:
-  - Develop front-end UI and connect to back-end
-  - Ensure User Authentication and Authorization are working
-  - Make sure that informational databases are displayed and functioning
-  
-beta:
-  - Add or fix any functionality missing from alpha version
-  - add google translation for french of pages
-  - embedding of youtube vides for charities
-  - displayal of google ads/analytics
-  
-final:
-  - Add or fix any functionality missing from beta version
-  - work on optional features 
-
-# Project Idea #2
-
-- Project title and team name
-
 Project Title: Arcadium
 
 Team name: JJK  (TBD)
@@ -146,7 +80,7 @@ final:
   - Add or fix any functionality missing from beta version
   - work on optional features such as stripe payment
   
-# Project Idea #3
+# Project Idea #2
 
 - Project title and team name
 
@@ -227,3 +161,68 @@ final:
   - Add or fix any functionality missing from beta version
   - work on optional features such as displaying board in 3d
 
+# Project Idea #3
+
+- Project title and team name
+
+Project Title: Non Profit Patreon
+
+Team name: JJK
+
+- Your focus (frontend focused or backend focused)
+
+N/A
+
+- Team members with student numbers
+
+  - Jason Dai 1005231189
+
+  - Jeffrey He 1007955438
+
+  - Keia Rahmati 1005502252
+
+- Description of the web application
+
+A patreon like collection of charity orgs that can be browsed by tags and donated/subbed to:
+
+- What complexity points will this project contain
+
+  - Stripe - 2
+
+  - Auth0 - 1
+
+  - SendGrid (email )- 1
+
+  - Web Audio- 1
+
+  - Facebook/twitter api’s For login and sharing
+
+  - Google translate api
+
+  - YouTube api -embedded videos
+
+  - Google analytics
+
+  - Google Ads
+
+- (optional) What complexity points will be attempted as bonus for the challenge factor
+
+  - Push Web API - 3
+
+
+- What you aim to complete for the alpha version, beta version, and final version
+
+alpha:
+  - Develop front-end UI and connect to back-end
+  - Ensure User Authentication and Authorization are working
+  - Make sure that informational databases are displayed and functioning
+  
+beta:
+  - Add or fix any functionality missing from alpha version
+  - add google translation for french of pages
+  - embedding of youtube vides for charities
+  - displayal of google ads/analytics
+  
+final:
+  - Add or fix any functionality missing from beta version
+  - work on optional features 
