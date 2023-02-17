@@ -10,7 +10,7 @@ This README.md is to be replaced by your project proposal:
 
 - Project title and team name
 
-Project Title: Arcadium
+Project Title: Gameboxd
 
 Team name: JJK  (TBD)
 
