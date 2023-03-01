@@ -55,9 +55,9 @@ This web application will allow users to play the game of onitama, on a 3d creat
 
 - (optional) What complexity points will be attempted as bonus for the challenge factor
 
- - Sharedb or similar database for handling global leaderboard or players online for matchmaking etc.
+  - Sharedb or similar database for handling global leaderboard or players online for matchmaking etc.
 
-  - 2 cp share/sharedb
+    - 2 cp share/sharedb
 
   - 2 cp - three.js for displaying a 3d game scene
   
