@@ -28,6 +28,7 @@ export const roomRouter = Router();
 //     res.json(gameState);
 //   });
 
+// Endpoint for creating a new game room
 roomRouter.post("/", isAuthenticated, async (req, res, next) => {
     if (!req.body.name) {
         return res.status(400).json({ error: "Room name is required." });
@@ -46,7 +47,7 @@ roomRouter.get("/", async (req, res, next) => {
         include: { association: "User", attributes: ["username"] },
     });
     return res.json({ rooms });
-}
+});
 
 roomRouter.patch("/:id/", isAuthenticated, async (req, res, next) => {
     const room = await Room.findByPk(req.params.id);
@@ -62,8 +63,8 @@ roomRouter.patch("/:id/", isAuthenticated, async (req, res, next) => {
     }
     await room.reload();
     return res.json(room);
-}
-);
+});
+
 
 roomRouter.delete("/:id/", isAuthenticated, async (req, res, next) => {
     const room = await Room.findByPk(req.params.id);
