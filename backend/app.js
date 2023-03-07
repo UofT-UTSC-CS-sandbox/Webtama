@@ -3,6 +3,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import { messagesRouter } from "./routers/messages_router.js";
 import { usersRouter } from "./routers/users_router.js";
+import { roomRouter } from "./routers/room_router.js";
 import session from "express-session";
 import cors from "cors";
 
@@ -35,6 +36,7 @@ app.use(
 
 app.use("/api/messages", messagesRouter);
 app.use("/users", usersRouter);
+app.use("/api/rooms", roomRouter);
 
 app.listen(PORT, (err) => {
   if (err) console.log(err);
