@@ -1,5 +1,6 @@
 import { sequelize } from "../datasource.js";
 import { DataTypes } from "sequelize";
+import { Room } from "./room.js";
 
 export const Board = sequelize.define("Board", {
   coordinate: {
@@ -7,9 +8,7 @@ export const Board = sequelize.define("Board", {
     allowNull: false,
     unique: true,
     },
-    value: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     
 });
+
+Board.belongsTo(Room);
