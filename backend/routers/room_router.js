@@ -41,19 +41,6 @@ roomRouter.post("/", isAuthenticated, async (req, res, next) => {
     }
 );
 
-roomRouter.post("/join", isAuthenticated, async (req, res, next) => {
-    if (!req.body.name) {
-        return res.status(400).json({ error: "Room name is required." });
-    }
-    const room = await Room.findOne({
-        where: { name: req.body.name },
-    });
-    if (!room) {
-        return res.status(404).json({ error: "Room not found." });
-    }
-    return res.json(room);
-});
-
 roomRouter.get("/:id/", async (req, res, next) => {
     const room = await Room.findByPk(req.params.id);
     if (!room) {
@@ -64,14 +51,28 @@ roomRouter.get("/:id/", async (req, res, next) => {
     return res.json(room);
 });
 
+// Add user to room
+roomRouter.post("/:id/join", isAuthenticated, async (req, res, next) => {
+    const room = await Room.findByPk(req.params.id);
+    if (!room) {
+        return res
+            .status(404)
+            .json({ error: `Room(id=${req.params.id}) not found.` });
+    }
+   
+    await room.addUser(req.session.userId);
+    await room.reload();
+    return res.json(room);
+});
 
-// roomRouter.get("/", async (req, res, next) => {
-//     const rooms = await Room.findAll({
-//         limit: 5,
-//         include: { association: "User", attributes: ["username"] },
-//     });
-//     return res.json({ rooms });
-// });
+
+roomRouter.get("/", async (req, res, next) => {
+    const rooms = await Room.findAll({
+        limit: 5,
+        include: { association: "User", attributes: ["username"] },
+    });
+    return res.json({ rooms });
+});
 
 // roomRouter.patch("/:id/", isAuthenticated, async (req, res, next) => {
 //     const room = await Room.findByPk(req.params.id);
