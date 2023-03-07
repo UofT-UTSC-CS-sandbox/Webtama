@@ -6,6 +6,7 @@ import { usersRouter } from "./routers/users_router.js";
 import { roomRouter } from "./routers/room_router.js";
 import session from "express-session";
 import cors from "cors";
+import { io } from "socket.io-client";
 
 const PORT = 3000;
 export const app = express();
@@ -37,6 +38,34 @@ app.use(
 app.use("/api/messages", messagesRouter);
 app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
+
+const socketClient = io();
+
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  // Handle the 'join room' event when a player joins a game room
+  socket.on('join room', (data) => {
+    const roomId = data.roomId;
+    const playerName = data.playerName;
+    // Join the specified game room and notify all players in the room
+    socket.join(roomId);
+    io.to(roomId).emit('player joined', playerName);
+  });
+
+  // Handle the 'make move' event when a player makes a move in the game
+  socket.on('make move', (data) => {
+    const roomId = data.roomId;
+    const move = data.move;
+    // Make a move in the specified game room and notify all players in the room
+    const gameState = makeMove(roomId, move);
+    io.to(roomId).emit('game state updated', gameState);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
 
 app.listen(PORT, (err) => {
   if (err) console.log(err);

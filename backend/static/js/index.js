@@ -69,33 +69,6 @@
     });
   };
 
-  io.on('connection', (socket) => {
-    console.log('New client connected');
-  
-    // Handle the 'join room' event when a player joins a game room
-    socket.on('join room', (data) => {
-      const roomId = data.roomId;
-      const playerName = data.playerName;
-      // Join the specified game room and notify all players in the room
-      socket.join(roomId);
-      io.to(roomId).emit('player joined', playerName);
-    });
-  
-    // Handle the 'make move' event when a player makes a move in the game
-    socket.on('make move', (data) => {
-      const roomId = data.roomId;
-      const move = data.move;
-      // Make a move in the specified game room and notify all players in the room
-      const gameState = makeMove(roomId, move);
-      io.to(roomId).emit('game state updated', gameState);
-    });
-  
-    socket.on('disconnect', () => {
-      console.log('Client disconnected');
-    });
-  });
-
-  
   window.addEventListener("load", function () {
     apiService.getUsername().then((res) => {
       document.querySelector("#signin-button").style.visibility = res.username

@@ -41,47 +41,71 @@ roomRouter.post("/", isAuthenticated, async (req, res, next) => {
     }
 );
 
-roomRouter.get("/", async (req, res, next) => {
-    const rooms = await Room.findAll({
-        limit: 5,
-        include: { association: "User", attributes: ["username"] },
+roomRouter.post("/join", isAuthenticated, async (req, res, next) => {
+    if (!req.body.name) {
+        return res.status(400).json({ error: "Room name is required." });
+    }
+    const room = await Room.findOne({
+        where: { name: req.body.name },
     });
-    return res.json({ rooms });
+    if (!room) {
+        return res.status(404).json({ error: "Room not found." });
+    }
+    return res.json(room);
 });
 
-roomRouter.patch("/:id/", isAuthenticated, async (req, res, next) => {
+roomRouter.get("/:id/", async (req, res, next) => {
     const room = await Room.findByPk(req.params.id);
     if (!room) {
         return res
             .status(404)
             .json({ error: `Room(id=${req.params.id}) not found.` });
     }
-    if (req.body.action === "upvote") {
-        await room.increment({ upvote: 1 });
-    } else if (req.body.action === "downvote") {
-        await room.increment({ downvote: 1 });
-    }
-    await room.reload();
     return res.json(room);
 });
 
 
-roomRouter.delete("/:id/", isAuthenticated, async (req, res, next) => {
-    const room = await Room.findByPk(req.params.id);
-    if (room) {
-        if (room.UserId !== req.session.userId) {
-            res
-                .status(403)
-                .json({ error: "You are not authorized to delete this room." });
-        } else {
-            await room.destroy();
-            return res.json(room);
-        }
-    } else {
-        return res
-            .status(404)
-            .json({ error: `Room(id=${req.params.id}) not found.` });
-    }
-}
-);
+// roomRouter.get("/", async (req, res, next) => {
+//     const rooms = await Room.findAll({
+//         limit: 5,
+//         include: { association: "User", attributes: ["username"] },
+//     });
+//     return res.json({ rooms });
+// });
+
+// roomRouter.patch("/:id/", isAuthenticated, async (req, res, next) => {
+//     const room = await Room.findByPk(req.params.id);
+//     if (!room) {
+//         return res
+//             .status(404)
+//             .json({ error: `Room(id=${req.params.id}) not found.` });
+//     }
+//     if (req.body.action === "upvote") {
+//         await room.increment({ upvote: 1 });
+//     } else if (req.body.action === "downvote") {
+//         await room.increment({ downvote: 1 });
+//     }
+//     await room.reload();
+//     return res.json(room);
+// });
+
+
+// roomRouter.delete("/:id/", isAuthenticated, async (req, res, next) => {
+//     const room = await Room.findByPk(req.params.id);
+//     if (room) {
+//         if (room.UserId !== req.session.userId) {
+//             res
+//                 .status(403)
+//                 .json({ error: "You are not authorized to delete this room." });
+//         } else {
+//             await room.destroy();
+//             return res.json(room);
+//         }
+//     } else {
+//         return res
+//             .status(404)
+//             .json({ error: `Room(id=${req.params.id}) not found.` });
+//     }
+// }
+// );
 
