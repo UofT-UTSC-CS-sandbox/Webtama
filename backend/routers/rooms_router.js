@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Room } from "../models/room.js";
+import { Room } from "../models/rooms.js";
 import { isAuthenticated } from "../middleware/helpers.js";
 
 export const roomRouter = Router();

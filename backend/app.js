@@ -3,7 +3,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import { messagesRouter } from "./routers/messages_router.js";
 import { usersRouter } from "./routers/users_router.js";
-import { roomRouter } from "./routers/room_router.js";
+import { roomRouter } from "./routers/rooms_router.js";
 import session from "express-session";
 import cors from "cors";
 import { io } from "socket.io-client";

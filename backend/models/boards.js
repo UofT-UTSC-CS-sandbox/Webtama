@@ -1,6 +1,6 @@
 import { sequelize } from "../datasource.js";
 import { DataTypes } from "sequelize";
-import { Room } from "./room.js";
+import { Room } from "./rooms.js";
 
 export const Board = sequelize.define("Board", {
   coordinate: {
