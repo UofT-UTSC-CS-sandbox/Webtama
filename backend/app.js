@@ -1,15 +1,18 @@
 import { sequelize } from "./datasource.js";
 import express from "express";
 import bodyParser from "body-parser";
+import http from "http";
 import { messagesRouter } from "./routers/messages_router.js";
 import { usersRouter } from "./routers/users_router.js";
 import { roomRouter } from "./routers/rooms_router.js";
 import session from "express-session";
 import cors from "cors";
-import { io } from "socket.io-client";
+//import { io } from "socket.io-client";
+import { Server } from "socket.io";
 
 const PORT = 3000;
 export const app = express();
+const httpServer = http.createServer(app);
 app.use(bodyParser.json());
 
 app.use(express.static("static"));
@@ -39,7 +42,7 @@ app.use("/api/messages", messagesRouter);
 app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
 
-const socketClient = io();
+const io = new Server(httpServer);
 
 socketClient.on('connection', (socket) => {
   console.log('New client connected');
