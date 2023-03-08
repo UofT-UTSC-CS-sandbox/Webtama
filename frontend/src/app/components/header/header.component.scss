@@ -1,25 +1,38 @@
 header {
   display: flex;
-  margin-top: 36px;
   height: 64px;
+  width: 100%;
+  background-color: #12cec5;
+  box-shadow:0 1px 1px #ccc;
   justify-content: flex-end;
+  -webkit-transition:top 0.3s;
+  transition:top 0.3s;
+  z-index: 1;
+  position: relative;
 }
 
 header #title {
+  float: left;
   color: black;
   text-decoration: none;
-  margin: auto;
+  margin-left: 5px;
   font-family: Jazz LET, fantasy;
-  margin: 0px;
   width: 100%;
-  font-size: 48px;
+  font-size: 40px;
 }
 
 .header-btn {
-  text-decoration: none;
-  font-size: 16px;
+  font-size: 15px;
   margin-left: 5px;
   margin-right: 5px;
+  border-radius: 10px;
+  text-align: center;
+  color: #3c3d3f;
+  background: #ffffff;
+  border: 2px #3c3d3f solid;
+  padding: 15px 10px 0px 10px;
+  display: inline-block;
+  text-decoration: none;
 }
 
 #error-box {

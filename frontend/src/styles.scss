@@ -9,8 +9,7 @@ body {
   font-size: 14px;
   color: #3c3d3f;
   text-align: left;
-  max-width: 800px;
-  margin: auto;
+  margin: 0px;
 }
 
 ::after,
@@ -115,11 +114,14 @@ body {
 
 .complex-form {
   margin-top: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
   border-radius: 10px;
   border: 2px #3c3d3f solid;
   padding: 20px 10px 10px 10px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .complex-form .form-title {
