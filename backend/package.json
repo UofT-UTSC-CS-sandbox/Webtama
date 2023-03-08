@@ -1,5 +1,5 @@
 {
-  "name": "Webtama",
+  "name": "microblog",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -26,11 +26,7 @@
     "sequelize": "^6.25.3",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
-<<<<<<< HEAD
-    "sqlite3": "^5.1.2"
-=======
     "sqlite3": "^5.1.4"
->>>>>>> 2e48aaac5341fe0549fffce33d40c000fde02402
   },
   "devDependencies": {
     "nodemon": "^2.0.20",

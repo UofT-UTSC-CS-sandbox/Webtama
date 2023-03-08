@@ -44,7 +44,7 @@ app.use("/api/rooms", roomRouter);
 
 const io = new Server(httpServer);
 
-socketClient.on('connection', (socket) => {
+io.on('connection', (socket) => {
   console.log('New client connected');
 
   // Handle the 'join room' event when a player joins a game room
