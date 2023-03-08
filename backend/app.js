@@ -41,14 +41,14 @@ app.use("/api/rooms", roomRouter);
 
 const socketClient = io();
 
-io.on('connection', (socket) => {
+socketClient.on('connection', (socket) => {
   console.log('New client connected');
 
   // Handle the 'join room' event when a player joins a game room
   socket.on('join room', (data) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
-    // Join the specified game room and notify all players in the room
+    // Join the specified game room and notify all players in the roeom
     socket.join(roomId);
     io.to(roomId).emit('player joined', playerName);
   });
