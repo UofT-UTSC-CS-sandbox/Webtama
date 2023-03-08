@@ -3,12 +3,10 @@ import { DataTypes } from "sequelize";
 import { Room } from "./rooms.js";
 
 export const Board = sequelize.define("Board", {
-  coordinate: {
-    type: DataTypes.STRING,
+  turn: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    unique: true,
-    },
-    
+  },
 });
 
 Board.belongsTo(Room);

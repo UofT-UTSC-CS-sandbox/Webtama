@@ -3,19 +3,22 @@ import { DataTypes } from "sequelize";
 import { Board } from "./boards.js";
 
 export const Piece = sequelize.define("Piece", {
-  coordinate: {
-    type: DataTypes.STRING,
+  xpos: {
+    type: DataTypes.integer,
     allowNull: false,
-    unique: true,
-    },
+  },
+  ypos: {
+    type: DataTypes.integer,
+    allowNull: false,
+  },
   type: {
     type: DataTypes.STRING,
     allowNull: false,
-    },
+  },
   side: {
-    type: DataTypes.STRING,
+    type: DataTypes.integer,
     allowNull: false,
-    },
+  },
 });
 
 Piece.belongsTo(Board);

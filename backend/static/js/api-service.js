@@ -80,7 +80,21 @@ const apiService = (function () {
       body: JSON.stringify({ username }),
     }).then((res) => res.json());
   };
-  
+
+  module.createBoard = function (roomId) {
+    return fetch(`/api/rooms/${roomId}/boards`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    }).then((res) => res.json());
+  };
+
+  module.makeMove = function (roomId, startx, endx, starty, endy) {
+    return fetch(`/api/rooms/${roomId}/boards`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ startx, endx, starty, endy }),
+    }).then((res) => res.json());
+  };
 
   return module;
 })();

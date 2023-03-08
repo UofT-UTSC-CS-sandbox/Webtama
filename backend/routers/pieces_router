@@ -1,46 +1,45 @@
-import { Router } from 'express';
-import { isAuthenticated } from '../middleware/helpers';
-import { Pieces } from '/models/pieces.js';
+// import { Router } from 'express';
+// import { isAuthenticated } from '../middleware/helpers';
+// import { Pieces } from '/models/pieces.js';
 
-const pieceRouter = Router();
+// const pieceRouter = Router();
 
-pieceRouter.get('/', isAuthenticated, async (req, res) => {
-    Pieces.findAll()
-        .then(pieces => {
-        res.json(pieces);
-        });
-    }
-);
+// pieceRouter.get('/', isAuthenticated, async (req, res) => {
+//     Pieces.findAll()
+//         .then(pieces => {
+//         res.json(pieces);
+//         });
+//     }
+// );
 
-pieceRouter.get('/:id', isAuthenticated, async (req, res) => {
-    Pieces.findById(req.params.id)
-        .then(piece => {
-        res.json(piece);
-        });
-    }
-);
+// pieceRouter.get('/:id', isAuthenticated, async (req, res) => {
+//     Pieces.findById(req.params.id)
+//         .then(piece => {
+//         res.json(piece);
+//         });
+//     }
+// );
 
-pieceRouter.post('/', isAuthenticated, async (req, res) => {
-    Pieces.create(req.body)
-        .then(piece => {
-        res.json(piece);
-        });
-    }
-);
+// pieceRouter.post('/', isAuthenticated, async (req, res) => {
+//     Pieces.create(req.body)
+//         .then(piece => {
+//         res.json(piece);
+//         });
+//     }
+// );
 
-pieceRouter.put('/:id', isAuthenticated, async (req, res) => {
-    Pieces.update(req.body, { where: { id: req.params.id } })
-        .then(piece => {
-        res.json(piece);
-        });
-    }
-);
+// pieceRouter.put('/:id', isAuthenticated, async (req, res) => {
+//     Pieces.update(req.body, { where: { id: req.params.id } })
+//         .then(piece => {
+//         res.json(piece);
+//         });
+//     }
+// );
 
-pieceRouter.delete('/:id', isAuthenticated, async (req, res) => {
-    Pieces.destroy({ where: { id: req.params.id } })
-        .then(piece => {
-        res.json(piece);
-        });
-    }
-);
-
+// pieceRouter.delete('/:id', isAuthenticated, async (req, res) => {
+//     Pieces.destroy({ where: { id: req.params.id } })
+//         .then(piece => {
+//         res.json(piece);
+//         });
+//     }
+// );
