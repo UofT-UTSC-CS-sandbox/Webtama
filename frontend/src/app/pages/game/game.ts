@@ -8,7 +8,8 @@ let pieceY = -1;
 
 @Component({
   selector: "app-game",
-  templateUrl: "./game.html",
+  templateUrl: "./game.component.html",
+  styleUrls: ["./game.component.scss"],
 })
 export class GameComponent implements OnInit {
   constructor(
@@ -57,10 +58,4 @@ export class GameComponent implements OnInit {
       for (let i = 0; i < data.length; i++) {}
     });
   }
-
-  //   onSubmit() {
-  //     this.apiService.createGame(this.gameForm.value).subscribe((data) => {
-  //       this.router.navigate(["list-game"]);
-  //     });
-  //   }
 }
