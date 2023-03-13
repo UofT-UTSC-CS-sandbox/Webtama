@@ -9,6 +9,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ApiInterceptor } from './api.interceptor';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { GameComponent } from './pages/game/game.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     IndexComponent,
     SignInComponent,
     HeaderComponent,
+    GameComponent,
   ],
   imports: [
     BrowserModule,

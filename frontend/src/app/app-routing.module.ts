@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes, Router } from '@angular/router';
 import { IndexComponent } from './pages/index/index.component';
 import { SignInComponent } from './pages/sign-in/sign-in.component';
+import { GameComponent } from './pages/game/game.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
     path: '**',
     redirectTo: '/',
   },
+  {
+    path: 'game',
+    component: GameComponent,
+  }
 ];
 
 @NgModule({
