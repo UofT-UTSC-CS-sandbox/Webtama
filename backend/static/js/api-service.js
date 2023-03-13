@@ -53,6 +53,16 @@ const apiService = (function () {
     }).then((res) => res.json());
   };
 
+  module.getBoard = function (roomId) {
+    return fetch(`/api/rooms/${roomId}/boards`).then((res) => res.json());
+  };
+
+  module.getPieces = function (roomId) {
+    return fetch(`/api/rooms/${roomId}/boards/pieces`).then((res) =>
+      res.json()
+    );
+  };
+
   module.makeMove = function (roomId, startx, endx, starty, endy) {
     return fetch(`/api/rooms/${roomId}/boards`, {
       method: "PATCH",

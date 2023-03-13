@@ -1,5 +1,13 @@
+:root {
+  --darkBase: #2c2b30;
+  --Base: #4f4f51;
+  --textColor: #d6d6d6;
+  --lightBase: #f2c4ce;
+  --mainColor: #f58f7c;
+}
+
 table {
-  border: 3px solid black;
+  border: 3px solid var(--lightBase);
 }
 td {
   width: 6vw;
@@ -9,24 +17,24 @@ td {
   text-align: center;
   margin: 0;
 
-  background-color: #ba7a3a;
+  background-color: var(--mainColor);
 }
 .td2 {
-  background-color: #f0d2b4;
+  background-color: var(--textColor);
 }
 
 .pawn {
-  width: 2vw;
-  height: 2vw;
+  width: 2.5vw;
+  height: 2.5vw;
   margin: auto;
   background-color: black;
-  border: 2px solid white;
+  /* border: 2px solid white; */
   border-radius: 50%;
 }
 
 .king {
-  width: 2vw;
-  height: 2vw;
+  width: 2.5vw;
+  height: 2.5vw;
   margin: auto;
   padding: 1;
   background-color: black;

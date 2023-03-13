@@ -1,4 +1,4 @@
-:root {
+/* :root {
   --mainColor: #fa991c;
   --bgColor: #032539;
   --secColor: #1c768f;
@@ -9,7 +9,6 @@
 .slide {
   color: white;
   background-color: var(--mainColor);
-  /* center the button */
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -73,4 +72,4 @@
   font-size: 15px;
   color: black;
   outline: none;
-}
+} */

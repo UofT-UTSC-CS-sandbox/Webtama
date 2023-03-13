@@ -191,21 +191,31 @@ roomRouter.patch("/:id/boards", isAuthenticated, async (req, res, next) => {
   return res.json(board);
 });
 
-// roomRouter.patch("/:id/", isAuthenticated, async (req, res, next) => {
-//     const room = await Room.findByPk(req.params.id);
-//     if (!room) {
-//         return res
-//             .status(404)
-//             .json({ error: `Room(id=${req.params.id}) not found.` });
-//     }
-//     if (req.body.action === "upvote") {
-//         await room.increment({ upvote: 1 });
-//     } else if (req.body.action === "downvote") {
-//         await room.increment({ downvote: 1 });
-//     }
-//     await room.reload();
-//     return res.json(room);
-// });
+//get pieces route
+roomRouter.get("/:id/boards/pieces", async (req, res, next) => {
+  const room = await Room.findByPk(req.params.id);
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+  const board = await room.getBoard();
+  if (!board) {
+    return res
+      .status(404)
+      .json({ error: `Board(id=${req.params.id}) not found.` });
+  }
+
+  const pieces = await board.getPieces();
+
+  //put all of the pieces in an array of thruples with their positions and type
+  let pieceArray = [];
+  for (let i = 0; i < pieces.length; i++) {
+    pieceArray.push([pieces[i].xpos, pieces[i].ypos, pieces[i].type]);
+  }
+
+  return res.json(pieceArray);
+});
 
 // roomRouter.delete("/:id/", isAuthenticated, async (req, res, next) => {
 //     const room = await Room.findByPk(req.params.id);
