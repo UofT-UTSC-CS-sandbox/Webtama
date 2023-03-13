@@ -69,6 +69,8 @@
     });
   };
 
+  
+
   window.addEventListener("load", function () {
     apiService.getUsername().then((res) => {
       document.querySelector("#signin-button").style.visibility = res.username
@@ -93,6 +95,7 @@
               return updateMessages();
             });
           });
+        
       }
     });
   });
