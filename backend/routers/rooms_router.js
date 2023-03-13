@@ -211,10 +211,15 @@ roomRouter.get("/:id/boards/pieces", async (req, res, next) => {
   //put all of the pieces in an array of thruples with their positions and type
   let pieceArray = [];
   for (let i = 0; i < pieces.length; i++) {
-    pieceArray.push([pieces[i].xpos, pieces[i].ypos, pieces[i].type]);
+    pieceArray.push([
+      pieces[i].xpos,
+      pieces[i].ypos,
+      pieces[i].type,
+      pieces[i].side,
+    ]);
   }
 
-  return res.json(pieceArray);
+  return res.json(pieceArray, pieces.length);
 });
 
 // roomRouter.delete("/:id/", isAuthenticated, async (req, res, next) => {

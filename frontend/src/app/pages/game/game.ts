@@ -32,6 +32,8 @@ export class GameComponent implements OnInit {
       console.log(data);
     });
 
+    this.updateBoard();
+
     //Set the player names
   }
 
@@ -51,11 +53,34 @@ export class GameComponent implements OnInit {
 
     pieceX = -1;
     pieceY = -1;
+
+    this.updateBoard();
   }
 
   updateBoard() {
     this.apiService.getPieces(1).subscribe((data) => {
-      for (let i = 0; i < data.length; i++) {}
+      for (let i = 0; i < data.pieces.length; i++) {
+        const piece = data.pieces[i];
+        //find the square with the same x and y
+        let square = document.querySelector(
+          `[data-row="${piece.xpos}"][data-col="${piece.ypos}"]`
+        );
+        if (square === null) {
+          console.log("Square not found");
+          return;
+        }
+        const display = document.createElement("p");
+        //add the piece's type as a class for display
+        display.classList.add(piece.type);
+        //add the piece's side as a class for display
+        if (piece.side == 0) {
+          display.classList.add("aTeam");
+        } else {
+          display.classList.add("bTeam");
+        }
+
+        square.appendChild(display);
+      }
     });
   }
 }

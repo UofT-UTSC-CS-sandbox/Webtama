@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../environments/environment";
+import { Piece } from "../classes/piece";
 
 @Injectable({
   providedIn: "root",
@@ -32,8 +33,10 @@ export class ApiService {
     return this.http.get(this.endpoint + `/boards/${id}`);
   }
 
-  getPieces(id: number) {
-    return this.http.get(this.endpoint + `/boards/${id}/pieces`);
+  getPieces(id: number): Observable<{ pieces: Piece[] }> {
+    return this.http.get<{ pieces: Piece[]; pieceCount: number }>(
+      this.endpoint + `/boards/${id}/pieces`
+    );
   }
 
   makeMove(id: number, x1: number, y1: number, x2: number, y2: number) {
