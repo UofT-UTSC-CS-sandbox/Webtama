@@ -3,9 +3,6 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ApiService } from "../../services/api.service";
 
-let pieceX = -1;
-let pieceY = -1;
-
 @Component({
   selector: "app-game",
   templateUrl: "./game.component.html",
@@ -38,21 +35,53 @@ export class GameComponent implements OnInit {
   }
 
   pieceSelect(x: number, y: number) {
-    pieceX = x;
-    pieceY = y;
+    //add the selected class to the piece
+    let piece = document.querySelector(
+      `[data-x="${x}"][data-y="${y}"]`
+    ) as HTMLElement;
+    piece.classList.add("selected");
+
+    //remove all event listeners from <p> elements
+    let pieces = document.querySelectorAll("p");
+    pieces.forEach((piece) => {
+      piece.removeEventListener("click", () => {
+        this.pieceSelect(x, y);
+      });
+    });
+
+    //add a event listener to all td elements
+    let squares = document.querySelectorAll("td");
+    squares.forEach((square) => {
+      const squareX = square.getAttribute("data-row");
+      const squareY = square.getAttribute("data-col");
+      if (squareX === null || squareY === null) {
+        console.log("Square not found");
+        return;
+      }
+      square.addEventListener("click", () => {
+        this.makeMove(x, y, parseInt(squareX), parseInt(squareY));
+      });
+    });
   }
 
-  makeMove(x: number, y: number) {
-    if (pieceX == -1 || pieceY == -1) {
-      console.log("No piece selected");
-      return;
-    }
+  makeMove(startx: number, starty: number, endx: number, endy: number) {
     this.apiService
-      .makeMove(1, pieceX, pieceY, x, y)
+      .makeMove(1, startx, starty, endx, endy)
       .subscribe((data) => console.log(data));
 
-    pieceX = -1;
-    pieceY = -1;
+    //remove the selected class from the piece
+    let piece = document.querySelector(
+      `[data-x="${startx}"][data-y="${starty}"]`
+    ) as HTMLElement;
+    piece.classList.remove("selected");
+
+    //remove all event listeners from <td> elements
+    let squares = document.querySelectorAll("td");
+    squares.forEach((square) => {
+      square.removeEventListener("click", () => {
+        this.makeMove(startx, starty, endx, endy);
+      });
+    });
 
     this.updateBoard();
   }
@@ -70,6 +99,13 @@ export class GameComponent implements OnInit {
           return;
         }
         const display = document.createElement("p");
+        //record the piece's x and y
+        display.setAttribute("data-x", piece.xpos.toString());
+        display.setAttribute("data-y", piece.ypos.toString());
+        //add pieceSelect as event listener for clicking to the piece
+        display.addEventListener("click", () => {
+          this.pieceSelect(piece.xpos, piece.ypos);
+        });
         //add the piece's type as a class for display
         display.classList.add(piece.type);
         //add the piece's side as a class for display
