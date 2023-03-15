@@ -14,20 +14,20 @@ export class ApiService {
   socket: Socket;
 
   constructor(private http: HttpClient) {
-    //console.log(this.endpoint);
+    console.log(this.endpoint);
     this.socket = io(this.endpoint);
   }
 
   addRoom(name: string) {
-    return this.http.post(this.endpoint + `/rooms`, { name });
+    return this.http.post(this.endpoint + `/api/rooms`, { name });
   }
 
   getRooms() {
-    return this.http.get(this.endpoint + `/rooms`);
+    return this.http.get(this.endpoint + `/api/rooms`);
   }
 
   getRoom(id: number) {
-    return this.http.get(this.endpoint + `/rooms/${id}`);
+    return this.http.get(this.endpoint + `/api/rooms/${id}`);
   }
 
   createBoard(id: number) {
