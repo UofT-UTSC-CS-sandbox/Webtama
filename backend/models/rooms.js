@@ -11,7 +11,7 @@ export const Room = sequelize.define("Room", {
   },
   Host: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   Guest: {
     type: DataTypes.INTEGER,
