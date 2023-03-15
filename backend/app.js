@@ -48,7 +48,12 @@ app.use("/api/rooms", roomRouter);
 // Initialize Redis client instance
 // const redisClient = redis.createClient();
 
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:4200",
+    methods: ["GET", "POST"],
+  },
+});
 // io.adapter(redisAdapter({ host: 'localhost', port: 6379 }));
 
 io.on("connection", (socket) => {

@@ -9,11 +9,12 @@ import { io, Socket } from "socket.io-client";
   providedIn: "root",
 })
 export class ApiService {
-  // endpoint = 'http://localhost:3000';
+  ///endpoint = "http://localhost:3000";
   endpoint = environment.apiEndpoint;
   socket: Socket;
 
   constructor(private http: HttpClient) {
+    //console.log(this.endpoint);
     this.socket = io(this.endpoint);
   }
 
