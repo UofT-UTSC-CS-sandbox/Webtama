@@ -1,6 +1,7 @@
 import { sequelize } from "../datasource.js";
 import { DataTypes } from "sequelize";
 import { User } from "./users.js";
+import { Board } from "./boards.js";
 
 export const Room = sequelize.define("Room", {
   name: {
@@ -17,6 +18,6 @@ export const Room = sequelize.define("Room", {
     allowNull: true,
   },
 });
-
+Room.hasOne(Board);
 // Room.belongsToMany(User, { through: "UserRoom" });
 // User.belongsToMany(Room, { through: "UserRoom" });
