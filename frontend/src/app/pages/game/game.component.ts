@@ -89,6 +89,13 @@ export class GameComponent implements OnInit {
     });
 
     this.updateBoard();
+    // Emit the move event to the server
+    this.apiService.emit("move", {
+      startx: startx,
+      starty: starty,
+      endx: endx,
+      endy: endy,
+    });
   }
 
   updateBoard() {
@@ -122,6 +129,7 @@ export class GameComponent implements OnInit {
 
         square.appendChild(display);
       }
+      // update board for other player through api call
     });
   }
 }
