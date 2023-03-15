@@ -8,11 +8,14 @@ export const Room = sequelize.define("Room", {
         allowNull: false,
         unique: true,
     },
-    UserId: {
+    Host: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-
+    Guest: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
 });
 
 Room.belongsToMany(User, { through: "UserRoom" });

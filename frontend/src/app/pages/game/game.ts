@@ -12,7 +12,8 @@ export class GameComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+
   ) {}
 
   ngOnInit() {
@@ -30,6 +31,14 @@ export class GameComponent implements OnInit {
     });
 
     this.updateBoard();
+
+    // Listen for the move event from the server
+    this.apiService.on("move", (data) => {
+      // Update the board based on the move
+      // ...
+      this.updateBoard();
+    });
+
 
     //Set the player names
   }
@@ -84,6 +93,14 @@ export class GameComponent implements OnInit {
     });
 
     this.updateBoard();
+    // Emit the move event to the server
+    this.apiService.emit("move", {
+      startx: startx,
+      starty: starty,
+      endx: endx,
+      endy: endy
+    });
+
   }
 
   updateBoard() {
@@ -117,6 +134,8 @@ export class GameComponent implements OnInit {
 
         square.appendChild(display);
       }
+      // update board for other player through api call
+      
     });
   }
 }

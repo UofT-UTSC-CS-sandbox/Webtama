@@ -3,6 +3,7 @@ import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { Piece } from "../classes/piece";
+import { io, Socket } from "socket.io-client";
 
 @Injectable({
   providedIn: "root",
@@ -10,8 +11,11 @@ import { Piece } from "../classes/piece";
 export class ApiService {
   // endpoint = 'http://localhost:3000';
   endpoint = environment.apiEndpoint;
+  socket: Socket;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.socket = io(this.endpoint);
+  }
 
   addRoom(name: string) {
     return this.http.post(this.endpoint + `/rooms`, { name });
@@ -68,5 +72,13 @@ export class ApiService {
 
   me() {
     return this.http.get(this.endpoint + `/users/me`);
+  }
+
+  on(event: string, callback: (data: any) => void) {
+    this.socket.on(event, callback);
+  }
+
+  emit(event: string, data: any) {
+    this.socket.emit(event, data);
   }
 }

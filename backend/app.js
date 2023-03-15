@@ -7,8 +7,10 @@ import { usersRouter } from "./routers/users_router.js";
 import { roomRouter } from "./routers/rooms_router.js";
 import session from "express-session";
 import cors from "cors";
-//import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 import { Server } from "socket.io";
+import redis from "redis";
+import redisAdapter from "socket.io-redis";
 
 const PORT = 3000;
 export const app = express();
@@ -42,7 +44,12 @@ app.use("/api/messages", messagesRouter);
 app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
 
+// Socket.io
+// Initialize Redis client instance
+// const redisClient = redis.createClient();
+
 const io = new Server(httpServer);
+// io.adapter(redisAdapter({ host: 'localhost', port: 6379 }));
 
 io.on('connection', (socket) => {
   console.log('New client connected');
@@ -56,8 +63,8 @@ io.on('connection', (socket) => {
     io.to(roomId).emit('player joined', playerName);
   });
 
-  // Handle the 'make move' event when a player makes a move in the game
-  socket.on('make move', (data) => {
+  // Handle the 'move' event when a player makes a move in the game
+  socket.on('move', (data) => {
     const roomId = data.roomId;
     const move = data.move;
     // Make a move in the specified game room and notify all players in the room

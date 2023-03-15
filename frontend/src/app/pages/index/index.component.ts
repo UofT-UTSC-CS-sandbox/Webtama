@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 
 /**
@@ -26,7 +27,7 @@ export class IndexComponent implements OnInit {
    * in the constructor. This applies for all the non components you want to use in another component, and mostly,
    * it would be custom services you define.
    */
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private router: Router) {}
 
   ngOnInit(): void {
     this.checkAuth();
@@ -41,5 +42,9 @@ export class IndexComponent implements OnInit {
         this.isAuth = false;
       }
     });
+  }
+
+  goToGame() {
+    this.router.navigate(['/game']);
   }
 }
