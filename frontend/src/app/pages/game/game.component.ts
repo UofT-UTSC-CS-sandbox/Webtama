@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { io } from "socket.io-client";
+
 import { ApiService } from "../../services/api.service";
 
 @Component({
@@ -20,6 +22,7 @@ export class GameComponent implements OnInit {
     this.apiService.getRooms().subscribe({
       next: (data) => {
         console.log(data);
+        this.apiService.socket.emit("join", { roomId: 1, playerName: "Jason" });
       },
 
       error: (err) => {
@@ -34,9 +37,11 @@ export class GameComponent implements OnInit {
       console.log(data);
     });
 
-    this.updateBoard();
-
-    //Set the player names
+    //this.updateBoard();
+    this.apiService.socket.emit("move", { roomid: 1 });
+    this.apiService.socket.on("game state updated", (data) => {
+      this.updateBoard();
+    });
   }
 
   pieceSelect(x: number, y: number) {
@@ -70,6 +75,7 @@ export class GameComponent implements OnInit {
   }
 
   makeMove(startx: number, starty: number, endx: number, endy: number) {
+    //Can refactor this into a move event in the socket
     this.apiService
       .makeMove(1, startx, starty, endx, endy)
       .subscribe((data) => console.log(data));
@@ -87,15 +93,8 @@ export class GameComponent implements OnInit {
         this.makeMove(startx, starty, endx, endy);
       });
     });
-
-    this.updateBoard();
     // Emit the move event to the server
-    this.apiService.emit("move", {
-      startx: startx,
-      starty: starty,
-      endx: endx,
-      endy: endy,
-    });
+    this.apiService.socket.emit("move", { roomid: 1 });
   }
 
   updateBoard() {
