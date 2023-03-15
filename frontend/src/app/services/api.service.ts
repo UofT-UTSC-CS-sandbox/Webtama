@@ -3,7 +3,8 @@ import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { Piece } from "../classes/piece";
-import { io, Socket} from "socket.io-client";
+import { Room } from "../classes/room";
+import { io, Socket } from "socket.io-client";
 
 @Injectable({
   providedIn: "root",
@@ -22,7 +23,7 @@ export class ApiService {
     return this.http.post(this.endpoint + `/api/rooms`, { name });
   }
 
-  getRooms() {
+  getRooms(): Observable<{ rooms: Room[] }> {
     return this.http.get(this.endpoint + `/api/rooms`);
   }
 
@@ -31,21 +32,21 @@ export class ApiService {
   }
 
   createBoard(id: number) {
-    return this.http.post(this.endpoint + `/boards`, { id });
+    return this.http.post(this.endpoint + `api/rooms/${id}/boards`, { id });
   }
 
   getBoard(id: number) {
-    return this.http.get(this.endpoint + `/boards/${id}`);
+    return this.http.get(this.endpoint + `api/rooms/${id}/boards`);
   }
 
   getPieces(id: number): Observable<{ pieces: Piece[] }> {
     return this.http.get<{ pieces: Piece[]; pieceCount: number }>(
-      this.endpoint + `/boards/${id}/pieces`
+      this.endpoint + `api/rooms/${id}/boards/pieces`
     );
   }
 
   makeMove(id: number, x1: number, y1: number, x2: number, y2: number) {
-    return this.http.post(this.endpoint + `/boards/${id}`, {
+    return this.http.patch(this.endpoint + `api/rooms/${id}/boards`, {
       x1,
       y1,
       x2,

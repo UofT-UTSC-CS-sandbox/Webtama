@@ -5,6 +5,7 @@ import http from "http";
 import { messagesRouter } from "./routers/messages_router.js";
 import { usersRouter } from "./routers/users_router.js";
 import { roomRouter } from "./routers/rooms_router.js";
+import { boardRouter } from "./routers/boards_router.js";
 import session from "express-session";
 import cors from "cors";
 // import { io } from "socket.io-client";
@@ -41,8 +42,9 @@ app.use(
 );
 
 app.use("/api/messages", messagesRouter);
-app.use("/users", usersRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/rooms", roomRouter);
+app.use("/api/rooms", boardRouter);
 
 // Socket.io
 // Initialize Redis client instance

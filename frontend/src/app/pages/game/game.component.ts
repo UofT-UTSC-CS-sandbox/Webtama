@@ -22,25 +22,40 @@ export class GameComponent implements OnInit {
     this.apiService.getRooms().subscribe({
       next: (data) => {
         console.log(data);
-        this.apiService.socket.emit("join", { roomId: 1, playerName: "Jason" });
+        if (data.rooms.length === 0) {
+          console.log("No rooms found");
+          this.apiService.addRoom("Alpha Room").subscribe(() => {});
+          this.apiService.createBoard(1).subscribe(() => {});
+          this.apiService.socket.emit("join", { roomId: 1, playerName: "Kia" });
+        } else {
+          console.log("Found room");
+          this.apiService.socket.emit("join", {
+            roomId: 1,
+            playerName: "Jason",
+          });
+        }
+
+        //Get the board for room 1
+        this.apiService.getBoard(1).subscribe((data) => {
+          console.log(data);
+        });
+        this.apiService.socket.emit("move", { roomid: 1 });
+        this.apiService.socket.on("game state updated", (data) => {
+          this.updateBoard();
+        });
       },
 
       error: (err) => {
-        console.log("No rooms found");
-        this.apiService.addRoom("Alpha Room").subscribe(() => {});
-        this.apiService.createBoard(1).subscribe(() => {});
+        //Get the board for room 1
+        this.apiService.getBoard(1).subscribe((data) => {
+          console.log(data);
+        });
+        //this.updateBoard();
+        this.apiService.socket.emit("move", { roomid: 1 });
+        this.apiService.socket.on("game state updated", (data) => {
+          this.updateBoard();
+        });
       },
-    });
-
-    //Get the board for room 1
-    this.apiService.getBoard(1).subscribe((data) => {
-      console.log(data);
-    });
-
-    //this.updateBoard();
-    this.apiService.socket.emit("move", { roomid: 1 });
-    this.apiService.socket.on("game state updated", (data) => {
-      this.updateBoard();
     });
   }
 
