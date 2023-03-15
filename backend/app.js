@@ -70,6 +70,7 @@ io.on("connection", (socket) => {
 
   // Handle the 'move' event when a player makes a move in the game
   socket.on("move", (data) => {
+    const roomId = data.roomId;
     // Make a move in the specified game room and notify all players in the room
     io.to(roomId).emit("game state updated");
   });
@@ -79,7 +80,7 @@ io.on("connection", (socket) => {
   });
 });
 
-app.listen(PORT, (err) => {
+httpServer.listen(PORT, (err) => {
   if (err) console.log(err);
   else console.log("HTTP server on http://localhost:%s", PORT);
 });
