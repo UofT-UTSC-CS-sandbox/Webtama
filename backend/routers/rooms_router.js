@@ -64,6 +64,7 @@ roomRouter.post("/:id/join", isAuthenticated, async (req, res, next) => {
   return res.json(room);
 });
 
+//get all rooms
 roomRouter.get("/", async (req, res, next) => {
   const rooms = await Room.findAll({
     limit: 5,
