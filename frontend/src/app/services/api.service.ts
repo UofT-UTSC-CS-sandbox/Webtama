@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { Piece } from "../classes/piece";
-import { io, Socket } from "socket.io-client";
+import { io, Socket} from "socket.io-client";
 
 @Injectable({
   providedIn: "root",
@@ -14,7 +14,7 @@ export class ApiService {
   socket: Socket;
 
   constructor(private http: HttpClient) {
-    console.log(this.endpoint);
+    //console.log(this.endpoint);
     this.socket = io(this.endpoint);
   }
 
