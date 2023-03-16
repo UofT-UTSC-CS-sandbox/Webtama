@@ -28,7 +28,7 @@ export class GameComponent implements OnInit {
             console.log(data);
           });
 
-          this.apiService.createBoard(data.rooms[0].id).subscribe(() => {
+          this.apiService.createBoard(1).subscribe(() => {
             console.log("Board created");
           });
           this.apiService.socket.emit("join", { roomId: 1, playerName: "Kia" });
@@ -41,8 +41,15 @@ export class GameComponent implements OnInit {
         }
 
         //Get the board for room 1
-        this.apiService.getBoard(1).subscribe((data) => {
-          console.log(data);
+        this.apiService.getBoard(1).subscribe({
+          next: (data) => {
+            console.log(data);
+          },
+          error: (err) => {
+            this.apiService.createBoard(1).subscribe(() => {
+              console.log("Board created");
+            });
+          },
         });
         this.apiService.socket.emit("move", { roomid: 1 });
         this.apiService.socket.on("game state updated", (data) => {
