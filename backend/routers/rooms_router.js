@@ -2,6 +2,7 @@ import { Router } from "express";
 import { Room } from "../models/rooms.js";
 import { isAuthenticated } from "../middleware/helpers.js";
 import { Board } from "../models/boards.js";
+import { Piece } from "../models/pieces.js";
 
 export const roomRouter = Router();
 
@@ -76,19 +77,20 @@ roomRouter.get("/", async (req, res, next) => {
 });
 
 //create board route
-roomRouter.post("/:id/boards", isAuthenticated, async (req, res, next) => {
+roomRouter.post("/:id/boards/", isAuthenticated, async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
   if (!room) {
     return res
       .status(404)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
-  if (room.UserId !== req.session.userId) {
-    return res
-      .status(403)
-      .json({ error: "You are not authorized to create a board." });
-  }
+  // if (room.UserId !== req.session.userId) {
+  //   return res
+  //     .status(403)
+  //     .json({ error: "You are not authorized to create a board." });
+  // }
   const board = await Board.create({
+    turn: 0,
     RoomId: req.params.id,
   });
 
