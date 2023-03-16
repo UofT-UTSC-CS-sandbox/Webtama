@@ -54,8 +54,13 @@ export class GameComponent implements OnInit {
             }
           },
         });
-        this.apiService.socket.emit("move", {roomId: 1});
+        console.log("our socket is:", this.apiService.socket.id);
+        this.apiService.socket.emit("move", {
+          roomId: 1,
+          socketId: this.apiService.socket.id,
+        });
         this.apiService.socket.on("game state updated", (data) => {
+          console.log("Game state updated");
           this.updateBoard();
         });
       },
@@ -68,6 +73,7 @@ export class GameComponent implements OnInit {
         //this.updateBoard();
         this.apiService.socket.emit("move", { roomid: 1 });
         this.apiService.socket.on("game state updated", (data) => {
+          console.log("Game state updated");
           this.updateBoard();
         });
       },
