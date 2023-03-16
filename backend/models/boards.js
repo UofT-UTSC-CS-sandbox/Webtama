@@ -9,4 +9,4 @@ export const Board = sequelize.define("Board", {
   },
 });
 
-Board.belongsTo(Room);
+// Board.belongsTo(Room);

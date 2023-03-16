@@ -24,7 +24,7 @@ export class ApiService {
   }
 
   getRooms(): Observable<{ rooms: Room[] }> {
-    return this.http.get(this.endpoint + `/api/rooms`);
+    return this.http.get<{ rooms: Room[] }>(this.endpoint + `/api/rooms`);
   }
 
   getRoom(id: number) {

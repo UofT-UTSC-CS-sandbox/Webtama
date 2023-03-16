@@ -18,6 +18,7 @@ export const Room = sequelize.define("Room", {
     allowNull: true,
   },
 });
+
 Room.hasOne(Board);
 // Room.belongsToMany(User, { through: "UserRoom" });
 // User.belongsToMany(Room, { through: "UserRoom" });
