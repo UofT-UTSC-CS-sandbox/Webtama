@@ -42,7 +42,7 @@ app.use(
 );
 
 app.use("/api/messages", messagesRouter);
-app.use("/api/users", usersRouter);
+app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
 // app.use("/api/rooms", boardRouter);
 

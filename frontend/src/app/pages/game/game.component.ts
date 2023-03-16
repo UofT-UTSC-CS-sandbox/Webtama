@@ -24,7 +24,10 @@ export class GameComponent implements OnInit {
         console.log(data);
         if (data.rooms.length === 0) {
           console.log("No rooms found");
-          this.apiService.addRoom("Alpha Room").subscribe(() => {});
+          this.apiService.addRoom("Alpha Room").subscribe((data) => {
+            console.log(data);
+          });
+
           this.apiService.createBoard(1).subscribe(() => {});
           this.apiService.socket.emit("join", { roomId: 1, playerName: "Kia" });
         } else {

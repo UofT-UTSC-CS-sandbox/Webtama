@@ -11,7 +11,7 @@ export const roomRouter = Router();
 //     const roomId = createNewGameRoom();
 //     res.json({ roomId });
 //   });
-  
+
 //   // Endpoint for joining a game room
 //   app.post('/api/rooms/:roomId/join', (req, res) => {
 //     const roomId = req.params.roomId;
@@ -19,7 +19,7 @@ export const roomRouter = Router();
 //     const gameState = joinGameRoom(roomId);
 //     res.json(gameState);
 //   });
-  
+
 //   // Endpoint for making a move in the game
 //   app.post('/api/rooms/:roomId/move', (req, res) => {
 //     const roomId = req.params.roomId;
@@ -31,47 +31,48 @@ export const roomRouter = Router();
 
 // Endpoint for creating a new game room
 roomRouter.post("/", isAuthenticated, async (req, res, next) => {
-    if (!req.body.name) {
-        return res.status(400).json({ error: "Room name is required." });
-    }
-    const room = await Room.create({
-        name: req.body.name,
-        UserId: req.session.userId,
-    });
-    return res.json(room);
+  if (!req.body.name) {
+    return res.status(400).json({ error: "Room name is required." });
+  }
+  const room = await Room.create({
+    name: req.body.name,
+    Host: null,
+    Guest: null,
+  });
+  return res.json(room);
 });
 
 roomRouter.get("/:id/", async (req, res, next) => {
-    const room = await Room.findByPk(req.params.id);
-    if (!room) {
-        return res
-            .status(404)
-            .json({ error: `Room(id=${req.params.id}) not found.` });
-    }
-    return res.json(room);
+  const room = await Room.findByPk(req.params.id);
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+  return res.json(room);
 });
 
 // Add user to room
 roomRouter.post("/:id/join", isAuthenticated, async (req, res, next) => {
-    const room = await Room.findByPk(req.params.id);
-    if (!room) {
-        return res
-            .status(404)
-            .json({ error: `Room(id=${req.params.id}) not found.` });
-    }
-   
-    await room.addUser(req.session.userId);
-    await room.reload();
-    return res.json(room);
+  const room = await Room.findByPk(req.params.id);
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+
+  await room.addUser(req.session.userId);
+  await room.reload();
+  return res.json(room);
 });
 
 //get all rooms
 roomRouter.get("/", async (req, res, next) => {
-    const rooms = await Room.findAll({
-        limit: 5,
-        // include: { association: "User", attributes: ["username"] },
-    });
-    return res.json({ rooms });
+  const rooms = await Room.findAll({
+    limit: 5,
+    // include: { association: "User", attributes: ["username"] },
+  });
+  return res.json({ rooms });
 });
 
 //create board route
@@ -100,7 +101,6 @@ roomRouter.post("/:id/boards", isAuthenticated, async (req, res, next) => {
       side: 0,
       BoardId: board.id,
     });
-
   }
   for (let i = 1; i <= 5; i++) {
     if (i === 3) continue;
@@ -111,8 +111,6 @@ roomRouter.post("/:id/boards", isAuthenticated, async (req, res, next) => {
       side: 1,
       BoardId: board.id,
     });
-
-
   }
 
   await Piece.create({
@@ -217,8 +215,7 @@ roomRouter.get("/:id/boards/pieces", async (req, res, next) => {
       .status(404)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
-  const board = await Board.findOne({ where: { RoomId: req.params.id,}, });
-
+  const board = await Board.findOne({ where: { RoomId: req.params.id } });
 
   if (!board) {
     return res
@@ -228,7 +225,6 @@ roomRouter.get("/:id/boards/pieces", async (req, res, next) => {
   const pieces = await Piece.findAll({ where: { BoardId: board.id } });
   return res.json(pieces);
 });
-
 
 // roomRouter.patch("/:id/", isAuthenticated, async (req, res, next) => {
 //     const room = await Room.findByPk(req.params.id);
