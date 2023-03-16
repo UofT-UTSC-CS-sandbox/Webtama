@@ -3,11 +3,14 @@
   <!-- this affects <router-outlet> as defined in app.component.ts -->
   <!-- you can modify internal routing in app-routing.module.ts -->
   <a routerLink="/" id="title">Webtama</a>
-  <a routerLink="/sign-in" id="signin-button" class="btn header-btn hidden"
-    >Sign in</a
-  >
-  <a (click)="signOut()" id="signout-button" class="btn header-btn hidden"
-    >Sign out</a
-  >
+  <div class="nav-bar__buttons">
+    <ng-container *ngIf="isAuthenticated$ | async; else unAuthenticated">
+        <app-logout-button></app-logout-button>
+    </ng-container>
+    <ng-template #unAuthenticated>
+        <app-signup-button></app-signup-button>
+        <app-login-button></app-login-button>
+    </ng-template>
+  </div>
 </header>
 <p id="error-box"></p>

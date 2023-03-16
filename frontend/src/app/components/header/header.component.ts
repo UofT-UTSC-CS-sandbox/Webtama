@@ -10,14 +10,8 @@ import { DOCUMENT } from '@angular/common';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  constructor(private api: ApiService, private router: Router, @Inject(DOCUMENT) public document: Document, public auth: AuthService) {}
+  isAuthenticated$ = this.authService.isAuthenticated$
+  constructor(private api: ApiService, private router: Router, @Inject(DOCUMENT) public document: Document, private authService: AuthService) {}
 
   ngOnInit(): void {}
-
-  signOut() {
-    this.api.signOut().subscribe((response) => {
-      this.auth.logout();
-      this.router.navigate(['/sign-in']);
-    });
-  }
 }

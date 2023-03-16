@@ -1,17 +1,12 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes, Router } from "@angular/router";
 import { IndexComponent } from "./pages/index/index.component";
-import { SignInComponent } from "./pages/sign-in/sign-in.component";
 import { GameComponent } from "./pages/game/game.component";
 
 const routes: Routes = [
   {
     path: "",
     component: IndexComponent,
-  },
-  {
-    path: "sign-in",
-    component: SignInComponent,
   },
   {
     path: "game",
@@ -24,6 +19,13 @@ const routes: Routes = [
   {
     path: "game",
     component: GameComponent,
+  },
+  {
+    path: 'callback',
+    loadChildren: () =>
+      import('./features/callback/callback.module').then(
+        (m) => m.CallbackModule
+      ),
   },
 ];
 
