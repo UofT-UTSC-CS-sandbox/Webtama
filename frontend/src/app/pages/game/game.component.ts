@@ -46,6 +46,7 @@ export class GameComponent implements OnInit {
             console.log(data);
           },
           error: (err) => {
+            console.log("Board not found" + err);
             this.apiService.createBoard(1).subscribe(() => {
               console.log("Board created");
             });
