@@ -40,7 +40,7 @@ app.use(
   })
 );
 
-app.use("/users", usersRouter);
+//app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
 // app.use("/api/rooms", boardRouter);
 

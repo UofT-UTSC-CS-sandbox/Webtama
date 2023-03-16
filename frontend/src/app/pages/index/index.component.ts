@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '@auth0/auth0-angular';
 
 /**
  * The index component is responsible for handling everything that a user can do in the home page.
@@ -20,32 +21,29 @@ import { ApiService } from '../../services/api.service';
 })
 export class IndexComponent implements OnInit {
   error: string = ''; // string representing the error message
-  isAuth: boolean = false; // boolean representing if the user is authenticated
+  isAuthenticated$ = this.authService.isAuthenticated$
 
   /**
    * Angular is famous for its dependency injection framework. If we want to use ApiService, we must declare it
    * in the constructor. This applies for all the non components you want to use in another component, and mostly,
    * it would be custom services you define.
    */
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(private api: ApiService, private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.checkAuth();
   }
 
   checkAuth() {
-    this.api.me().subscribe({
-      next: () => {
-        this.isAuth = true;
-      },
-      error: () => {
-        this.isAuth = false;
+    this.authService.isAuthenticated$.subscribe((isAuth) => {
+      if (isAuth) {
+        this.router.navigate(['/game']);
       }
     });
   }
 
   goToGame() {
-    if (this.isAuth) {
+    if (this.isAuthenticated$) {
       this.router.navigate(['/game']);
     } else {
       // handle not authenticated case, e.g. show a message or redirect to login page
