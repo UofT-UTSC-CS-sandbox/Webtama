@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { io, Socket } from "socket.io-client";
+import { ViewEncapsulation } from "@angular/core";
 
 import { ApiService } from "../../services/api.service";
 
@@ -9,6 +10,7 @@ import { ApiService } from "../../services/api.service";
   selector: "app-game",
   templateUrl: "./game.component.html",
   styleUrls: ["./game.component.scss"],
+  encapsulation: ViewEncapsulation.None,
 })
 export class GameComponent implements OnInit {
   constructor(
@@ -76,8 +78,8 @@ export class GameComponent implements OnInit {
 
     let squares = document.querySelectorAll("td");
     squares.forEach((square) => {
-      const squareX = square.getAttribute("data-row");
-      const squareY = square.getAttribute("data-col");
+      const squareX = square.getAttribute("data-col");
+      const squareY = square.getAttribute("data-row");
       if (squareX === null || squareY === null) {
         console.log("Square not found");
         return;
@@ -90,23 +92,23 @@ export class GameComponent implements OnInit {
 
   makeMove(startx: number, starty: number, endx: number, endy: number) {
     //Can refactor this into a move event in the socket
+    console.log("making move");
     this.apiService
       .makeMove(1, startx, starty, endx, endy)
-      .subscribe((data) => console.log(data));
+      .subscribe((data) => {
+        let piece = document.querySelector(
+          `[data-x="${startx}"][data-y="${starty}"]`
+        ) as HTMLElement;
+        piece.classList.remove("selected");
 
-    let piece = document.querySelector(
-      `[data-x="${startx}"][data-y="${starty}"]`
-    ) as HTMLElement;
-    piece.classList.remove("selected");
-
-    let squares = document.querySelectorAll("td");
-    squares.forEach((square) => {
-      square.removeEventListener("click", () => {
-        this.makeMove(startx, starty, endx, endy);
+        let squares = document.querySelectorAll("td");
+        squares.forEach((square) => {
+          square.removeEventListener("click", () => {
+            this.makeMove(startx, starty, endx, endy);
+          });
+        });
+        this.apiService.socket.emit("move", { roomid: 1 });
       });
-    });
-
-    this.apiService.socket.emit("move", { roomid: 1 });
   }
 
   updateBoard() {
@@ -114,7 +116,7 @@ export class GameComponent implements OnInit {
       for (let i = 0; i < data.pieces.length; i++) {
         const piece = data.pieces[i];
         let square = document.querySelector(
-          `[data-row="${piece.xpos}"][data-col="${piece.ypos}"]`
+          `[data-row="${piece.ypos}"][data-col="${piece.xpos}"]`
         );
         console.log("square", square);
         if (square === null) {
@@ -136,6 +138,7 @@ export class GameComponent implements OnInit {
           display.classList.add("bTeam");
         }
 
+        console.log("adding");
         square.appendChild(display);
       }
     });

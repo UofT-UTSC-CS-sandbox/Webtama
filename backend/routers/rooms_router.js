@@ -154,12 +154,14 @@ roomRouter.get("/:id/boards", async (req, res, next) => {
 //move piece/patch board
 roomRouter.patch("/:id/boards", isAuthenticated, async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
+
   if (!room) {
     return res
       .status(404)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
   const board = await Board.findOne({ where: { RoomId: req.params.id } });
+  console.log("AHSDASDKASHDIJASHDKJHASDHAS", board);
 
   if (!board) {
     return res

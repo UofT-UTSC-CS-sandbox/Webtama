@@ -47,10 +47,10 @@ export class ApiService {
 
   makeMove(id: number, x1: number, y1: number, x2: number, y2: number) {
     return this.http.patch(this.endpoint + `/api/rooms/${id}/boards`, {
-      x1,
-      y1,
-      x2,
-      y2,
+      startx: x1,
+      starty: y1,
+      endx: x2,
+      endy: y2,
     });
   }
 
