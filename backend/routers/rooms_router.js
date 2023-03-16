@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { Room } from "../models/rooms.js";
 import { isAuthenticated } from "../middleware/helpers.js";
+import { Board } from "../models/boards.js";
+import { Piece } from "../models/pieces.js";
 
 export const roomRouter = Router();
 
@@ -35,7 +37,8 @@ roomRouter.post("/", async (req, res, next) => {
   }
   const room = await Room.create({
     name: req.body.name,
-    UserId: req.session.userId,
+    Host: null,
+    Guest: null,
   });
   return res.json(room);
 });
@@ -64,10 +67,11 @@ roomRouter.post("/:id/join", async (req, res, next) => {
   return res.json(room);
 });
 
+//get all rooms
 roomRouter.get("/", async (req, res, next) => {
   const rooms = await Room.findAll({
     limit: 5,
-    include: { association: "User", attributes: ["username"] },
+    // include: { association: "User", attributes: ["username"] },
   });
   return res.json({ rooms });
 });
@@ -80,43 +84,50 @@ roomRouter.post("/:id/boards/", async (req, res, next) => {
       .status(404)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
-  if (room.UserId !== req.session.userId) {
-    return res
-      .status(403)
-      .json({ error: "You are not authorized to create a board." });
-  }
-  const board = await room.createBoard();
+  // if (room.UserId !== req.session.userId) {
+  //   return res
+  //     .status(403)
+  //     .json({ error: "You are not authorized to create a board." });
+  // }
+  const board = await Board.create({
+    turn: 0,
+    RoomId: req.params.id,
+  });
 
   for (let i = 1; i <= 5; i++) {
     if (i === 3) continue;
-    await board.createPiece({
+    await Piece.create({
       xpos: i,
       ypos: 1,
       type: "pawn",
       side: 0,
+      BoardId: board.id,
     });
   }
   for (let i = 1; i <= 5; i++) {
     if (i === 3) continue;
-    await board.createPiece({
+    await Piece.create({
       xpos: i,
       ypos: 5,
       type: "pawn",
       side: 1,
+      BoardId: board.id,
     });
   }
 
-  await board.createPiece({
+  await Piece.create({
     xpos: 3,
     ypos: 1,
     type: "king",
     side: 0,
+    BoardId: board.id,
   });
-  await board.createPiece({
+  await Piece.create({
     xpos: 3,
     ypos: 5,
     type: "king",
     side: 1,
+    BoardId: board.id,
   });
 
   await board.reload();
@@ -131,7 +142,7 @@ roomRouter.get("/:id/boards", async (req, res, next) => {
       .status(404)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
-  const board = await room.getBoard();
+  const board = await Board.findOne({ where: { RoomId: req.params.id } });
   if (!board) {
     return res
       .status(404)
@@ -143,24 +154,28 @@ roomRouter.get("/:id/boards", async (req, res, next) => {
 //move piece/patch board
 roomRouter.patch("/:id/boards", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
+
   if (!room) {
     return res
       .status(404)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
-  const board = await room.getBoard();
+  const board = await Board.findOne({ where: { RoomId: req.params.id } });
+
   if (!board) {
     return res
       .status(404)
       .json({ error: `Board(id=${req.params.id}) not found.` });
   }
-
-  const piece = await board.getPiece({
+  console.log("AHSDASDKASHDIJASHDKJHASDHAS", req.body);
+  const piece = await Piece.findOne({
     where: {
       xpos: req.body.startx,
       ypos: req.body.starty,
+      BoardId: board.id,
     },
   });
+
   if (!piece) {
     return res
       .status(404)
@@ -168,12 +183,14 @@ roomRouter.patch("/:id/boards", async (req, res, next) => {
   }
 
   //check if the piece lands on another piece
-  const piece2 = await board.getPiece({
+  const piece2 = await Piece.findOne({
     where: {
       xpos: req.body.endx,
       ypos: req.body.endy,
+      BoardId: board.id,
     },
   });
+
   if (piece2) {
     await piece2.destroy();
   }
@@ -191,21 +208,24 @@ roomRouter.patch("/:id/boards", async (req, res, next) => {
   return res.json(board);
 });
 
-// roomRouter.patch("/:id/", isAuthenticated, async (req, res, next) => {
-//     const room = await Room.findByPk(req.params.id);
-//     if (!room) {
-//         return res
-//             .status(404)
-//             .json({ error: `Room(id=${req.params.id}) not found.` });
-//     }
-//     if (req.body.action === "upvote") {
-//         await room.increment({ upvote: 1 });
-//     } else if (req.body.action === "downvote") {
-//         await room.increment({ downvote: 1 });
-//     }
-//     await room.reload();
-//     return res.json(room);
-// });
+//get all pieces
+roomRouter.get("/:id/boards/pieces", async (req, res, next) => {
+  const room = await Room.findByPk(req.params.id);
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+  const board = await Board.findOne({ where: { RoomId: req.params.id } });
+
+  if (!board) {
+    return res
+      .status(404)
+      .json({ error: `Board(id=${req.params.id}) not found.` });
+  }
+  const pieces = await Piece.findAll({ where: { BoardId: board.id } });
+  return res.json({ pieces });
+});
 
 // roomRouter.delete("/:id/", isAuthenticated, async (req, res, next) => {
 //     const room = await Room.findByPk(req.params.id);

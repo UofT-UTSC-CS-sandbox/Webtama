@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject} from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
+import { AuthService } from '@auth0/auth0-angular';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-header',
@@ -8,13 +10,8 @@ import { ApiService } from 'src/app/services/api.service';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  constructor(private api: ApiService, private router: Router) {}
+  isAuthenticated$ = this.authService.isAuthenticated$
+  constructor(private api: ApiService, private router: Router, @Inject(DOCUMENT) public document: Document, private authService: AuthService) {}
 
   ngOnInit(): void {}
-
-  signOut() {
-    this.api.signOut().subscribe((response) => {
-      this.router.navigate(['/sign-in']);
-    });
-  }
 }

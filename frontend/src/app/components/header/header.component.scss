@@ -1,28 +1,44 @@
 header {
   display: flex;
-  margin-top: 36px;
   height: 64px;
-  justify-content: flex-end;
+  width: 100%;
+  background-color: #d6d6d6;
+  box-shadow: 0 1px 1px #ccc;
+  -webkit-transition: top 0.3s;
+  transition: top 0.3s;
+  z-index: 1;
+  position: relative;
+  align-items: center;
+  margin: auto;
+  border: 3px solid #f58f7c;
+  box-sizing: border-box;
 }
 
 header #title {
+  padding-top: 4.5%;
+  float: left;
   color: black;
   text-decoration: none;
 <<<<<<< HEAD
 =======
   margin: auto;
   font-family: Jazz LET, fantasy;
->>>>>>> dev
-  margin: 0px;
   width: 100%;
-  font-size: 48px;
+  font-size: 40px;
 }
 
 .header-btn {
-  text-decoration: none;
-  font-size: 16px;
+  font-size: 15px;
   margin-left: 5px;
   margin-right: 5px;
+  border-radius: 10px;
+  text-align: center;
+  color: #3c3d3f;
+  background: #ffffff;
+  border: 2px #3c3d3f solid;
+  padding: 15px 10px 0px 10px;
+  display: inline-block;
+  text-decoration: none;
 }
 
 #error-box {
@@ -44,7 +60,7 @@ header #title {
   padding: 10px 20px 10px 20px;
 }
 
-.btn:hover {
+.btn {
   background: #3c3d3f;
   color: #ffffff;
   cursor: pointer;

@@ -1,58 +1,57 @@
-import { Injectable } from '@angular/core';
-import { Message } from '../classes/message';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { environment } from "../../environments/environment";
+import { Piece } from "../classes/piece";
+import { Room } from "../classes/room";
+import { io, Socket } from "socket.io-client";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class ApiService {
-  // endpoint = 'http://localhost:3000';
+  ///endpoint = "http://localhost:3000";
   endpoint = environment.apiEndpoint;
+  socket: Socket;
 
-  constructor(private http: HttpClient) {}
-  /**
-   * HttpClient has methods for all the CRUD actions: get, post, put, patch, delete, and head.
-   * First parameter is the URL, and the second parameter is the body.
-   * You can use this as a reference for how to use HttpClient.
-   * @param content The content of the message
-   * @returns
-   */
-  addMessage(content: string): Observable<Message> {
-    return this.http.post<Message>(this.endpoint + '/api/messages', {
-      content,
+  constructor(private http: HttpClient) {
+    //console.log(this.endpoint);
+    this.socket = io(this.endpoint);
+  }
+
+  addRoom(name: string) {
+    return this.http.post(this.endpoint + `/api/rooms`, { name });
+  }
+
+  getRooms(): Observable<{ rooms: Room[] }> {
+    return this.http.get<{ rooms: Room[] }>(this.endpoint + `/api/rooms`);
+  }
+
+  getRoom(id: number) {
+    return this.http.get(this.endpoint + `/api/rooms/${id}`);
+  }
+
+  createBoard(id: number) {
+    return this.http.post(this.endpoint + `/api/rooms/${id}/boards`, { id });
+  }
+
+  getBoard(id: number) {
+    return this.http.get(this.endpoint + `/api/rooms/${id}/boards`);
+  }
+
+  getPieces(id: number): Observable<{ pieces: Piece[] }> {
+    return this.http.get<{ pieces: Piece[]; pieceCount: number }>(
+      this.endpoint + `/api/rooms/${id}/boards/pieces`
+    );
+  }
+
+  makeMove(id: number, x1: number, y1: number, x2: number, y2: number) {
+    return this.http.patch(this.endpoint + `/api/rooms/${id}/boards`, {
+      startx: x1,
+      starty: y1,
+      endx: x2,
+      endy: y2,
     });
-  }
-
-  deleteMessage(messageId: number): Observable<Message> {
-    return this.http.delete<Message>(
-      this.endpoint + `/api/messages/${messageId}`
-    );
-  }
-
-  upvoteMessage(messageId: number) {
-    return this.http.patch<Message>(
-      this.endpoint + `/api/messages/${messageId}`,
-      {
-        action: 'upvote',
-      }
-    );
-  }
-
-  downvoteMessage(messageId: number) {
-    return this.http.patch<Message>(
-      this.endpoint + `/api/messages/${messageId}`,
-      {
-        action: 'downvote',
-      }
-    );
-  }
-
-  getMessages(): Observable<{ messages: Message[] }> {
-    return this.http.get<{ messages: Message[] }>(
-      this.endpoint + `/api/messages`
-    );
   }
 
   signIn(username: string, password: string) {
@@ -62,9 +61,10 @@ export class ApiService {
     });
   }
 
-  signUp(username: string, password: string) {
+  signUp(username: string, email: string, password: string) {
     return this.http.post<{ token: string }>(this.endpoint + `/users/signup`, {
       username,
+      email,
       password,
     });
   }

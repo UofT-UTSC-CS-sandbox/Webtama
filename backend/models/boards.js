@@ -8,5 +8,3 @@ export const Board = sequelize.define("Board", {
     allowNull: false,
   },
 });
-
-Board.belongsTo(Room);
