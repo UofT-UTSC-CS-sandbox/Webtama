@@ -52,7 +52,7 @@ export class GameComponent implements OnInit {
             });
           },
         });
-        this.apiService.socket.emit("move", { roomid: 1 });
+        this.apiService.socket.emit("move", {roomId: 1});
         this.apiService.socket.on("game state updated", (data) => {
           this.updateBoard();
         });
