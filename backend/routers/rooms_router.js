@@ -29,7 +29,7 @@ export const roomRouter = Router();
 //   });
 
 // Endpoint for creating a new game room
-roomRouter.post("/", isAuthenticated, async (req, res, next) => {
+roomRouter.post("/", async (req, res, next) => {
   if (!req.body.name) {
     return res.status(400).json({ error: "Room name is required." });
   }
@@ -51,7 +51,7 @@ roomRouter.get("/:id/", async (req, res, next) => {
 });
 
 // Add user to room
-roomRouter.post("/:id/join", isAuthenticated, async (req, res, next) => {
+roomRouter.post("/:id/join", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
   if (!room) {
     return res
@@ -73,7 +73,7 @@ roomRouter.get("/", async (req, res, next) => {
 });
 
 //create board route
-roomRouter.post("/:id/boards", isAuthenticated, async (req, res, next) => {
+roomRouter.post("/:id/boards/", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
   if (!room) {
     return res
@@ -141,7 +141,7 @@ roomRouter.get("/:id/boards", async (req, res, next) => {
 });
 
 //move piece/patch board
-roomRouter.patch("/:id/boards", isAuthenticated, async (req, res, next) => {
+roomRouter.patch("/:id/boards", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
   if (!room) {
     return res

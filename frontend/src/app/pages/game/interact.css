@@ -1,8 +1,17 @@
 :root {
-  --mainColor: #fa991c;
-  --bgColor: #032539;
-  --secColor: #1c768f;
-  --offwhite: #fbf3f2;
+  --darkBase: #2c2b30;
+  --Base: #4f4f51;
+  --textColor: #d6d6d6;
+  --lightBase: #f2c4ce;
+  --mainColor: #f58f7c;
+
+  overflow-x: scroll;
+}
+
+:app-game {
+  display: block;
+  left: 0;
+  width: 100%;
 }
 
 .kiaButton,
