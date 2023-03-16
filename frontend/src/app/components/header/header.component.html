@@ -2,17 +2,14 @@
   <!-- note here for internal routing, I use routerLink instead of href -->
   <!-- this affects <router-outlet> as defined in app.component.ts -->
   <!-- you can modify internal routing in app-routing.module.ts -->
-<<<<<<< HEAD
-  <a routerLink="/" id="title">Nanoblog</a>
-=======
   <a routerLink="/" id="title">Webtama</a>
   <div class="nav-bar__buttons">
     <ng-container *ngIf="isAuthenticated$ | async; else unAuthenticated">
-        <app-logout-button></app-logout-button>
+      <app-logout-button></app-logout-button>
     </ng-container>
     <ng-template #unAuthenticated>
-        <app-signup-button></app-signup-button>
-        <app-login-button></app-login-button>
+      <app-signup-button></app-signup-button>
+      <app-login-button></app-login-button>
     </ng-template>
   </div>
 </header>

@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
-  "name": "nanoblog",
-=======
   "name": "Webtama",
->>>>>>> dev
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -43,7 +39,6 @@
     "prettier": "^2.7.1",
     "typescript": "~4.7.2"
   }
-<<<<<<< HEAD
+
 }
-=======
-}
+
