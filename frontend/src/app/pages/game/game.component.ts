@@ -92,11 +92,9 @@ export class GameComponent implements OnInit {
 
   makeMove(startx: number, starty: number, endx: number, endy: number) {
     //Can refactor this into a move event in the socket
-    console.log("making move");
     this.apiService
       .makeMove(1, startx, starty, endx, endy)
       .subscribe((data) => {
-        console.log("board patched");
         let piece = document.querySelector(
           `[data-x="${startx}"][data-y="${starty}"]`
         ) as HTMLElement;
@@ -104,7 +102,7 @@ export class GameComponent implements OnInit {
 
         let squares = document.querySelectorAll("td");
         squares.forEach((square) => {
-          square.removeEventListener("click", () => {
+          square.removeEventListener("click", (e) => {
             this.makeMove(startx, starty, endx, endy);
           });
         });
@@ -119,16 +117,16 @@ export class GameComponent implements OnInit {
         let square = document.querySelector(
           `[data-row="${piece.ypos}"][data-col="${piece.xpos}"]`
         );
-        console.log("square", square);
         if (square === null) {
-          console.log("Square not found");
+          console.error("Square not found");
           return;
         }
         const display = document.createElement("p");
         display.setAttribute("data-x", piece.xpos.toString());
         display.setAttribute("data-y", piece.ypos.toString());
-        display.addEventListener("click", () => {
-          console.log("clicked");
+        display.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
           this.pieceSelect(piece.xpos, piece.ypos);
         });
 
@@ -138,8 +136,6 @@ export class GameComponent implements OnInit {
         } else {
           display.classList.add("bTeam");
         }
-
-        console.log("adding");
         square.appendChild(display);
       }
     });
