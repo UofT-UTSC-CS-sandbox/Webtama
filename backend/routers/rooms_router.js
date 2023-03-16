@@ -36,7 +36,7 @@ roomRouter.post("/", isAuthenticated, async (req, res, next) => {
     }
     const room = await Room.create({
         name: req.body.name,
-        UserId: req.session.userId,
+        // UserId: req.session.userId,
     });
     return res.json(room);
 });
