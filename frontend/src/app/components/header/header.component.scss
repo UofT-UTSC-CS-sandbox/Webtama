@@ -2,14 +2,16 @@ header {
   display: flex;
   height: 64px;
   width: 100%;
-  background-color: #12cec5;
+  background-color: #d6d6d6;
   box-shadow: 0 1px 1px #ccc;
-  justify-content: flex-end;
   -webkit-transition: top 0.3s;
   transition: top 0.3s;
   z-index: 1;
   position: relative;
   align-items: center;
+  margin: auto;
+  border: 3px solid #f58f7c;
+  box-sizing: border-box;
 }
 
 header #title {
