@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'app-sign-in',
@@ -12,13 +13,14 @@ export class SignInComponent implements OnInit {
   signInForm: FormGroup;
   signUpForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
+  constructor(private fb: FormBuilder, private api: ApiService, private router: Router, public auth: AuthService) {
     this.signInForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
     });
     this.signUpForm = this.fb.group({
       username: ['', Validators.required],
+      email: ['', Validators.required],
       password: ['', Validators.required],
     });
   }
@@ -35,8 +37,9 @@ export class SignInComponent implements OnInit {
 
   signUp() {
     const username = this.signUpForm.value.username;
+    const email = this.signUpForm.value.email;
     const password = this.signUpForm.value.password;
-    this.api.signUp(username, password).subscribe((response) => {
+    this.api.signUp(username,email,password).subscribe((response) => {
       this.router.navigate(['/']);
     });
   }

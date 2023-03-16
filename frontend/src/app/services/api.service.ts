@@ -55,9 +55,10 @@ export class ApiService {
     });
   }
 
-  signUp(username: string, password: string) {
+  signUp(username: string, email:string, password: string) {
     return this.http.post<{ token: string }>(this.endpoint + `/users/signup`, {
       username,
+      email,
       password,
     });
   }

@@ -10,6 +10,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ApiInterceptor } from './api.interceptor';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GameComponent } from './pages/game/game.component';
+import { AuthModule ,AuthHttpInterceptor} from '@auth0/auth0-angular';
 
 @NgModule({
   declarations: [
@@ -25,12 +26,30 @@ import { GameComponent } from './pages/game/game.component';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
+    BrowserModule,
+    // Import the module into the application, with configuration
+    AuthModule.forRoot({
+      domain: 'dev-0rubju8i61qqpmgv.us.auth0.com',
+      clientId: 'dibFRURk5XSOdzcA66JIBCs4n38zwein',
+      authorizationParams: {
+        redirect_uri: 'http://localhost:4200/callback',
+      }
+    }),
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ApiInterceptor,
       multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthHttpInterceptor,
+      multi: true,
+    },
+    {
+      provide: Window,
+      useValue: window,
     },
   ],
   bootstrap: [AppComponent],

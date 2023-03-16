@@ -2,7 +2,6 @@ import { sequelize } from "./datasource.js";
 import express from "express";
 import bodyParser from "body-parser";
 import http from "http";
-import { messagesRouter } from "./routers/messages_router.js";
 import { usersRouter } from "./routers/users_router.js";
 import { roomRouter } from "./routers/rooms_router.js";
 import session from "express-session";
@@ -38,9 +37,9 @@ app.use(
   })
 );
 
-app.use("/api/messages", messagesRouter);
 app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
+
 
 const io = new Server(httpServer);
 
