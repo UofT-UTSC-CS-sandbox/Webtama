@@ -62,13 +62,11 @@ export class GameComponent implements OnInit {
   }
 
   pieceSelect(x: number, y: number) {
-    //add the selected class to the piece
     let piece = document.querySelector(
       `[data-x="${x}"][data-y="${y}"]`
     ) as HTMLElement;
     piece.classList.add("selected");
 
-    //remove all event listeners from <p> elements
     let pieces = document.querySelectorAll("p");
     pieces.forEach((piece) => {
       piece.removeEventListener("click", () => {
@@ -76,7 +74,6 @@ export class GameComponent implements OnInit {
       });
     });
 
-    //add a event listener to all td elements
     let squares = document.querySelectorAll("td");
     squares.forEach((square) => {
       const squareX = square.getAttribute("data-row");
@@ -97,28 +94,27 @@ export class GameComponent implements OnInit {
       .makeMove(1, startx, starty, endx, endy)
       .subscribe((data) => console.log(data));
 
-    //remove the selected class from the piece
     let piece = document.querySelector(
       `[data-x="${startx}"][data-y="${starty}"]`
     ) as HTMLElement;
     piece.classList.remove("selected");
 
-    //remove all event listeners from <td> elements
     let squares = document.querySelectorAll("td");
     squares.forEach((square) => {
       square.removeEventListener("click", () => {
         this.makeMove(startx, starty, endx, endy);
       });
     });
-    // Emit the move event to the server
+
     this.apiService.socket.emit("move", { roomid: 1 });
   }
 
   updateBoard() {
     this.apiService.getPieces(1).subscribe((data) => {
+      console.log("update", data.pieces);
+      console.log("update", data.pieces.length);
       for (let i = 0; i < data.pieces.length; i++) {
         const piece = data.pieces[i];
-        //find the square with the same x and y
         let square = document.querySelector(
           `[data-row="${piece.xpos}"][data-col="${piece.ypos}"]`
         );
@@ -127,16 +123,13 @@ export class GameComponent implements OnInit {
           return;
         }
         const display = document.createElement("p");
-        //record the piece's x and y
         display.setAttribute("data-x", piece.xpos.toString());
         display.setAttribute("data-y", piece.ypos.toString());
-        //add pieceSelect as event listener for clicking to the piece
         display.addEventListener("click", () => {
           this.pieceSelect(piece.xpos, piece.ypos);
         });
-        //add the piece's type as a class for display
+
         display.classList.add(piece.type);
-        //add the piece's side as a class for display
         if (piece.side == 0) {
           display.classList.add("aTeam");
         } else {
@@ -145,7 +138,6 @@ export class GameComponent implements OnInit {
 
         square.appendChild(display);
       }
-      // update board for other player through api call
     });
   }
 }

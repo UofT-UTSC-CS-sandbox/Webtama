@@ -205,8 +205,6 @@ roomRouter.patch("/:id/boards", isAuthenticated, async (req, res, next) => {
 
   await board.reload();
   return res.json(board);
-  // Emit the updated board to all clients
-  // io.emit("board", board);
 });
 
 //get all pieces
@@ -225,7 +223,7 @@ roomRouter.get("/:id/boards/pieces", async (req, res, next) => {
       .json({ error: `Board(id=${req.params.id}) not found.` });
   }
   const pieces = await Piece.findAll({ where: { BoardId: board.id } });
-  return res.json(pieces);
+  return res.json({ pieces });
 });
 
 // roomRouter.delete("/:id/", isAuthenticated, async (req, res, next) => {
