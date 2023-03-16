@@ -43,6 +43,12 @@ usersRouter.post("/signup", async (req, res) => {
     });
 });
 
+//Get all users
+usersRouter.get("/", async (req, res) => {
+  const users = await User.findAll();
+  return res.json(users);
+});
+
 usersRouter.post("/signin", async (req, res) => {
   let user = await User.findOne({
     where: {

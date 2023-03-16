@@ -1,26 +1,30 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes, Router } from '@angular/router';
-import { IndexComponent } from './pages/index/index.component';
-import { SignInComponent } from './pages/sign-in/sign-in.component';
-import { GameComponent } from './pages/game/game.component';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes, Router } from "@angular/router";
+import { IndexComponent } from "./pages/index/index.component";
+import { SignInComponent } from "./pages/sign-in/sign-in.component";
+import { GameComponent } from "./pages/game/game.component";
 
 const routes: Routes = [
   {
-    path: '',
+    path: "",
     component: IndexComponent,
   },
   {
-    path: 'sign-in',
+    path: "sign-in",
     component: SignInComponent,
   },
   {
-    path: '**',
-    redirectTo: '/',
+    path: "game",
+    component: GameComponent,
   },
   {
-    path: 'game',
+    path: "**",
+    redirectTo: "/",
+  },
+  {
+    path: "game",
     component: GameComponent,
-  }
+  },
 ];
 
 @NgModule({
@@ -30,7 +34,7 @@ const routes: Routes = [
 export class AppRoutingModule {
   constructor(private router: Router) {
     this.router.errorHandler = (error: any) => {
-      this.router.navigate(['/']);
+      this.router.navigate(["/"]);
     };
   }
 }

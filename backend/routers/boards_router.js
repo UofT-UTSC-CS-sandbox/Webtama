@@ -1,89 +1,79 @@
-import { Router } from 'express';
-import { isAuthenticated } from '../middleware/helpers';
-import { Board } from '../models/boards';
+import { Router } from "express";
+import { isAuthenticated } from "../middleware/helpers";
+import { Board } from "../models/boards";
 
-const boardRouter = Router();
+export const boardRouter = Router();
 
-boardRouter.get('/', isAuthenticated, async (req, res) => {
-    Board.findAll()
-        .then(boards => {
-        res.json(boards);
-        });
-    }
-);
+//get board route
+boardRouter.get("/:id", async (req, res, next) => {
+  const room = await Room.findByPk(req.params.id);
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+  const board = await room.getBoard();
+  if (!board) {
+    return res
+      .status(404)
+      .json({ error: `Board(id=${req.params.id}) not found.` });
+  }
 
-boardRouter.get('/:id', isAuthenticated, async (req, res) => {
-    Board.findById(req.params.id)
-        .then(board => {
-        res.json(board);
-        });
-    }
-);
+  return res.json(board);
+});
 
-boardRouter.post('/', isAuthenticated, async (req, res) => {
-    Board.create(req.body)
-        .then(board => {
-        res.json(board);
-        });
-    }
-);
+//get pieces
+//boardRouter.get("/:id/boards/pieces", async (req, res, next) => {
 
-boardRouter.put('/:id', isAuthenticated, async (req, res) => {
-    Board.update(req.body, { where: { id: req.params.id } })
-        .then(board => {
-        res.json(board);
-        });
-    }
-);
+//move piece/patch board
+boardRouter.patch("/:id", isAuthenticated, async (req, res, next) => {
+  const room = await Room.findByPk(req.params.id);
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+  const board = await room.getBoard();
+  if (!board) {
+    return res
+      .status(404)
+      .json({ error: `Board(id=${req.params.id}) not found.` });
+  }
 
-boardRouter.delete('/:id', isAuthenticated, async (req, res) => {
-    Board.destroy({ where: { id: req.params.id } })
-        .then(board => {
-        res.json(board);
-        });
-    }
-);
+  const piece = await board.getPiece({
+    where: {
+      xpos: req.body.startx,
+      ypos: req.body.starty,
+    },
+  });
+  if (!piece) {
+    return res
+      .status(404)
+      .json({ error: `Piece(id=${req.params.id}) not found.` });
+  }
 
-// import { Pieces } from '/models/pieces.js';
+  //check if the piece lands on another piece
+  const piece2 = await board.getPiece({
+    where: {
+      xpos: req.body.endx,
+      ypos: req.body.endy,
+    },
+  });
+  if (piece2) {
+    await piece2.destroy();
+  }
 
-// const pieceRouter = Router();
+  //update piece position
+  piece.xpos = req.body.endx;
+  piece.ypos = req.body.endy;
+  await piece.save();
 
-// pieceRouter.get('/', isAuthenticated, async (req, res) => {
-//     Pieces.findAll()
-//         .then(pieces => {
-//         res.json(pieces);
-//         });
-//     }
-// );
+  //update board
+  board.turn = board.turn === 0 ? 1 : 0;
+  await board.save();
 
-// pieceRouter.get('/:id', isAuthenticated, async (req, res) => {
-//     Pieces.findById(req.params.id)
-//         .then(piece => {
-//         res.json(piece);
-//         });
-//     }
-// );
-
-// pieceRouter.post('/', isAuthenticated, async (req, res) => {
-//     Pieces.create(req.body)
-//         .then(piece => {
-//         res.json(piece);
-//         });
-//     }
-// );
-
-// pieceRouter.put('/:id', isAuthenticated, async (req, res) => {
-//     Pieces.update(req.body, { where: { id: req.params.id } })
-//         .then(piece => {
-//         res.json(piece);
-//         });
-//     }
-// );
-
-// pieceRouter.delete('/:id', isAuthenticated, async (req, res) => {
-//     Pieces.destroy({ where: { id: req.params.id } })
-//         .then(piece => {
-//         res.json(piece);
-//         });
-//     }
-// );
+  await board.reload();
+  return res.json(board);
+  // Emit the updated board to all clients
+  // io.emit("board", board);
+});

@@ -4,11 +4,11 @@ import { Board } from "./boards.js";
 
 export const Piece = sequelize.define("Piece", {
   xpos: {
-    type: DataTypes.integer,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   ypos: {
-    type: DataTypes.integer,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   type: {
@@ -16,7 +16,7 @@ export const Piece = sequelize.define("Piece", {
     allowNull: false,
   },
   side: {
-    type: DataTypes.integer,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
 });
