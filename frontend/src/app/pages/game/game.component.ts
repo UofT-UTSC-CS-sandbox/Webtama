@@ -50,6 +50,7 @@ export class GameComponent implements OnInit {
           },
         });
 
+        console.log("init MOVEEEEEEEEE");
         this.apiService.socket.emit("move", { roomId: 1 });
         this.apiService.socket.on("game state updated", (data) => {
           console.log("Game state updated");
@@ -71,9 +72,9 @@ export class GameComponent implements OnInit {
 
     let pieces = document.querySelectorAll("p");
     pieces.forEach((piece) => {
-      piece.removeEventListener("click", () => {
-        this.pieceSelect(x, y);
-      });
+      let new_piece = piece.cloneNode(true);
+      if (piece.parentNode !== null)
+        piece.parentNode.replaceChild(new_piece, piece);
     });
 
     let squares = document.querySelectorAll("td");
@@ -84,7 +85,7 @@ export class GameComponent implements OnInit {
         console.log("Square not found");
         return;
       }
-      square.addEventListener("click", () => {
+      square.addEventListener("click", (e) => {
         this.makeMove(x, y, parseInt(squareX), parseInt(squareY));
       });
     });
@@ -92,6 +93,14 @@ export class GameComponent implements OnInit {
 
   makeMove(startx: number, starty: number, endx: number, endy: number) {
     //Can refactor this into a move event in the socket
+    console.log("Making move");
+    let squares = document.querySelectorAll("td");
+    squares.forEach((square) => {
+      let new_square = square.cloneNode(true);
+      if (square.parentNode !== null)
+        square.parentNode.replaceChild(new_square, square);
+    });
+
     this.apiService
       .makeMove(1, startx, starty, endx, endy)
       .subscribe((data) => {
@@ -100,17 +109,16 @@ export class GameComponent implements OnInit {
         ) as HTMLElement;
         piece.classList.remove("selected");
 
-        let squares = document.querySelectorAll("td");
-        squares.forEach((square) => {
-          square.removeEventListener("click", (e) => {
-            this.makeMove(startx, starty, endx, endy);
-          });
-        });
-        this.apiService.socket.emit("move", { roomid: 1 });
+        this.apiService.socket.emit("move", { roomId: 1 });
+        //this.updateBoard();
       });
   }
 
   updateBoard() {
+    let pieces = document.querySelectorAll("p");
+    pieces.forEach((piece) => {
+      piece.remove();
+    });
     this.apiService.getPieces(1).subscribe((data) => {
       for (let i = 0; i < data.pieces.length; i++) {
         const piece = data.pieces[i];
@@ -124,11 +132,16 @@ export class GameComponent implements OnInit {
         const display = document.createElement("p");
         display.setAttribute("data-x", piece.xpos.toString());
         display.setAttribute("data-y", piece.ypos.toString());
-        display.addEventListener("click", (e) => {
+
+        let pieceEvent = (e: Event) => {
           e.preventDefault();
           e.stopPropagation();
-          this.pieceSelect(piece.xpos, piece.ypos);
-        });
+          const x = piece.xpos;
+          const y = piece.ypos;
+          this.pieceSelect(x, y);
+        };
+
+        display.addEventListener("click", pieceEvent);
 
         display.classList.add(piece.type);
         if (piece.side == 0) {
