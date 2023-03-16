@@ -161,14 +161,13 @@ roomRouter.patch("/:id/boards", isAuthenticated, async (req, res, next) => {
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
   const board = await Board.findOne({ where: { RoomId: req.params.id } });
-  console.log("AHSDASDKASHDIJASHDKJHASDHAS", board);
 
   if (!board) {
     return res
       .status(404)
       .json({ error: `Board(id=${req.params.id}) not found.` });
   }
-
+  console.log("AHSDASDKASHDIJASHDKJHASDHAS", req.body);
   const piece = await Piece.findOne({
     where: {
       xpos: req.body.startx,

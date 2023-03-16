@@ -96,6 +96,7 @@ export class GameComponent implements OnInit {
     this.apiService
       .makeMove(1, startx, starty, endx, endy)
       .subscribe((data) => {
+        console.log("board patched");
         let piece = document.querySelector(
           `[data-x="${startx}"][data-y="${starty}"]`
         ) as HTMLElement;
