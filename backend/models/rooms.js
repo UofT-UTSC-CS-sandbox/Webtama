@@ -18,6 +18,6 @@ export const Room = sequelize.define("Room", {
     },
 });
 
-Room.belongsToMany(User, { through: "UserRoom" });
-User.belongsToMany(Room, { through: "UserRoom" });
+// Room.belongsToMany(User, { through: "UserRoom" });
+// User.belongsToMany(Room, { through: "UserRoom" });
 
