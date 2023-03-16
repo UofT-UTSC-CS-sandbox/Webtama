@@ -76,7 +76,7 @@ io.on("connection", (socket) => {
     const roomId = data.roomId;
     // Make a move in the specified game room and notify all players in the room
     console.log("move", data.roomId, data);
-    io.to(data.socketId).emit("game state updated");
+    io.to(roomId).emit("game state updated");
   });
 
   socket.on("disconnect", () => {

@@ -41,12 +41,12 @@ export class ApiService {
 
   getPieces(id: number): Observable<{ pieces: Piece[] }> {
     return this.http.get<{ pieces: Piece[]; pieceCount: number }>(
-      this.endpoint + `api/rooms/${id}/boards/pieces`
+      this.endpoint + `/api/rooms/${id}/boards/pieces`
     );
   }
 
   makeMove(id: number, x1: number, y1: number, x2: number, y2: number) {
-    return this.http.patch(this.endpoint + `api/rooms/${id}/boards`, {
+    return this.http.patch(this.endpoint + `/api/rooms/${id}/boards`, {
       x1,
       y1,
       x2,
