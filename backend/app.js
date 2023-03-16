@@ -67,6 +67,7 @@ io.on("connection", (socket) => {
     const playerName = data.playerName;
     // Join the specified game room and notify all players in the roeom
     socket.join(roomId);
+    console.log("join room", data.roomId, data);
     io.to(roomId).emit("player joined", playerName);
   });
 

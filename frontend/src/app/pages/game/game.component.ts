@@ -23,17 +23,11 @@ export class GameComponent implements OnInit {
       next: (data) => {
         console.log(data);
         if (data.rooms.length === 0) {
-          console.log("No rooms found");
-          this.apiService.addRoom("Alpha Room").subscribe((data) => {
-            console.log(data);
-          });
-          console.log("Preparing to create board");
-          this.apiService.createBoard(1).subscribe(() => {
-            console.log("Board created");
-          });
+          this.apiService.addRoom("Alpha Room").subscribe((data) => {});
+          this.apiService.createBoard(1).subscribe(() => {});
           this.apiService.socket.emit("join", { roomId: 1, playerName: "Kia" });
         } else {
-          console.log("Found room");
+          console.log("joinin room");
           this.apiService.socket.emit("join", {
             roomId: 1,
             playerName: "Jason",
@@ -42,19 +36,15 @@ export class GameComponent implements OnInit {
 
         //Get the board for room 1
         this.apiService.getBoard(1).subscribe({
-          next: (data) => {
-            console.log(data);
-          },
+          next: (data) => {},
           error: (err) => {
             console.log(err.status);
             if (err.status === 404) {
-              this.apiService.createBoard(1).subscribe(() => {
-                console.log("Board created");
-              });
+              this.apiService.createBoard(1).subscribe(() => {});
             }
           },
         });
-        console.log("our socket is:", this.apiService.socket.id);
+
         this.apiService.socket.emit("move", {
           roomId: 1,
           socketId: this.apiService.socket.id,
@@ -66,16 +56,7 @@ export class GameComponent implements OnInit {
       },
 
       error: (err) => {
-        //Get the board for room 1
-        this.apiService.getBoard(1).subscribe((data) => {
-          console.log(data);
-        });
-        //this.updateBoard();
-        this.apiService.socket.emit("move", { roomid: 1 });
-        this.apiService.socket.on("game state updated", (data) => {
-          console.log("Game state updated");
-          this.updateBoard();
-        });
+        console.log(err);
       },
     });
   }
