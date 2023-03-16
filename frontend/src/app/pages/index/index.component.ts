@@ -45,6 +45,11 @@ export class IndexComponent implements OnInit {
   }
 
   goToGame() {
-    this.router.navigate(['/game']);
+    if (this.isAuth) {
+      this.router.navigate(['/game']);
+    } else {
+      // handle not authenticated case, e.g. show a message or redirect to login page
+      console.log('not authenticated');
+    }
   }
 }
