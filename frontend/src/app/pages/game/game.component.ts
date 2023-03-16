@@ -28,7 +28,9 @@ export class GameComponent implements OnInit {
             console.log(data);
           });
 
-          this.apiService.createBoard(1).subscribe(() => {});
+          this.apiService.createBoard(1).subscribe(() => {
+            console.log("Board created");
+          });
           this.apiService.socket.emit("join", { roomId: 1, playerName: "Kia" });
         } else {
           console.log("Found room");
