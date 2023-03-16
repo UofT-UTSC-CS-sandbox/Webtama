@@ -111,13 +111,12 @@ export class GameComponent implements OnInit {
 
   updateBoard() {
     this.apiService.getPieces(1).subscribe((data) => {
-      console.log("update", data.pieces);
-      console.log("update", data.pieces.length);
       for (let i = 0; i < data.pieces.length; i++) {
         const piece = data.pieces[i];
         let square = document.querySelector(
           `[data-row="${piece.xpos}"][data-col="${piece.ypos}"]`
         );
+        console.log("square", square);
         if (square === null) {
           console.log("Square not found");
           return;
@@ -126,6 +125,7 @@ export class GameComponent implements OnInit {
         display.setAttribute("data-x", piece.xpos.toString());
         display.setAttribute("data-y", piece.ypos.toString());
         display.addEventListener("click", () => {
+          console.log("clicked");
           this.pieceSelect(piece.xpos, piece.ypos);
         });
 
