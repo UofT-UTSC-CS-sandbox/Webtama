@@ -32,11 +32,11 @@ export class ApiService {
   }
 
   createBoard(id: number) {
-    return this.http.post(this.endpoint + `api/rooms/${id}/boards`, { id });
+    return this.http.post(this.endpoint + `/api/rooms/${id}/boards`, { id });
   }
 
   getBoard(id: number) {
-    return this.http.get(this.endpoint + `api/rooms/${id}/boards`);
+    return this.http.get(this.endpoint + `/api/rooms/${id}/boards`);
   }
 
   getPieces(id: number): Observable<{ pieces: Piece[] }> {

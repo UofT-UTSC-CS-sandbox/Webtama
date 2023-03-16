@@ -27,7 +27,7 @@ export class GameComponent implements OnInit {
           this.apiService.addRoom("Alpha Room").subscribe((data) => {
             console.log(data);
           });
-
+          console.log("Preparing to create board");
           this.apiService.createBoard(1).subscribe(() => {
             console.log("Board created");
           });
