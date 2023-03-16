@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
 import { ApiService } from "../../services/api.service";
 
@@ -25,10 +25,13 @@ export class GameComponent implements OnInit {
         if (data.rooms.length === 0) {
           this.apiService.addRoom("Alpha Room").subscribe((data) => {});
           this.apiService.createBoard(1).subscribe(() => {});
-          this.apiService.socket.emit("join", { roomId: 1, playerName: "Kia" });
+          this.apiService.socket.emit("join room", {
+            roomId: 1,
+            playerName: "Kia",
+          });
         } else {
           console.log("joinin room");
-          this.apiService.socket.emit("join", {
+          this.apiService.socket.emit("join room", {
             roomId: 1,
             playerName: "Jason",
           });
@@ -45,10 +48,7 @@ export class GameComponent implements OnInit {
           },
         });
 
-        this.apiService.socket.emit("move", {
-          roomId: 1,
-          socketId: this.apiService.socket.id,
-        });
+        this.apiService.socket.emit("move", { roomId: 1 });
         this.apiService.socket.on("game state updated", (data) => {
           console.log("Game state updated");
           this.updateBoard();

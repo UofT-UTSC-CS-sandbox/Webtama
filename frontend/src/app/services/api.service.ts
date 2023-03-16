@@ -75,12 +75,4 @@ export class ApiService {
   me() {
     return this.http.get(this.endpoint + `/users/me`);
   }
-
-  on(event: string, callback: (data: any) => void) {
-    this.socket.on(event, callback);
-  }
-
-  emit(event: string, data: any) {
-    this.socket.emit(event, data);
-  }
 }

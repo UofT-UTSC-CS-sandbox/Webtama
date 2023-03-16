@@ -61,11 +61,9 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
   console.log("New client connected");
 
-  // Handle the 'join room' event when a player joins a game room
   socket.on("join room", (data) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
-    // Join the specified game room and notify all players in the roeom
     socket.join(roomId);
     console.log("join room", data.roomId, data);
     io.to(roomId).emit("player joined", playerName);
@@ -76,7 +74,7 @@ io.on("connection", (socket) => {
     const roomId = data.roomId;
     // Make a move in the specified game room and notify all players in the room
     console.log("move", data.roomId, data);
-    io.to(data.socketId).emit("game state updated");
+    io.to(data.roomId).emit("game state updated");
   });
 
   socket.on("disconnect", () => {
