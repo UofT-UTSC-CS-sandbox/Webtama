@@ -13,9 +13,11 @@ usersRouter.post("/signup", async (req, res) => {
     email: req.body.email,
   });
   // generate password - salted and hashed
+  /** 
   const password = req.body.password;
   const salt = bcrypt.genSaltSync(10);
   user.password = bcrypt.hashSync(password, salt);
+  */
   try {
     await user.save();
   } catch (err) {
@@ -50,15 +52,16 @@ usersRouter.get("/", async (req, res) => {
 });
 
 usersRouter.post("/signin", async (req, res) => {
+  console.log(req.body);
   let user = await User.findOne({
     where: {
-      username: req.body.username,
+      email: req.body.email,
     },
   });
   if (user === null) {
     user = await User.findOne({
       where: {
-        email: req.body.username,
+        username: req.body.username,
       },
     });
   }
@@ -66,9 +69,11 @@ usersRouter.post("/signin", async (req, res) => {
     return res.status(401).json({ error: "Incorrect username or password." });
   }
   // password incorrect
+  /** 
   if (!bcrypt.compareSync(req.body.password, user.password)) {
     return res.status(401).json({ error: "Incorrect username or password." });
   }
+  */
   req.session.userId = user.id;
   return res.json(user);
 });

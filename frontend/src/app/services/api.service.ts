@@ -54,18 +54,17 @@ export class ApiService {
     });
   }
 
-  signIn(username: string, password: string) {
+  signIn(username: string, email: string) {
     return this.http.post<{ token: string }>(this.endpoint + `/users/signin`, {
       username,
-      password,
+      email,
     });
   }
 
-  signUp(username: string, email:string, password: string) {
+  signUp(username: string, email:string) {
     return this.http.post<{ token: string }>(this.endpoint + `/users/signup`, {
       username,
       email,
-      password,
     });
   }
 

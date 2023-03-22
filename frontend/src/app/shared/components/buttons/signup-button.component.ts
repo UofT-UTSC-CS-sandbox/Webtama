@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'app-signup-button',
@@ -8,7 +9,7 @@ import { AuthService } from '@auth0/auth0-angular';
   `,
 })
 export class SignupButtonComponent {
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private apiService: ApiService) {}
 
   handleSignUp(): void {
     this.auth.loginWithRedirect({
