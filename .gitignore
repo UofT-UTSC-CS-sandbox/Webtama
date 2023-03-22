@@ -32,6 +32,7 @@ yarn-error.log
 /frontend/.angular/cache
 /backend/node_modules
 /frontend/node_modules
+.sqlite/
 .sass-cache/
 /connect.lock
 /coverage

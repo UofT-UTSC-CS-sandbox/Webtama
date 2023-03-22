@@ -11,6 +11,7 @@ import cors from "cors";
 import { Server } from "socket.io";
 import redis from "redis";
 import redisAdapter from "socket.io-redis";
+import auth0 from 'auth0-js';
 
 const PORT = 3000;
 export const app = express();
@@ -40,13 +41,29 @@ app.use(
   })
 );
 
-//app.use("/users", usersRouter);
+app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
 // app.use("/api/rooms", boardRouter);
 
 // Socket.io
 // Initialize Redis client instance
 // const redisClient = redis.createClient();
+/**
+var webAuth = new auth0.WebAuth({
+  domain: 'dev-0rubju8i61qqpmgv.us.auth0.com',
+  clientID: 'dibFRURk5XSOdzcA66JIBCs4n38zwein'
+});
+
+// Parse the URL and extract the Access Token
+webAuth.parseHash(window.location.hash, function(err, authResult) {
+  if (err) {
+    return console.log(err);
+  }
+  webAuth.client.userInfo(authResult.accessToken, function(err, user) {
+      console.log(user);
+  });
+});
+*/
 
 const io = new Server(httpServer, {
   cors: {

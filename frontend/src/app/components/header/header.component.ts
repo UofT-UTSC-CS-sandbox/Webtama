@@ -11,7 +11,20 @@ import { DOCUMENT } from '@angular/common';
 })
 export class HeaderComponent implements OnInit {
   isAuthenticated$ = this.authService.isAuthenticated$
-  constructor(private api: ApiService, private router: Router, @Inject(DOCUMENT) public document: Document, private authService: AuthService) {}
+  constructor(private apiService: ApiService, private router: Router, @Inject(DOCUMENT) public document: Document, private authService: AuthService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.isAuthenticated$){
+      this.authService.user$.subscribe(res => {
+        if (res != null){
+          this.apiService.signUp(JSON.stringify(res.nickname), JSON.stringify(res.email)).subscribe({
+            next: (data) => {
+            },
+            error: (err) => {
+              this.apiService.signIn(JSON.stringify(res.nickname), JSON.stringify(res.email)).subscribe({})}
+          });
+        }
+      });
+    }
+  }
 }
