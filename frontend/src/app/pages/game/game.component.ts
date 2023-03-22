@@ -16,8 +16,21 @@ export class GameComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private audioContext: AudioContext
   ) {}
+
+  async loadAudio() {
+    const audioSource = await fetch("moveSound.mp3");
+    const audioBuffer = await this.audioContext.decodeAudioData(
+      await audioSource.arrayBuffer()
+    );
+
+    const source = this.audioContext.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(this.audioContext.destination);
+    source.start();
+  }
 
   ngOnInit() {
     //If getRooms doeesnt return a room, create room with id 1
@@ -112,6 +125,8 @@ export class GameComponent implements OnInit {
         this.apiService.socket.emit("move", { roomId: 1 });
         //this.updateBoard();
       });
+
+    this.loadAudio();
   }
 
   updateBoard() {
