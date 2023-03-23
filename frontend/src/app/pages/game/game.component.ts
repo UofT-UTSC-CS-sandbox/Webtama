@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { io, Socket } from "socket.io-client";
 import { ViewEncapsulation } from "@angular/core";
-
 import { ApiService } from "../../services/api.service";
 
 @Component({
@@ -16,19 +15,19 @@ export class GameComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private apiService: ApiService,
-    private audioContext: AudioContext
+    private apiService: ApiService
   ) {}
 
   async loadAudio() {
+    const audioContext = new AudioContext();
     const audioSource = await fetch("moveSound.mp3");
-    const audioBuffer = await this.audioContext.decodeAudioData(
+    const audioBuffer = await audioContext.decodeAudioData(
       await audioSource.arrayBuffer()
     );
 
-    const source = this.audioContext.createBufferSource();
+    const source = audioContext.createBufferSource();
     source.buffer = audioBuffer;
-    source.connect(this.audioContext.destination);
+    source.connect(audioContext.destination);
     source.start();
   }
 
@@ -63,10 +62,8 @@ export class GameComponent implements OnInit {
           },
         });
 
-        console.log("init MOVEEEEEEEEE");
         this.apiService.socket.emit("move", { roomId: 1 });
         this.apiService.socket.on("game state updated", (data) => {
-          console.log("Game state updated");
           this.updateBoard();
         });
       },
@@ -105,8 +102,6 @@ export class GameComponent implements OnInit {
   }
 
   makeMove(startx: number, starty: number, endx: number, endy: number) {
-    //Can refactor this into a move event in the socket
-    console.log("Making move");
     let squares = document.querySelectorAll("td");
     squares.forEach((square) => {
       let new_square = square.cloneNode(true);
@@ -121,9 +116,7 @@ export class GameComponent implements OnInit {
           `[data-x="${startx}"][data-y="${starty}"]`
         ) as HTMLElement;
         piece.classList.remove("selected");
-
         this.apiService.socket.emit("move", { roomId: 1 });
-        //this.updateBoard();
       });
 
     this.loadAudio();
