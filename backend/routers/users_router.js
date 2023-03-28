@@ -24,7 +24,8 @@ usersRouter.post("/signup", async (req, res) => {
     console.log(err);
     return res.status(422).json({ error: "User creation failed." });
   }
-
+  req.session.userId = user.id;
+  req.session.save();
   const sgMail = pkg;
   sgMail.setApiKey("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")
   console.log(sgMail)
@@ -75,6 +76,8 @@ usersRouter.post("/signin", async (req, res) => {
   }
   */
   req.session.userId = user.id;
+  req.session.save();
+  console.log(req.session);
   return res.json(user);
 });
 
