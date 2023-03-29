@@ -1,0 +1,113 @@
+/* :root {
+  --darkBase: #2c2b30;
+  --Base: #4f4f51;
+  --textColor: #d6d6d6;
+  --lightBase: #f2c4ce;
+  --mainColor: #f58f7c;
+}
+
+html {
+  overflow: -moz-scrollbars-vertical;
+  background: var(--mainColor) !important;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background-color: var(--darkBase) !important;
+  max-width: 85%;
+  height: 160vh;
+  border-radius: 2px;
+  margin: auto;
+  align-items: center;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+h1 {
+  color: var(--textColor);
+  font-size: 2em;
+  margin: 5%;
+  padding: 0;
+  text-align: center;
+}
+
+footer {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--mainColor) !important;
+}
+
+a {
+  color: var(--mainColor) !important;
+}
+
+.kiaButton {
+  color: white;
+  background-color: var(--mainColor);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-color: #0f1225;
+  font-size: 84%;
+  width: 18vw;
+  height: 5vh;
+  margin: 1%, auto;
+  padding: 1%, 0;
+  border-radius: 12em;
+  border: 1.5px solid;
+  transition-duration: 0.35s;
+  box-shadow: 0 3px #999;
+  cursor: pointer;
+}
+
+.kiaButton:hover {
+  background-color: white;
+  color: var(--mainColor);
+}
+
+.kiaButton:active {
+  box-shadow: 0 1px #666;
+  transform: translateY(3px);
+}
+
+.info {
+  color: #666;
+  font-size: 12px;
+  transition: 0.1s;
+  overflow: hidden;
+}
+
+.info:focus-within {
+  color: var(--mainColor);
+  font-size: 15px;
+}
+
+.infoField {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.13);
+  width: 90%;
+  color: #666;
+  display: block;
+  -webkit-transition: 0.5s;
+  transition: 0.5;
+  resize: none;
+  border-radius: 10px;
+  border: 1px solid #555;
+  font-size: 15px;
+  margin: auto;
+  margin-bottom: 1.5%;
+  padding: 0.5%;
+}
+
+.infoField:focus {
+  border: 3px solid var(--mainColor);
+  background-color: white;
+  font-size: 15px;
+  color: black;
+  outline: none;
+} */
