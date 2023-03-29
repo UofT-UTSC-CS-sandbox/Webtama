@@ -70,23 +70,9 @@ usersRouter.get("/signout", function (req, res, next) {
 });
 
 usersRouter.get("/me", async (req, res) => {
-  const auth0Token = req.headers.authorization?.replace("Bearer ", "");
-
-  if (!auth0Token) {
-    return res.status(401).json({ errors: "Not Authenticated" });
+  if (!req.session.userId) {
+    return res.status(401).json({ error: "Not authorized." });
   }
-
-  const user = await User.findOne({
-    where: {
-      auth0Token,
-    },
-  });
-
-  if (!user) {
-    return res.status(401).json({ errors: "User not found" });
-  }
-
-  return res.json({
-    userId: user.id,
-  });
+  const user = await User.findByPk(req.session.userId);
+  return res.json(user);
 });
