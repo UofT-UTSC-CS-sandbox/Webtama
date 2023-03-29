@@ -12,10 +12,6 @@ export const User = sequelize.define("User", {
     allowNull: false,
     unique: true,
   },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   mmr: {
     type: DataTypes.INTEGER,
     defaultValue: 200,

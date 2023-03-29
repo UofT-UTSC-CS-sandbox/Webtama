@@ -32,6 +32,9 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.apiService.me().subscribe((data) => {
+      console.log(data);
+    });
     //If getRooms doeesnt return a room, create room with id 1
     this.apiService.getRooms().subscribe({
       next: (data) => {

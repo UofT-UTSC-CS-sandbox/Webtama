@@ -9,9 +9,7 @@ import session from "express-session";
 import cors from "cors";
 // import { io } from "socket.io-client";
 import { Server } from "socket.io";
-import redis from "redis";
-import redisAdapter from "socket.io-redis";
-import auth0 from 'auth0-js';
+import  Twilio  from "twilio";
 
 const PORT = 3000;
 export const app = express();
@@ -33,6 +31,18 @@ try {
   console.error("Unable to connect to the database:", error);
 }
 
+const accountSid = 'AC2476bdfeea3e34264f12f4552759a27f';
+const authToken = 'b01d56523b6d91da88a8b75e3ec3b265';
+const client = Twilio(accountSid, authToken);
+
+client.messages
+  .create({
+     body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
+     from: '+14345955403',
+     to: '+14168316858' //testing phone number
+   })
+  .then(message => console.log(message.sid));
+
 app.use(
   session({
     secret: process.env.SECRET_KEY || "test",
@@ -48,22 +58,22 @@ app.use("/api/rooms", roomRouter);
 // Socket.io
 // Initialize Redis client instance
 // const redisClient = redis.createClient();
-/**
-var webAuth = new auth0.WebAuth({
-  domain: 'dev-0rubju8i61qqpmgv.us.auth0.com',
-  clientID: 'dibFRURk5XSOdzcA66JIBCs4n38zwein'
-});
 
-// Parse the URL and extract the Access Token
-webAuth.parseHash(window.location.hash, function(err, authResult) {
-  if (err) {
-    return console.log(err);
-  }
-  webAuth.client.userInfo(authResult.accessToken, function(err, user) {
-      console.log(user);
-  });
-});
-*/
+// var webAuth = new auth0.WebAuth({
+//   domain: 'dev-0rubju8i61qqpmgv.us.auth0.com',
+//   clientID: 'dibFRURk5XSOdzcA66JIBCs4n38zwein'
+// });
+
+// // Parse the URL and extract the Access Token
+// webAuth.parseHash(window.location.hash, function(err, authResult) {
+//   if (err) {
+//     return console.log(err);
+//   }
+//   webAuth.client.userInfo(authResult.accessToken, function(err, user) {
+//       console.log(user);
+//   });
+// });
+
 
 const io = new Server(httpServer, {
   cors: {

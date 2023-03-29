@@ -24,25 +24,8 @@ usersRouter.post("/signup", async (req, res) => {
     console.log(err);
     return res.status(422).json({ error: "User creation failed." });
   }
-
-  const sgMail = pkg;
-  sgMail.setApiKey("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")
-  console.log(sgMail)
-  const msg = {
-    to: user.email,
-    from: 'jeffreyhe406@gmail.com',
-    subject: 'Account created successfully',
-    text: 'Welcome to the Webtama!',
-    html: '<strong>Enjoy!</strong>',
-  }
-  sgMail
-    .send(msg)
-    .then(() => {
-      console.log('Email sent')
-    })
-    .catch((error) => {
-      console.error(error)
-    });
+  req.session.userId = user.id;
+  req.session.save();
 });
 
 //Get all users
@@ -74,7 +57,10 @@ usersRouter.post("/signin", async (req, res) => {
     return res.status(401).json({ error: "Incorrect username or password." });
   }
   */
+
   req.session.userId = user.id;
+  req.session.save();
+  console.log(req.session);
   return res.json(user);
 });
 
@@ -84,10 +70,23 @@ usersRouter.get("/signout", function (req, res, next) {
 });
 
 usersRouter.get("/me", async (req, res) => {
-  if (!req.session.userId) {
-    return res.status(401).json({ errors: "Not Authenticaed" });
+  const auth0Token = req.headers.authorization?.replace("Bearer ", "");
+
+  if (!auth0Token) {
+    return res.status(401).json({ errors: "Not Authenticated" });
   }
+
+  const user = await User.findOne({
+    where: {
+      auth0Token,
+    },
+  });
+
+  if (!user) {
+    return res.status(401).json({ errors: "User not found" });
+  }
+
   return res.json({
-    userId: req.session.userId,
+    userId: user.id,
   });
 });
