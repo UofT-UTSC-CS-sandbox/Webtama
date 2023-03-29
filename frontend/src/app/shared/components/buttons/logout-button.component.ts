@@ -17,11 +17,12 @@ export class LogoutButtonComponent {
   ) {}
 
   handleLogout(): void {
-    this.apiService.signOut().subscribe((data) => {});
+    this.apiService.signOut();
     this.auth.logout({
       logoutParams: {
         returnTo: this.doc.location.origin,
       },
     });
+    
   }
 }

@@ -15,15 +15,8 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.isAuthenticated$){
-      this.authService.user$.subscribe(res => {
-        if (res != null){
-          this.apiService.signUp(JSON.stringify(res.nickname), JSON.stringify(res.email)).subscribe({
-            next: (data) => {
-            },
-            error: (err) => {
-              this.apiService.signIn(JSON.stringify(res.nickname), JSON.stringify(res.email)).subscribe({})}
-          });
-        }
+      this.apiService.me().subscribe((data) => {
+        console.log(data);
       });
     }
   }
