@@ -9,9 +9,7 @@ import session from "express-session";
 import cors from "cors";
 // import { io } from "socket.io-client";
 import { Server } from "socket.io";
-import redis from "redis";
-import redisAdapter from "socket.io-redis";
-// import auth0 from 'auth0-js';
+import  Twilio  from "twilio";
 
 const PORT = 3000;
 export const app = express();
@@ -32,6 +30,18 @@ try {
 } catch (error) {
   console.error("Unable to connect to the database:", error);
 }
+
+const accountSid = 'AC2476bdfeea3e34264f12f4552759a27f';
+const authToken = 'b01d56523b6d91da88a8b75e3ec3b265';
+const client = Twilio(accountSid, authToken);
+
+client.messages
+  .create({
+     body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
+     from: '+14345955403',
+     to: '+14168316858' //testing phone number
+   })
+  .then(message => console.log(message.sid));
 
 app.use(
   session({
