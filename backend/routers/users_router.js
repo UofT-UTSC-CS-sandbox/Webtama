@@ -26,24 +26,6 @@ usersRouter.post("/signup", async (req, res) => {
   }
   req.session.userId = user.id;
   req.session.save();
-  const sgMail = pkg;
-  sgMail.setApiKey("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")
-  console.log(sgMail)
-  const msg = {
-    to: user.email,
-    from: 'jeffreyhe406@gmail.com',
-    subject: 'Account created successfully',
-    text: 'Welcome to the Webtama!',
-    html: '<strong>Enjoy!</strong>',
-  }
-  sgMail
-    .send(msg)
-    .then(() => {
-      console.log('Email sent')
-    })
-    .catch((error) => {
-      console.error(error)
-    });
 });
 
 //Get all users
