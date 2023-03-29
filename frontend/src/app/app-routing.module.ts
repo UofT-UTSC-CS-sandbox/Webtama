@@ -1,5 +1,6 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes, Router } from "@angular/router";
+import { LobbyComponent } from "./pages/lobby/lobby.component";
 import { IndexComponent } from "./pages/index/index.component";
 import { GameComponent } from "./pages/game/game.component";
 
@@ -17,13 +18,13 @@ const routes: Routes = [
     redirectTo: "/",
   },
   {
-    path: "game",
-    component: GameComponent,
+    path: "lobby",
+    component: LobbyComponent,
   },
   {
-    path: 'callback',
+    path: "callback",
     loadChildren: () =>
-      import('./features/callback/callback.module').then(
+      import("./features/callback/callback.module").then(
         (m) => m.CallbackModule
       ),
   },

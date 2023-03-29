@@ -112,7 +112,7 @@ export class ApiService {
     });
   }
 
-  signUp(username: string, email:string) {
+  signUp(username: string, email: string) {
     return this.http.post<{ token: string }>(this.endpoint + `/users/signup`, {
       username,
       email,
@@ -146,5 +146,15 @@ export class ApiService {
 
     return this.http.get(this.endpoint + `/users/me`, this.getAuthHeader());
 
+  }
+
+  joinRoom(id: number, userId: number) {
+    return this.http.patch(this.endpoint + `users/${userId}/join`, {
+      roomId: id,
+    });
+  }
+
+  getActiveRoom(userId: number) {
+    return this.http.get(this.endpoint + `/users/${userId}/rooms`);
   }
 }
