@@ -75,6 +75,7 @@ usersRouter.post("/signin", async (req, res) => {
     return res.status(401).json({ error: "Incorrect username or password." });
   }
   */
+
   req.session.userId = user.id;
   req.session.save();
   console.log(req.session);
@@ -87,10 +88,23 @@ usersRouter.get("/signout", function (req, res, next) {
 });
 
 usersRouter.get("/me", async (req, res) => {
-  if (!req.session.userId) {
-    return res.status(401).json({ errors: "Not Authenticaed" });
+  const auth0Token = req.headers.authorization?.replace("Bearer ", "");
+
+  if (!auth0Token) {
+    return res.status(401).json({ errors: "Not Authenticated" });
   }
+
+  const user = await User.findOne({
+    where: {
+      auth0Token,
+    },
+  });
+
+  if (!user) {
+    return res.status(401).json({ errors: "User not found" });
+  }
+
   return res.json({
-    userId: req.session.userId,
+    userId: user.id,
   });
 });

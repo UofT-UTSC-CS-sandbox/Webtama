@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { Piece } from "../classes/piece";
 import { Room } from "../classes/room";
 import { io, Socket } from "socket.io-client";
+import { AuthService } from "@auth0/auth0-angular";
 
 @Injectable({
   providedIn: "root",
@@ -13,10 +14,22 @@ export class ApiService {
   ///endpoint = "http://localhost:3000";
   endpoint = environment.apiEndpoint;
   socket: Socket;
+  private headers: HttpHeaders;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService: AuthService) {
     //console.log(this.endpoint);
     this.socket = io(this.endpoint);
+    this.headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.authService.getAccessTokenSilently()}`
+      // 'Cookie': document.cookie
+    });
+  }
+
+  private getAuthHeader() {
+    return {
+      headers: this.headers
+    };
   }
 
   addRoom(name: string) {
@@ -58,6 +71,7 @@ export class ApiService {
     return this.http.post<{ token: string }>(this.endpoint + `/users/signin`, {
       username,
       email,
+      headers: this.headers,
     });
   }
 
@@ -65,6 +79,7 @@ export class ApiService {
     return this.http.post<{ token: string }>(this.endpoint + `/users/signup`, {
       username,
       email,
+      headers: this.headers,
     });
   }
 
