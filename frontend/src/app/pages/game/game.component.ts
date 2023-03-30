@@ -119,7 +119,7 @@ export class GameComponent implements OnInit {
           `[data-x="${startx}"][data-y="${starty}"]`
         ) as HTMLElement;
         piece.classList.remove("selected");
-        this.apiService.socket.emit("move", { roomId: 1 });
+        this.apiService.socket.emit("move", { roomId: 1, startx, starty, endx, endy});
       });
 
     this.loadAudio();
