@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { io, Socket } from "socket.io-client";
@@ -12,30 +12,31 @@ import { ApiService } from "../../services/api.service";
   encapsulation: ViewEncapsulation.None,
 })
 export class GameComponent implements OnInit {
+  socket: Socket;
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private apiService: ApiService
-  ) {}
-
-  async loadAudio() {
-    const audioContext = new AudioContext();
-    const audioSource = await fetch("moveSound.mp3");
-    const audioBuffer = await audioContext.decodeAudioData(
-      await audioSource.arrayBuffer()
-    );
-
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(audioContext.destination);
-    source.start();
+  ) {
+    this.socket = io("http://localhost:3000");
   }
 
-  getRoomId() {
-    let userId: number = -1;
-    this.apiService.me().subscribe((data) => {
-      userId = data as number;
-    });
+  async loadAudio() {
+    const audioCtx = new AudioContext();
+    let buffer: AudioBuffer;
+
+    const audio = new Audio("http://localhost:4200/assets/audio/moveSound.mp3");
+
+    const source = audioCtx.createMediaElementSource(audio);
+    source.connect(audioCtx.destination);
+    audio.play();
+  }
+
+  async getRoomId() {
+    let userId: number = 1;
+    // this.apiService.me().subscribe((data) => {
+    //   userId = data as number;
+    // });
     let roomId: number = -1;
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       roomId = data as number;
@@ -45,18 +46,31 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit() {
-    const roomId = this.getRoomId();
-    this.apiService.getBoard(roomId).subscribe({
-      next: (data) => {},
-      error: (err) => {
-        console.log(err.status);
-        if (err.status === 404) {
-          this.apiService.createBoard(roomId).subscribe(() => {});
-        }
-      },
+    //dynamic
+    let userId: number = 1;
+    let roomId: number = -1;
+
+    this.apiService.getActiveRoom(userId).subscribe((data) => {
+      roomId = data as number;
+      this.apiService.socket.emit("join room", {
+        roomId: roomId,
+        playerName: "Beta",
+      });
+      this.apiService.getBoard(roomId).subscribe({
+        next: (data) => {
+          console.log("board found" + data + "roomId: " + roomId);
+          this.apiService.socket.emit("move", { roomId: roomId });
+        },
+        error: (err) => {
+          console.log(err.status);
+          if (err.status === 404) {
+            this.apiService.createBoard(roomId).subscribe();
+          }
+          this.apiService.socket.emit("move", { roomId: roomId });
+        },
+      });
     });
 
-    this.apiService.socket.emit("move", { roomId: roomId });
     this.apiService.socket.on("game state updated", (data) => {
       this.updateBoard();
     });
@@ -76,7 +90,12 @@ export class GameComponent implements OnInit {
     });
 
     let squares = document.querySelectorAll("td");
-    const roomId = this.getRoomId();
+    let userId: number = 1;
+    let roomId: number = -1;
+
+    this.apiService.getActiveRoom(userId).subscribe((data) => {
+      roomId = data as number;
+    });
     squares.forEach((square) => {
       const squareX = square.getAttribute("data-col");
       const squareY = square.getAttribute("data-row");
@@ -122,39 +141,45 @@ export class GameComponent implements OnInit {
     pieces.forEach((piece) => {
       piece.remove();
     });
-    const roomId = this.getRoomId();
-    this.apiService.getPieces(roomId).subscribe((data) => {
-      for (let i = 0; i < data.pieces.length; i++) {
-        const piece = data.pieces[i];
-        let square = document.querySelector(
-          `[data-row="${piece.ypos}"][data-col="${piece.xpos}"]`
-        );
-        if (square === null) {
-          console.error("Square not found");
-          return;
+    //dynamic
+    let userId: number = 1;
+    let roomId: number = -1;
+
+    this.apiService.getActiveRoom(userId).subscribe((data) => {
+      roomId = data as number;
+      this.apiService.getPieces(roomId).subscribe((data) => {
+        for (let i = 0; i < data.pieces.length; i++) {
+          const piece = data.pieces[i];
+          let square = document.querySelector(
+            `[data-row="${piece.ypos}"][data-col="${piece.xpos}"]`
+          );
+          if (square === null) {
+            console.error("Square not found");
+            return;
+          }
+          const display = document.createElement("p");
+          display.setAttribute("data-x", piece.xpos.toString());
+          display.setAttribute("data-y", piece.ypos.toString());
+
+          let pieceEvent = (e: Event) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const x = piece.xpos;
+            const y = piece.ypos;
+            this.pieceSelect(x, y);
+          };
+
+          display.addEventListener("click", pieceEvent);
+
+          display.classList.add(piece.type);
+          if (piece.side == 0) {
+            display.classList.add("aTeam");
+          } else {
+            display.classList.add("bTeam");
+          }
+          square.appendChild(display);
         }
-        const display = document.createElement("p");
-        display.setAttribute("data-x", piece.xpos.toString());
-        display.setAttribute("data-y", piece.ypos.toString());
-
-        let pieceEvent = (e: Event) => {
-          e.preventDefault();
-          e.stopPropagation();
-          const x = piece.xpos;
-          const y = piece.ypos;
-          this.pieceSelect(x, y);
-        };
-
-        display.addEventListener("click", pieceEvent);
-
-        display.classList.add(piece.type);
-        if (piece.side == 0) {
-          display.classList.add("aTeam");
-        } else {
-          display.classList.add("bTeam");
-        }
-        square.appendChild(display);
-      }
+      });
     });
   }
 }

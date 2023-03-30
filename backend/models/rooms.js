@@ -7,7 +7,7 @@ export const Room = sequelize.define("Room", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: false,
   },
   Host: {
     type: DataTypes.INTEGER,

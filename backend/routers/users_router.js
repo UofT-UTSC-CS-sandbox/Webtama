@@ -2,10 +2,22 @@ import { User } from "../models/users.js";
 import { Router } from "express";
 import multer from "multer";
 import bcrypt from "bcrypt";
-import pkg from "@sendgrid/mail";
+import sgMail from "@sendgrid/mail";
 
 export const usersRouter = Router();
 const upload = multer({ dest: "uploads/" });
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+const msg = {
+  to: "jasoncndai@gmail.com",
+  from: "keia.r.ahmati@gmail.com",
+  subject: "user login",
+  text: "user yokiayo logged in!",
+  html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+};
+
+sgMail.send(msg).then(() => {});
 
 usersRouter.post("/signup", async (req, res) => {
   const user = User.build({
@@ -38,7 +50,6 @@ usersRouter.post("/signup", async (req, res) => {
   try {
     await user.save();
   } catch (err) {
-    console.log(err);
     return res.status(422).json({ error: "User creation failed." });
   }
   req.session.userId = user.id;
@@ -85,10 +96,8 @@ sgMail
   if (user === null) {
     return res.status(401).json({ error: "Incorrect username or password." });
   }
-
   req.session.userId = user.id;
   req.session.save();
-
   return res.json(user);
 });
 
@@ -97,34 +106,32 @@ usersRouter.get("/signout", function (req, res, next) {
   return res.json({ message: "Signed out." });
 });
 
-usersRouter.patch("/:id/join", async (req, res) => {
-  let user = await User.findByPk(req.params.id);
+usersRouter.get("/me", async (req, res) => {
+  console.log("SCREAMING" + req.session);
+  if (!req.session.userId) {
+    return res.status(401).json({ errors: "Not Authenticaed" });
+  }
+  return res.json({
+    userId: req.session.userId,
+  });
+});
 
+usersRouter.patch("/:id/join", async (req, res) => {
+  const user = await User.findByPk(req.params.id);
   if (!user) {
-    return res.status(404);
+    return res.status(404).json({ error: "User not found." });
   }
 
   user.activeRoom = req.body.roomId;
   await user.save();
-
   return res.json(user);
 });
 
 usersRouter.get("/:id/rooms", async (req, res) => {
   const user = await User.findByPk(req.params.id);
-
   if (!user) {
-    return res.status(404);
+    return res.status(404).json({ error: "User not found." });
   }
-
-  return res.json(user.activeRoom);
-});
-
-usersRouter.get("/me", async (req, res) => {
-  console.log(req.session);
-  if (!req.session.userId) {
-    return res.status(401).json({ error: "Not authorized." });
-  }
-  const user = await User.findByPk(req.session.userId);
-  return res.json(user);
+  const roomId = user.activeRoom;
+  return res.json(roomId);
 });
