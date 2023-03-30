@@ -9,7 +9,7 @@ import session from "express-session";
 import cors from "cors";
 // import { io } from "socket.io-client";
 import { Server } from "socket.io";
-import  Twilio  from "twilio";
+import Twilio from "twilio";
 
 const PORT = 3000;
 export const app = express();
@@ -31,17 +31,17 @@ try {
   console.error("Unable to connect to the database:", error);
 }
 
-const accountSid = 'AC2476bdfeea3e34264f12f4552759a27f';
-const authToken = 'b01d56523b6d91da88a8b75e3ec3b265';
+const accountSid = "AC2476bdfeea3e34264f12f4552759a27f";
+const authToken = "b01d56523b6d91da88a8b75e3ec3b265";
 const client = Twilio(accountSid, authToken);
 
 client.messages
   .create({
-     body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
-     from: '+14345955403',
-     to: '+14168316858' //testing phone number
-   })
-  .then(message => console.log(message.sid));
+    body: "This is the ship that made the Kessel Run in fourteen parsecs?",
+    from: "+14345955403",
+    to: "+14168316858", //testing phone number
+  })
+  .then((message) => console.log(message.sid));
 
 app.use(
   session({
@@ -74,7 +74,6 @@ app.use("/api/rooms", roomRouter);
 //   });
 // });
 
-
 const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:4200",
@@ -98,7 +97,7 @@ io.on("connection", (socket) => {
   socket.on("move", (data) => {
     const roomId = data.roomId;
     // Make a move in the specified game room and notify all players in the room
-    console.log("move", data.roomId, data);
+    console.log("move roomId:", roomId, data);
     io.to(roomId).emit("game state updated");
   });
 

@@ -34,7 +34,6 @@ usersRouter.get("/", async (req, res) => {
 });
 
 usersRouter.post("/signin", async (req, res) => {
-  console.log("SCREAMING screaming");
   let user = await User.findOne({
     where: {
       email: req.body.email,
@@ -68,4 +67,24 @@ usersRouter.get("/me", async (req, res) => {
   return res.json({
     userId: req.session.userId,
   });
+});
+
+usersRouter.patch("/:id/join", async (req, res) => {
+  const user = await User.findByPk(req.params.id);
+  if (!user) {
+    return res.status(404).json({ error: "User not found." });
+  }
+
+  user.activeRoom = req.body.roomId;
+  await user.save();
+  return res.json(user);
+});
+
+usersRouter.get("/:id/rooms", async (req, res) => {
+  const user = await User.findByPk(req.params.id);
+  if (!user) {
+    return res.status(404).json({ error: "User not found." });
+  }
+  const roomId = user.activeRoom;
+  return res.json(roomId);
 });

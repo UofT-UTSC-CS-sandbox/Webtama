@@ -16,9 +16,8 @@ export class ApiService {
   ///endpoint = "http://localhost:3000";
   endpoint = environment.apiEndpoint;
   socket: Socket;
-  
+
   constructor(private http: HttpClient) {
-    //console.log(this.endpoint);
     this.socket = io(this.endpoint);
   }
   addRoom(name: string) {
@@ -63,7 +62,7 @@ export class ApiService {
     });
   }
 
-  signUp(username: string, email:string) {
+  signUp(username: string, email: string) {
     return this.http.post<{ token: string }>(this.endpoint + `/users/signup`, {
       username,
       email,
@@ -78,9 +77,9 @@ export class ApiService {
     return this.http.get(this.endpoint + `/users/me`);
   }
 
-  joinRoom(id: number, userId: number) {
-    return this.http.patch(this.endpoint + `users/${userId}/join`, {
-      roomId: id,
+  joinRoom(roomId: number, userId: number) {
+    return this.http.patch(this.endpoint + `/users/${userId}/join`, {
+      roomId: roomId,
     });
   }
 

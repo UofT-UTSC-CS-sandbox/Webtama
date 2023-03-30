@@ -28,15 +28,29 @@ roomRouter.get("/:id/", async (req, res, next) => {
   return res.json(room);
 });
 
-roomRouter.post("/:id/join", async (req, res, next) => {
+roomRouter.patch("/:id/join", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
   if (!room) {
     return res
-      .status(404)
+      .status(405)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
+  const user = await User.findByPk(req.body.userId);
+  if (!user) {
+    return res
+      .status(405)
+      .json({ error: `User(id=${req.body.userId}) not found.` });
+  }
 
-  await room.addUser(req.session.userId);
+  user.activeRoom = room.id;
+  await user.save();
+
+  if (room.Host === null) {
+    room.Host = user.id;
+  } else if (room.Guest === null) {
+    room.Guest = user.id;
+  }
+
   await room.reload();
   return res.json(room);
 });
