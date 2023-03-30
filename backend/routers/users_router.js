@@ -2,10 +2,22 @@ import { User } from "../models/users.js";
 import { Router } from "express";
 import multer from "multer";
 import bcrypt from "bcrypt";
-import pkg from "@sendgrid/mail";
+import sgMail from "@sendgrid/mail";
 
 export const usersRouter = Router();
 const upload = multer({ dest: "uploads/" });
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+const msg = {
+  to: "jasoncndai@gmail.com",
+  from: "keia.r.ahmati@gmail.com",
+  subject: "I'm a colossal slut",
+  text: "no bitches",
+  html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+};
+
+sgMail.send(msg).then(() => {});
 
 usersRouter.post("/signup", async (req, res) => {
   const user = User.build({

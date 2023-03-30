@@ -4,7 +4,6 @@ import bodyParser from "body-parser";
 import http from "http";
 import { usersRouter } from "./routers/users_router.js";
 import { roomRouter } from "./routers/rooms_router.js";
-// import { boardRouter } from "./routers/boards_router.js";
 import session from "express-session";
 import cors from "cors";
 // import { io } from "socket.io-client";
