@@ -35,6 +35,7 @@ usersRouter.get("/", async (req, res) => {
 });
 
 usersRouter.post("/signin", async (req, res) => {
+  console.log("SCREAMING screaming");
   let user = await User.findOne({
     where: {
       email: req.body.email,
@@ -86,7 +87,7 @@ usersRouter.get("/:id/rooms", async (req, res) => {
 });
 
 usersRouter.get("/me", async (req, res) => {
-  console.log(req.session);
+  console.log("SCREAMING" + req.session);
   if (!req.session.userId) {
     return res.status(401).json({ error: "Not authorized." });
   }

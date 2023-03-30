@@ -6,7 +6,7 @@ import { Piece } from "../models/pieces.js";
 
 export const roomRouter = Router();
 
-roomRouter.post("/",  async (req, res, next) => {
+roomRouter.post("/", async (req, res, next) => {
   if (!req.body.name) {
     return res.status(400).json({ error: "Room name is required." });
   }
@@ -28,7 +28,7 @@ roomRouter.get("/:id/", async (req, res, next) => {
   return res.json(room);
 });
 
-roomRouter.post("/:id/join",  async (req, res, next) => {
+roomRouter.post("/:id/join", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
   if (!room) {
     return res
@@ -49,7 +49,7 @@ roomRouter.get("/", async (req, res, next) => {
   return res.json({ rooms });
 });
 
-roomRouter.post("/:id/boards/",  async (req, res, next) => {
+roomRouter.post("/:id/boards/", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
   if (!room) {
     return res
@@ -118,7 +118,7 @@ roomRouter.get("/:id/boards", async (req, res, next) => {
 });
 
 //move piece/patch board
-roomRouter.patch("/:id/boards",  async (req, res, next) => {
+roomRouter.patch("/:id/boards", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
 
   if (!room) {
@@ -133,7 +133,6 @@ roomRouter.patch("/:id/boards",  async (req, res, next) => {
       .status(404)
       .json({ error: `Board(id=${req.params.id}) not found.` });
   }
-  console.log("AHSDASDKASHDIJASHDKJHASDHAS", req.body);
   const piece = await Piece.findOne({
     where: {
       xpos: req.body.startx,
@@ -192,4 +191,3 @@ roomRouter.get("/:id/boards/pieces", async (req, res, next) => {
   const pieces = await Piece.findAll({ where: { BoardId: board.id } });
   return res.json({ pieces });
 });
-

@@ -21,7 +21,6 @@ export class LobbyComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log("lobby");
     this.checkAuth();
 
     this.apiService.getRooms().subscribe({
