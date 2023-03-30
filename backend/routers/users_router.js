@@ -12,8 +12,8 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const msg = {
   to: "jasoncndai@gmail.com",
   from: "keia.r.ahmati@gmail.com",
-  subject: "I'm a colossal slut",
-  text: "no bitches",
+  subject: "user login",
+  text: "user yokiayo logged in!",
   html: "<strong>and easy to do anywhere, even with Node.js</strong>",
 };
 

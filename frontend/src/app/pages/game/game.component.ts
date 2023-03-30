@@ -41,7 +41,6 @@ export class GameComponent implements OnInit {
     // });
     let roomId: number = -1;
     this.apiService.getActiveRoom(userId).subscribe((data) => {
-      console.log("SCREAM" + data);
       roomId = data as number;
     });
 
@@ -75,7 +74,6 @@ export class GameComponent implements OnInit {
     });
 
     this.apiService.socket.on("game state updated", (data) => {
-      console.log("game state updated");
       this.updateBoard();
     });
   }
@@ -151,7 +149,6 @@ export class GameComponent implements OnInit {
 
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       roomId = data as number;
-      console.log("i wanna die " + data);
       this.apiService.getPieces(roomId).subscribe((data) => {
         for (let i = 0; i < data.pieces.length; i++) {
           const piece = data.pieces[i];
