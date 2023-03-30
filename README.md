@@ -93,4 +93,5 @@ final:
   - Ruleset is added to limit players to legal moves
   - App is deployed
     -Online matchmaking should then be working
+    -Players should be able to communicate using twillo
   - work on optional features such as displaying board in 3d
