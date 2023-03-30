@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { io, Socket } from "socket.io-client";
@@ -22,16 +22,14 @@ export class GameComponent implements OnInit {
   }
 
   async loadAudio() {
-    const audioContext = new AudioContext();
-    const audioSource = await fetch("moveSound.mp3");
-    const audioBuffer = await audioContext.decodeAudioData(
-      await audioSource.arrayBuffer()
-    );
+    const audioCtx = new AudioContext();
+    let buffer: AudioBuffer;
 
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(audioContext.destination);
-    source.start();
+    const audio = new Audio("http://localhost:4200/assets/audio/moveSound.mp3");
+
+    const source = audioCtx.createMediaElementSource(audio);
+    source.connect(audioCtx.destination);
+    audio.play();
   }
 
   async getRoomId() {
