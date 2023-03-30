@@ -84,7 +84,6 @@ beta:
   - Add player MMR
   - Implement basic foundation of Sendgrid, Twilio for user communication
   - Implement Web Audio API for sound effects on game moves
-  - user is able to communicate with other user in the game, chat between >2 people, e.g. global chat, all friends chat, etc.
   - pieces are moves in accordance with game, click/SMS/etc. used to connect and move pieces
   
 final:
