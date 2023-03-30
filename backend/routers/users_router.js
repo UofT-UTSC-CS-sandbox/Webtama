@@ -2,7 +2,7 @@ import { User } from "../models/users.js";
 import { Router } from "express";
 import multer from "multer";
 import bcrypt from "bcrypt";
-import pkg from "@sendgrid/mail"
+import pkg from "@sendgrid/mail";
 
 export const usersRouter = Router();
 const upload = multer({ dest: "uploads/" });
@@ -85,16 +85,10 @@ sgMail
   if (user === null) {
     return res.status(401).json({ error: "Incorrect username or password." });
   }
-  // password incorrect
-  /** 
-  if (!bcrypt.compareSync(req.body.password, user.password)) {
-    return res.status(401).json({ error: "Incorrect username or password." });
-  }
-  */
 
   req.session.userId = user.id;
   req.session.save();
-  console.log(req.session);
+
   return res.json(user);
 });
 
@@ -103,7 +97,31 @@ usersRouter.get("/signout", function (req, res, next) {
   return res.json({ message: "Signed out." });
 });
 
+usersRouter.patch("/:id/join", async (req, res) => {
+  let user = await User.findByPk(req.params.id);
+
+  if (!user) {
+    return res.status(404);
+  }
+
+  user.activeRoom = req.body.roomId;
+  await user.save();
+
+  return res.json(user);
+});
+
+usersRouter.get("/:id/rooms", async (req, res) => {
+  const user = await User.findByPk(req.params.id);
+
+  if (!user) {
+    return res.status(404);
+  }
+
+  return res.json(user.activeRoom);
+});
+
 usersRouter.get("/me", async (req, res) => {
+  console.log(req.session);
   if (!req.session.userId) {
     return res.status(401).json({ error: "Not authorized." });
   }

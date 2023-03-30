@@ -31,49 +31,34 @@ export class GameComponent implements OnInit {
     source.start();
   }
 
-  ngOnInit() {
+  getRoomId() {
+    let userId: number = -1;
     this.apiService.me().subscribe((data) => {
-      console.log(data);
+      userId = data as number;
     });
-    //If getRooms doeesnt return a room, create room with id 1
-    this.apiService.getRooms().subscribe({
-      next: (data) => {
-        console.log(data);
-        if (data.rooms.length === 0) {
-          this.apiService.addRoom("Alpha Room").subscribe((data) => {});
-          this.apiService.createBoard(1).subscribe(() => {});
-          this.apiService.socket.emit("join room", {
-            roomId: 1,
-            playerName: "Kia",
-          });
-        } else {
-          console.log("joinin room");
-          this.apiService.socket.emit("join room", {
-            roomId: 1,
-            playerName: "Jason",
-          });
-        }
+    let roomId: number = -1;
+    this.apiService.getActiveRoom(userId).subscribe((data) => {
+      roomId = data as number;
+    });
 
-        //Get the board for room 1
-        this.apiService.getBoard(1).subscribe({
-          next: (data) => {},
-          error: (err) => {
-            console.log(err.status);
-            if (err.status === 404) {
-              this.apiService.createBoard(1).subscribe(() => {});
-            }
-          },
-        });
+    return roomId;
+  }
 
-        this.apiService.socket.emit("move", { roomId: 1 });
-        this.apiService.socket.on("game state updated", (data) => {
-          this.updateBoard();
-        });
-      },
-
+  ngOnInit() {
+    const roomId = this.getRoomId();
+    this.apiService.getBoard(roomId).subscribe({
+      next: (data) => {},
       error: (err) => {
-        console.log(err);
+        console.log(err.status);
+        if (err.status === 404) {
+          this.apiService.createBoard(roomId).subscribe(() => {});
+        }
       },
+    });
+
+    this.apiService.socket.emit("move", { roomId: roomId });
+    this.apiService.socket.on("game state updated", (data) => {
+      this.updateBoard();
     });
   }
 
@@ -91,6 +76,7 @@ export class GameComponent implements OnInit {
     });
 
     let squares = document.querySelectorAll("td");
+    const roomId = this.getRoomId();
     squares.forEach((square) => {
       const squareX = square.getAttribute("data-col");
       const squareY = square.getAttribute("data-row");
@@ -99,12 +85,18 @@ export class GameComponent implements OnInit {
         return;
       }
       square.addEventListener("click", (e) => {
-        this.makeMove(x, y, parseInt(squareX), parseInt(squareY));
+        this.makeMove(roomId, x, y, parseInt(squareX), parseInt(squareY));
       });
     });
   }
 
-  makeMove(startx: number, starty: number, endx: number, endy: number) {
+  makeMove(
+    roomId: number,
+    startx: number,
+    starty: number,
+    endx: number,
+    endy: number
+  ) {
     let squares = document.querySelectorAll("td");
     squares.forEach((square) => {
       let new_square = square.cloneNode(true);
@@ -113,7 +105,7 @@ export class GameComponent implements OnInit {
     });
 
     this.apiService
-      .makeMove(1, startx, starty, endx, endy)
+      .makeMove(roomId, startx, starty, endx, endy)
       .subscribe((data) => {
         let piece = document.querySelector(
           `[data-x="${startx}"][data-y="${starty}"]`
@@ -130,7 +122,8 @@ export class GameComponent implements OnInit {
     pieces.forEach((piece) => {
       piece.remove();
     });
-    this.apiService.getPieces(1).subscribe((data) => {
+    const roomId = this.getRoomId();
+    this.apiService.getPieces(roomId).subscribe((data) => {
       for (let i = 0; i < data.pieces.length; i++) {
         const piece = data.pieces[i];
         let square = document.querySelector(
