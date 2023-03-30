@@ -9,14 +9,14 @@
 html {
   overflow: -moz-scrollbars-vertical;
   background: var(--mainColor);
-  height: 100%;
+  height: 80%;
   width: 100%;
 }
 
 body {
   background-color: var(--darkBase) !important;
-  max-width: 85%;
-  height: 110%;
+  max-width: 90%;
+  height: 80%;
   border-radius: 2px;
   margin: auto;
   align-items: center;
@@ -46,11 +46,11 @@ a {
   color: var(--mainColor) !important;
 }
 
-::after,
-::before {
-  /* https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing */
-  box-sizing: border-box;
-}
+// ::after,
+// ::before {
+//   /* https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing */
+//   box-sizing: border-box;
+// }
 
 .row {
   margin: 0 auto;

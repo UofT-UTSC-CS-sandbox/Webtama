@@ -10,6 +10,10 @@ const routes: Routes = [
     component: IndexComponent,
   },
   {
+    path: "lobby",
+    component: LobbyComponent,
+  },
+  {
     path: "game",
     component: GameComponent,
   },
@@ -17,10 +21,7 @@ const routes: Routes = [
     path: "**",
     redirectTo: "/",
   },
-  {
-    path: "lobby",
-    component: LobbyComponent,
-  },
+
   {
     path: "callback",
     loadChildren: () =>

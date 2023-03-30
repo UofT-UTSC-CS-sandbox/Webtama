@@ -40,17 +40,9 @@ export class IndexComponent implements OnInit {
   checkAuth() {
     this.authService.isAuthenticated$.subscribe((isAuth) => {
       if (isAuth) {
+        console.log("authenticated");
         this.router.navigate(["/lobby"]);
       }
     });
-  }
-
-  goToGame() {
-    if (this.isAuthenticated$) {
-      this.router.navigate(["/game"]);
-    } else {
-      // handle not authenticated case, e.g. show a message or redirect to login page
-      console.log("not authenticated");
-    }
   }
 }

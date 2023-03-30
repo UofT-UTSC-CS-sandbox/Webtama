@@ -5,9 +5,7 @@
   --lightBase: #f2c4ce;
   --mainColor: #f58f7c;
 }
-html {
-  background-color: var(--darkBase);
-}
+
 #lobbyInfo {
   text-align: center;
   color: var(--textColor);
@@ -37,23 +35,10 @@ html {
   flex-direction: column;
 }
 
-.joinButton {
-  width: 9vw;
-  height: 5vh;
-  margin-right: 1px;
-  display: inline;
-  position: unset;
-  margin-left: 63%;
-  margin-right: 1%;
-  flex-wrap: scroll;
-  overflow: scroll;
-  white-space: nowrap;
-}
-
 body {
   background-color: var(--darkBase) !important;
   max-width: 85%;
-  height: 160vh;
+  height: 95vh;
   border-radius: 2px;
   margin: auto;
   align-items: center;
@@ -63,6 +48,11 @@ body {
 
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
+}
+
+.lobbyhtml {
+  background-color: #2c2b30;
+  height: 110vh;
 }
 
 h1 {
@@ -82,7 +72,7 @@ h1 {
   margin-right: auto;
   border-color: #0f1225;
   font-size: 84%;
-  width: 18vw;
+  width: 15vw;
   height: 5vh;
   margin: 1%, auto;
   padding: 1%, 0;
@@ -101,6 +91,19 @@ h1 {
 .kiaButton:active {
   box-shadow: 0 1px #666;
   transform: translateY(3px);
+}
+
+.joinButton {
+  width: 3vw;
+  min-width: 40px;
+  height: 4vh;
+  margin-right: 1px;
+  display: inline;
+  position: unset;
+  margin-left: 70%;
+  margin-right: 1%;
+  margin-top: 1%;
+  white-space: normal;
 }
 
 .info {

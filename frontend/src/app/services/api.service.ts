@@ -63,28 +63,28 @@ export class ApiService {
   }
 
   addRoom(name: string) {
-    return this.http.post(this.endpoint + `/api/rooms`, { name }, { headers: this.headers });
+    return this.http.post(this.endpoint + `/api/rooms`, { name }, this.getAuthHeader());
   }
 
   getRooms(): Observable<{ rooms: Room[] }> {
-    return this.http.get<{ rooms: Room[] }>(this.endpoint + `/api/rooms`, { headers: this.headers });
+    return this.http.get<{ rooms: Room[] }>(this.endpoint + `/api/rooms`, this.getAuthHeader());
   }
 
   getRoom(id: number) {
-    return this.http.get(this.endpoint + `/api/rooms/${id}`, { headers: this.headers });
+    return this.http.get(this.endpoint + `/api/rooms/${id}`, this.getAuthHeader());
   }
 
   createBoard(id: number) {
-    return this.http.post(this.endpoint + `/api/rooms/${id}/boards`, { id }, { headers: this.headers });
+    return this.http.post(this.endpoint + `/api/rooms/${id}/boards`, { id }, this.getAuthHeader());
   }
 
   getBoard(id: number) {
-    return this.http.get(this.endpoint + `/api/rooms/${id}/boards`, { headers: this.headers });
+    return this.http.get(this.endpoint + `/api/rooms/${id}/boards`, this.getAuthHeader());
   }
 
   getPieces(id: number): Observable<{ pieces: Piece[] }> {
     return this.http.get<{ pieces: Piece[]; pieceCount: number }>(
-      this.endpoint + `/api/rooms/${id}/boards/pieces`, { headers: this.headers }
+      this.endpoint + `/api/rooms/${id}/boards/pieces`, this.getAuthHeader()
     );
   }
 
@@ -94,14 +94,14 @@ export class ApiService {
       starty: y1,
       endx: x2,
       endy: y2,
-    }, { headers: this.headers });
+    }, this.getAuthHeader());
   }
 
   signIn(username: string, email: string) {
     return this.http.post<{ token: string }>(this.endpoint + `/users/signin`, {
       username,
       email,
-    }).subscribe({
+    }, this.getAuthHeader() ).subscribe({
       next: (data) => {
         console.log("data: ", data);
         this.setToken(data.token);
@@ -117,7 +117,7 @@ export class ApiService {
       username,
       email,
       headers: this.headers,
-    }).subscribe({
+    }, this.getAuthHeader() ).subscribe({
       next: (data) => {
         console.log("data: ", data);
         this.setToken(data.token);
@@ -129,7 +129,7 @@ export class ApiService {
   }
 
   signOut() {
-    return this.http.get(this.endpoint + `/users/signout`).subscribe({
+    return this.http.get(this.endpoint + `/users/signout`, this.getAuthHeader() ).subscribe({
       next: (data) => {
         console.log("data: ", data);
         this.setToken("");

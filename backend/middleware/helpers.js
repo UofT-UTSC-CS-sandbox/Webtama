@@ -9,7 +9,8 @@ export const isAuthenticated = function (req, res, next) {
   try {
     auth({
       // audience: 'dev-0rubju8i61qqpmgv.us.auth0.com',
-      audience: 'https://dev-0rubju8i61qqpmgv.us.auth0.com/api/v2/',
+      // audience: 'https://dev-0rubju8i61qqpmgv.us.auth0.com/api/v2/',
+      audience: 'https://dev-0rubju8i61qqpmgv.us.auth0.com/userinfo',
       issuerBaseURL: `http://localhost:4200/`,
       // cookie: '_legacy_auth0.dibFRURk5XSOdzcA66JIBCs4n38zwein.is.authenticated',
     })(req, res, next);

@@ -35,7 +35,6 @@ usersRouter.get("/", async (req, res) => {
 });
 
 usersRouter.post("/signin", async (req, res) => {
-  console.log(req.body);
   let user = await User.findOne({
     where: {
       email: req.body.email,
@@ -51,16 +50,10 @@ usersRouter.post("/signin", async (req, res) => {
   if (user === null) {
     return res.status(401).json({ error: "Incorrect username or password." });
   }
-  // password incorrect
-  /** 
-  if (!bcrypt.compareSync(req.body.password, user.password)) {
-    return res.status(401).json({ error: "Incorrect username or password." });
-  }
-  */
 
   req.session.userId = user.id;
   req.session.save();
-  console.log(req.session);
+
   return res.json(user);
 });
 
@@ -93,23 +86,10 @@ usersRouter.get("/:id/rooms", async (req, res) => {
 });
 
 usersRouter.get("/me", async (req, res) => {
-  const auth0Token = req.headers.authorization?.replace("Bearer ", "");
-
-  if (!auth0Token) {
-    return res.status(401).json({ errors: "Not Authenticated" });
+  console.log(req.session);
+  if (!req.session.userId) {
+    return res.status(401).json({ error: "Not authorized." });
   }
-
-  const user = await User.findOne({
-    where: {
-      auth0Token,
-    },
-  });
-
-  if (!user) {
-    return res.status(401).json({ errors: "User not found" });
-  }
-
-  const userId = req.session.userId;
-
-  return res.json(userId);
+  const user = await User.findByPk(req.session.userId);
+  return res.json(user);
 });

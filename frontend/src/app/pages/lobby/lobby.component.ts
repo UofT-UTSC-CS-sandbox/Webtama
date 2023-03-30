@@ -2,11 +2,13 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { ApiService } from "../../services/api.service";
 import { AuthService } from "@auth0/auth0-angular";
+import { ViewEncapsulation } from "@angular/core";
 
 @Component({
   selector: "app-lobby",
   templateUrl: "./lobby.component.html",
   styleUrls: ["./lobby.component.scss"],
+  encapsulation: ViewEncapsulation.None,
 })
 export class LobbyComponent implements OnInit {
   error: string = ""; // string representing the error message
@@ -19,6 +21,7 @@ export class LobbyComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log("lobby");
     this.checkAuth();
 
     this.apiService.getRooms().subscribe({
