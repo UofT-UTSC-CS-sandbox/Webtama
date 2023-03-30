@@ -19,18 +19,24 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // if (this.isAuthenticated$){
-    //   this.apiService.me().subscribe((data) => {
-    //     console.log(data);
-    //   });
-    // }
-
-    this.document.getElementById("signUp")?.addEventListener("click", () => {
-      // this.apiService.signUp();
-    });
-
-    this.document.getElementById("signIn")?.addEventListener("click", () => {
-      // this.apiService.signIn();
-    });
+    if (this.isAuthenticated$) {
+      this.authService.user$.subscribe((res) => {
+        if (res != null) {
+          this.apiService
+            .signUp(JSON.stringify(res.nickname), JSON.stringify(res.email))
+            .subscribe({
+              next: (data) => {},
+              error: (err) => {
+                this.apiService
+                  .signIn(
+                    JSON.stringify(res.nickname),
+                    JSON.stringify(res.email)
+                  )
+                  .subscribe({});
+              },
+            });
+        }
+      });
+    }
   }
 }
