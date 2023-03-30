@@ -80,14 +80,18 @@ alpha:
   
 beta:
   - Add or fix any functionality missing from alpha version
-  - Enable user interaction with the site by starting a game and interacting with the board
-  - user can matchmake with others by pressing a button
-  - user is able to communicate with other user in the game, chat between >2 people, e.g. global chat, all friends chat, etc.
-  - move cards for the game are served to user and handled properly
+  - Create a lobby system to create and join different synchronous game rooms
+  - Add player MMR
+  - Implement basic foundation of Sendgrid, Twilio for user communication
+  - Implement Web Audio API for sound effects on game moves
   - pieces are moves in accordance with game, click/SMS/etc. used to connect and move pieces
   
 final:
   - Add or fix any functionality missing from beta version
   - user is able to buy cosmetics through the stripe system and items are displayed on game
-  - audio for game and other features is functioning
+  - work on optional features such as displaying board in 3d
+  - Ruleset is added to limit players to legal moves
+  - App is deployed
+    -Online matchmaking should then be working
+    -Players should be able to communicate using twillo
   - work on optional features such as displaying board in 3d
