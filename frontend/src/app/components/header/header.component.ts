@@ -14,10 +14,17 @@ export class HeaderComponent implements OnInit {
   constructor(private apiService: ApiService, private router: Router, @Inject(DOCUMENT) public document: Document, private authService: AuthService) {}
 
   ngOnInit(): void {
-    // if (this.isAuthenticated$){
-    //   this.apiService.me().subscribe((data) => {
-    //     console.log(data);
-    //   });
-    // }
+    if (this.isAuthenticated$){
+      this.authService.user$.subscribe(res => {
+        if (res != null){
+          this.apiService.signUp(JSON.stringify(res.nickname), JSON.stringify(res.email)).subscribe({
+            next: (data) => {
+            },
+            error: (err) => {
+              this.apiService.signIn(JSON.stringify(res.nickname), JSON.stringify(res.email)).subscribe({})}
+          });
+        }
+      });
+    }
   }
 }
