@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { Room } from "../models/rooms.js";
+import { User } from "../models/users.js";
 import { isAuthenticated } from "../middleware/helpers.js";
 import { Board } from "../models/boards.js";
 import { Piece } from "../models/pieces.js";
@@ -25,6 +26,35 @@ roomRouter.get("/:id/", async (req, res, next) => {
       .status(404)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
+  return res.json({ room });
+});
+
+roomRouter.patch("/:id/join", async (req, res, next) => {
+  const room = await Room.findByPk(req.params.id);
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+  console.log(req.body);
+  const user = await User.findByPk(req.body.userId);
+  if (!user) {
+    return res
+      .status(404)
+      .json({ error: `User(id=${req.body.userId}) not found.` });
+  }
+
+  user.activeRoom = room.id;
+  await user.save();
+
+  if (room.Host === null) {
+    room.Host = user.id;
+  } else if (room.Guest === null) {
+    room.Guest = user.id;
+  }
+  await room.save();
+  await room.reload();
+  await user.reload();
   return res.json(room);
 });
 
@@ -42,23 +72,24 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
       .json({ error: `User(id=${req.body.userId}) not found.` });
   }
 
-  user.activeRoom = room.id;
-  await user.save();
+  const userId = req.body.userId;
 
-  if (room.Host === null) {
-    room.Host = user.id;
-  } else if (room.Guest === null) {
-    room.Guest = user.id;
+  if (room.Host === req.body.userId) {
+    room.Host = null;
+  } else if (room.Guest === req.body.userId) {
+    room.Guest = null;
   }
-
+  user.activeRoom = null;
+  await user.save();
+  await room.save();
   await room.reload();
+  await user.reload();
   return res.json(room);
 });
 
 roomRouter.get("/", async (req, res, next) => {
   const rooms = await Room.findAll({
     limit: 5,
-    // include: { association: "User", attributes: ["username"] },
   });
   return res.json({ rooms });
 });

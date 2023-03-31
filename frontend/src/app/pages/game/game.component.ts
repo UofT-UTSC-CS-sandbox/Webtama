@@ -40,12 +40,14 @@ export class GameComponent implements OnInit {
     let roomId: number = -1;
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       roomId = data as number;
+      return roomId;
     });
 
     return roomId;
   }
 
   ngOnInit() {
+    this.cleanBoard();
     //dynamic
     let userId: number = 1;
     let roomId: number = -1;
@@ -65,14 +67,35 @@ export class GameComponent implements OnInit {
           console.log(err.status);
           if (err.status === 404) {
             this.apiService.createBoard(roomId).subscribe();
+            this.apiService.socket.emit("move", { roomId: roomId });
           }
-          this.apiService.socket.emit("move", { roomId: roomId });
         },
       });
     });
 
     this.apiService.socket.on("game state updated", (data) => {
+      this.cleanBoard();
+      console.log("game state updated");
       this.updateBoard();
+    });
+  }
+
+  ngOnDestroy() {
+    //dynamic
+    let userId: number = 1;
+
+    this.apiService.getActiveRoom(userId).subscribe((data) => {
+      let roomId: number = data as number;
+
+      this.apiService.socket.emit("leave room", {
+        roomId: roomId,
+        playerName: "Beta",
+      });
+      this.apiService.getRoom(roomId).subscribe((roomData) => {
+        if (roomData.room.host === userId || roomData.room.guest === userId) {
+          this.apiService.leaveRoom(roomId, userId).subscribe();
+        }
+      });
     });
   }
 
@@ -130,17 +153,41 @@ export class GameComponent implements OnInit {
           `[data-x="${startx}"][data-y="${starty}"]`
         ) as HTMLElement;
         piece.classList.remove("selected");
-        this.apiService.socket.emit("move", { roomId: 1, startx, starty, endx, endy});
+        this.apiService.socket.emit("move", {
+          roomId: 1,
+          startx,
+          starty,
+          endx,
+          endy,
+        });
       });
 
     this.loadAudio();
   }
 
-  updateBoard() {
+  checkTurn(userId: number, roomId: number): boolean {
+    this.apiService.getRoom(roomId).subscribe((roomData) => {
+      this.apiService.getBoard(roomId).subscribe((boardData) => {
+        if (roomData.room.host === userId && boardData.board.turn % 2 === 0) {
+          return true;
+        }
+        if (roomData.room.guest === userId && boardData.board.turn % 2 !== 0) {
+          return true;
+        }
+        return false;
+      });
+    });
+    return false;
+  }
+
+  cleanBoard() {
     let pieces = document.querySelectorAll("p");
     pieces.forEach((piece) => {
       piece.remove();
     });
+  }
+
+  updateBoard() {
     //dynamic
     let userId: number = 1;
     let roomId: number = -1;
@@ -148,6 +195,7 @@ export class GameComponent implements OnInit {
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       roomId = data as number;
       this.apiService.getPieces(roomId).subscribe((data) => {
+        this.cleanBoard();
         for (let i = 0; i < data.pieces.length; i++) {
           const piece = data.pieces[i];
           let square = document.querySelector(

@@ -93,6 +93,14 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("player joined", playerName);
   });
 
+  socket.on("leave room", (data) => {
+    const roomId = data.roomId;
+    const playerName = data.playerName;
+    socket.leave(roomId);
+    console.log("leave room", data.roomId, data);
+    io.to(roomId).emit("player left", playerName);
+  });
+
   // Handle the 'move' event when a player makes a move in the game
   socket.on("move", (data) => {
     const roomId = data.roomId;

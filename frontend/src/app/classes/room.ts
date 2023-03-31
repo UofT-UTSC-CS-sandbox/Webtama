@@ -1,6 +1,6 @@
 export interface Room {
-  Name: string;
-  Host: number;
-  Guest: number;
+  name: string;
+  host: number;
+  guest: number;
   id: number;
 }

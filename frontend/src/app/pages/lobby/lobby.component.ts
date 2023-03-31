@@ -72,15 +72,18 @@ export class LobbyComponent implements OnInit {
     //   userId = data as number;
     // });
     joinBtn.addEventListener("click", () => {
-      console.log(roomId + " " + userId);
-      this.apiService.joinRoom(roomId, userId).subscribe((data) => {
-        console.log(data);
-        this.goToGame();
-      });
+      this.joinRoom(roomId, userId);
     });
     display.appendChild(joinBtn);
     const lobbyList = document.getElementById("lobbyList")!;
     lobbyList.appendChild(display);
+  }
+
+  joinRoom(roomId: number, userId: number) {
+    this.apiService.joinRoom(roomId, userId).subscribe((data) => {
+      console.log(data);
+      this.goToGame();
+    });
   }
 
   goToGame() {

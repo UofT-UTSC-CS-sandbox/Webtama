@@ -30,22 +30,24 @@ usersRouter.post("/signup", async (req, res) => {
   const salt = bcrypt.genSaltSync(10);
   user.password = bcrypt.hashSync(password, salt);
   */
-  sgMail.setApiKey("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")
+  sgMail.setApiKey(
+    "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"
+  );
   const msg = {
     to: user.email, // Change to your recipient
-    from: 'jasoncndai@gmail.com', // Change to your verified sender
-    subject: 'Sending with SendGrid is Fun',
-    text: 'and easy to do anywhere, even with Node.js',
-    html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-  }
+    from: "jasoncndai@gmail.com", // Change to your verified sender
+    subject: "Sending with SendGrid is Fun",
+    text: "and easy to do anywhere, even with Node.js",
+    html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+  };
   sgMail
     .send(msg)
     .then(() => {
-      console.log('Email sent')
+      console.log("Email sent");
     })
     .catch((error) => {
-      console.error(error)
-    })
+      console.error(error);
+    });
 
   try {
     await user.save();
@@ -63,22 +65,24 @@ usersRouter.get("/", async (req, res) => {
 });
 
 usersRouter.post("/signin", async (req, res) => {
-  sgMail.setApiKey("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")
-const msg = {
-  to: user.email, // Change to your recipient
-  from: 'jasoncndai@gmail.com', // Change to your verified sender
-  subject: 'Sending with SendGrid is Fun',
-  text: 'and easy to do anywhere, even with Node.js',
-  html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-}
-sgMail
-  .send(msg)
-  .then(() => {
-    console.log('Email sent')
-  })
-  .catch((error) => {
-    console.error(error)
-  })
+  sgMail.setApiKey(
+    "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"
+  );
+  const msg = {
+    to: user.email, // Change to your recipient
+    from: "jasoncndai@gmail.com", // Change to your verified sender
+    subject: "Sending with SendGrid is Fun",
+    text: "and easy to do anywhere, even with Node.js",
+    html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+  };
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log("Email sent");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 
   console.log(req.body);
   let user = await User.findOne({
@@ -114,17 +118,6 @@ usersRouter.get("/me", async (req, res) => {
   return res.json({
     userId: req.session.userId,
   });
-});
-
-usersRouter.patch("/:id/join", async (req, res) => {
-  const user = await User.findByPk(req.params.id);
-  if (!user) {
-    return res.status(404).json({ error: "User not found." });
-  }
-
-  user.activeRoom = req.body.roomId;
-  await user.save();
-  return res.json(user);
 });
 
 usersRouter.get("/:id/rooms", async (req, res) => {
