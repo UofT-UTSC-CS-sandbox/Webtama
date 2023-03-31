@@ -4,8 +4,11 @@ import { User } from "../models/users.js";
 import { isAuthenticated } from "../middleware/helpers.js";
 import { Board } from "../models/boards.js";
 import { Piece } from "../models/pieces.js";
+// import { getUserInfo } from "../middleware/helpers.js";
 
 export const roomRouter = Router();
+
+// roomRouter.use(getUserInfo);
 
 roomRouter.post("/", async (req, res, next) => {
   if (!req.body.name) {
