@@ -40,12 +40,14 @@ export class GameComponent implements OnInit {
     let roomId: number = -1;
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       roomId = data as number;
+      return roomId;
     });
 
     return roomId;
   }
 
   ngOnInit() {
+    this.cleanBoard();
     //dynamic
     let userId: number = 1;
     let roomId: number = -1;
@@ -56,6 +58,7 @@ export class GameComponent implements OnInit {
         roomId: roomId,
         playerName: "Beta",
       });
+      this.updateName(roomId);
       this.apiService.getBoard(roomId).subscribe({
         next: (data) => {
           console.log("board found" + data + "roomId: " + roomId);
@@ -65,14 +68,53 @@ export class GameComponent implements OnInit {
           console.log(err.status);
           if (err.status === 404) {
             this.apiService.createBoard(roomId).subscribe();
+            this.apiService.socket.emit("move", { roomId: roomId });
           }
-          this.apiService.socket.emit("move", { roomId: roomId });
         },
       });
     });
 
     this.apiService.socket.on("game state updated", (data) => {
+      this.cleanBoard();
+      console.log("game state updated");
       this.updateBoard();
+    });
+  }
+
+  ngOnDestroy() {
+    //dynamic
+    let userId: number = 1;
+
+    this.apiService.getActiveRoom(userId).subscribe((data) => {
+      let roomId: number = data as number;
+
+      this.apiService.socket.emit("leave room", {
+        roomId: roomId,
+        playerName: "Beta",
+      });
+      this.apiService.getRoom(roomId).subscribe((roomData) => {
+        if (roomData.room.Host === userId || roomData.room.Guest === userId) {
+          this.apiService.leaveRoom(roomId, userId).subscribe();
+        }
+      });
+    });
+  }
+
+  updateName(roomId: number) {
+    console.log("updateName:");
+    this.apiService.getRoom(roomId).subscribe((roomData) => {
+      console.log(roomData);
+      let player1 = document.getElementById("p1Title");
+      let player2 = document.getElementById("p2Title");
+      if (roomData.room.Host) {
+        player1!.innerHTML = "User: " + roomData.room.Host.toString();
+      }
+      if (roomData.room.Guest) {
+        player2!.innerHTML = "User: " + roomData.room.Guest.toString();
+      }
+
+      player1!.style.visibility = "visible";
+      player2!.style.visibility = "visible";
     });
   }
 
@@ -130,17 +172,41 @@ export class GameComponent implements OnInit {
           `[data-x="${startx}"][data-y="${starty}"]`
         ) as HTMLElement;
         piece.classList.remove("selected");
-        this.apiService.socket.emit("move", { roomId: roomId });
+        this.apiService.socket.emit("move", {
+          roomId: 1,
+          startx,
+          starty,
+          endx,
+          endy,
+        });
       });
 
     this.loadAudio();
   }
 
-  updateBoard() {
+  checkTurn(userId: number, roomId: number): boolean {
+    this.apiService.getRoom(roomId).subscribe((roomData) => {
+      this.apiService.getBoard(roomId).subscribe((boardData) => {
+        if (roomData.room.Host === userId && boardData.board.turn % 2 === 0) {
+          return true;
+        }
+        if (roomData.room.Guest === userId && boardData.board.turn % 2 !== 0) {
+          return true;
+        }
+        return false;
+      });
+    });
+    return false;
+  }
+
+  cleanBoard() {
     let pieces = document.querySelectorAll("p");
     pieces.forEach((piece) => {
       piece.remove();
     });
+  }
+
+  updateBoard() {
     //dynamic
     let userId: number = 1;
     let roomId: number = -1;
@@ -148,6 +214,7 @@ export class GameComponent implements OnInit {
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       roomId = data as number;
       this.apiService.getPieces(roomId).subscribe((data) => {
+        this.cleanBoard();
         for (let i = 0; i < data.pieces.length; i++) {
           const piece = data.pieces[i];
           let square = document.querySelector(

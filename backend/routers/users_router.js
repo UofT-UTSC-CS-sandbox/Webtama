@@ -30,6 +30,15 @@ usersRouter.post("/signup", async (req, res) => {
   const salt = bcrypt.genSaltSync(10);
   user.password = bcrypt.hashSync(password, salt);
   */
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log("Email sent");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
   try {
     await user.save();
   } catch (err) {
@@ -45,7 +54,31 @@ usersRouter.get("/", async (req, res) => {
   return res.json(users);
 });
 
+//Get user by id
+usersRouter.get("/:id", async (req, res) => {
+  const user = await User.findByPk(req.params.id);
+  return res.json({ user });
+});
+
 usersRouter.post("/signin", async (req, res) => {
+  // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  // const msg = {
+  //   to: user.email, // Change to your recipient
+  //   from: "jasoncndai@gmail.com", // Change to your verified sender
+  //   subject: "Sending with SendGrid is Fun",
+  //   text: "and easy to do anywhere, even with Node.js",
+  //   html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+  // };
+  // sgMail
+  //   .send(msg)
+  //   .then(() => {
+  //     console.log("Email sent");
+  //   })
+  //   .catch((error) => {
+  //     console.error(error);
+  //   });
+
+  console.log(req.body);
   let user = await User.findOne({
     where: {
       email: req.body.email,
@@ -79,17 +112,6 @@ usersRouter.get("/me", async (req, res) => {
   return res.json({
     userId: req.session.userId,
   });
-});
-
-usersRouter.patch("/:id/join", async (req, res) => {
-  const user = await User.findByPk(req.params.id);
-  if (!user) {
-    return res.status(404).json({ error: "User not found." });
-  }
-
-  user.activeRoom = req.body.roomId;
-  await user.save();
-  return res.json(user);
 });
 
 usersRouter.get("/:id/rooms", async (req, res) => {

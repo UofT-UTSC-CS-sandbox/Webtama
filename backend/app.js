@@ -8,6 +8,7 @@ import session from "express-session";
 import cors from "cors";
 // import { io } from "socket.io-client";
 import { Server } from "socket.io";
+import sgMail from "@sendgrid/mail";
 import Twilio from "twilio";
 
 const PORT = 3000;
@@ -92,12 +93,37 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("player joined", playerName);
   });
 
+  socket.on("leave room", (data) => {
+    const roomId = data.roomId;
+    const playerName = data.playerName;
+    socket.leave(roomId);
+    console.log("leave room", data.roomId, data);
+    io.to(roomId).emit("player left", playerName);
+  });
+
   // Handle the 'move' event when a player makes a move in the game
   socket.on("move", (data) => {
     const roomId = data.roomId;
     // Make a move in the specified game room and notify all players in the room
     console.log("move roomId:", roomId, data);
     io.to(roomId).emit("game state updated");
+    // send sms to player
+    const accountSid = "ACc746786f25d6927c3eb29d72c4775f8a";
+    const authToken = "0dc8051c79979dd0ec148b75ed9963ee";
+    const client = Twilio(accountSid, authToken);
+
+    client.messages
+      .create({
+        body:
+          "Move has been made!" +
+          data.startx +
+          data.starty +
+          data.endx +
+          data.endy,
+        from: "+15855951945",
+        to: "+16475703028", //testing phone number
+      })
+      .then((message) => console.log(message.sid));
   });
 
   socket.on("disconnect", () => {

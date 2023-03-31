@@ -4,6 +4,8 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { Piece } from "../classes/piece";
 import { Room } from "../classes/room";
+import { Board } from "../classes/board";
+import { User } from "../classes/user";
 import { io, Socket } from "socket.io-client";
 import { AuthService } from "@auth0/auth0-angular";
 import { switchMap } from "rxjs/operators";
@@ -28,16 +30,18 @@ export class ApiService {
     return this.http.get<{ rooms: Room[] }>(this.endpoint + `/api/rooms`);
   }
 
-  getRoom(id: number) {
-    return this.http.get(this.endpoint + `/api/rooms/${id}`);
+  getRoom(id: number): Observable<{ room: Room }> {
+    return this.http.get<{ room: Room }>(this.endpoint + `/api/rooms/${id}`);
   }
 
   createBoard(id: number) {
     return this.http.post(this.endpoint + `/api/rooms/${id}/boards`, { id });
   }
 
-  getBoard(id: number) {
-    return this.http.get(this.endpoint + `/api/rooms/${id}/boards`);
+  getBoard(id: number): Observable<{ board: Board }> {
+    return this.http.get<{ board: Board }>(
+      this.endpoint + `/api/rooms/${id}/boards`
+    );
   }
 
   getPieces(id: number): Observable<{ pieces: Piece[] }> {
@@ -52,6 +56,19 @@ export class ApiService {
       starty: y1,
       endx: x2,
       endy: y2,
+    });
+  }
+
+  joinRoom(roomId: number, userId: number) {
+    console.log("joinging :" + roomId + " " + userId);
+    return this.http.patch(this.endpoint + `/api/rooms/${roomId}/join`, {
+      userId: userId,
+    });
+  }
+
+  leaveRoom(roomId: number, userId: number) {
+    return this.http.patch(this.endpoint + `/api/rooms/${roomId}/leave`, {
+      userId: roomId,
     });
   }
 
@@ -77,13 +94,11 @@ export class ApiService {
     return this.http.get(this.endpoint + `/users/me`);
   }
 
-  joinRoom(roomId: number, userId: number) {
-    return this.http.patch(this.endpoint + `/users/${userId}/join`, {
-      roomId: roomId,
-    });
-  }
-
   getActiveRoom(userId: number) {
     return this.http.get(this.endpoint + `/users/${userId}/rooms`);
+  }
+
+  getUser(userId: number): Observable<{ user: User }> {
+    return this.http.get<{ user: User }>(this.endpoint + `/users/${userId}`);
   }
 }
