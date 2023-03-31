@@ -19,6 +19,34 @@ roomRouter.post("/", async (req, res, next) => {
   return res.json(room.id);
 });
 
+roomRouter.patch("/match", async (req, res, next) => {
+  const rooms = await Room.findAll({
+    where: {
+      Host: !null,
+      Guest: null,
+    },
+    limit: 5,
+  });
+
+  if (rooms.length === 0) {
+    console.log("PLEASE GOOOOOOOOOD");
+    return res.status(404).json({ error: "No rooms found." });
+  }
+
+  let maxMMR = 0;
+  let foundRoom = -1;
+  for (let i = 0; i < rooms.length; i++) {
+    const room = rooms[i];
+    const mmr = room.dataValues.Host.mmr;
+    if (mmr > maxMMR) {
+      maxMMR = mmr;
+      foundRoom = room.dataValues.id;
+    }
+  }
+
+  return res.json(foundRoom);
+});
+
 roomRouter.get("/:id/", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
   if (!room) {

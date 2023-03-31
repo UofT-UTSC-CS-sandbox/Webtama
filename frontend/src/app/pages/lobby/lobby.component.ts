@@ -37,6 +37,9 @@ export class LobbyComponent implements OnInit {
         document.getElementById("roomCreate")!.addEventListener("click", () => {
           this.addRoom();
         });
+        document.getElementById("matchmake")!.addEventListener("click", () => {
+          this.match();
+        });
       },
     });
   }
@@ -55,6 +58,21 @@ export class LobbyComponent implements OnInit {
       roomId = data as number;
       this.showRoom(roomId);
       return roomId;
+    });
+  }
+
+  match() {
+    let userId: number = -1;
+    this.apiService.me().subscribe((userData) => {
+      userId = userData as number;
+      console.log("userId: ", userId);
+
+      let foundRoom: number = -1;
+
+      this.apiService.matchmake().subscribe((data) => {
+        foundRoom = data as number;
+        this.joinRoom(foundRoom, userId);
+      });
     });
   }
 

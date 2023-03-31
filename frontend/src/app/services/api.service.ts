@@ -58,48 +58,70 @@ export class ApiService {
   setToken(token: string) {
     this.headers = new HttpHeaders({
       "Content-Type": "application/json",
-      'Authorization' : `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     });
     console.log("headers: ", this.headers);
-
   }
 
   addRoom(name: string) {
-    return this.http.post(this.endpoint + `/api/rooms`, { name }, this.getAuthHeader());
+    return this.http.post(
+      this.endpoint + `/api/rooms`,
+      { name },
+      this.getAuthHeader()
+    );
   }
 
   getRooms(): Observable<{ rooms: Room[] }> {
-    return this.http.get<{ rooms: Room[] }>(this.endpoint + `/api/rooms`, this.getAuthHeader());
+    return this.http.get<{ rooms: Room[] }>(
+      this.endpoint + `/api/rooms`,
+      this.getAuthHeader()
+    );
+  }
+
+  matchmake() {
+    return this.http.patch(this.endpoint + `/api/rooms/match`, {});
   }
 
   getRoom(id: number) {
-    return this.http.get(this.endpoint + `/api/rooms/${id}`, this.getAuthHeader());
+    return this.http.get<{ room: Room }>(
+      this.endpoint + `/api/rooms/${id}`,
+      this.getAuthHeader()
+    );
   }
 
   createBoard(id: number) {
-    return this.http.post(this.endpoint + `/api/rooms/${id}/boards`, { id }, this.getAuthHeader());
+    return this.http.post(
+      this.endpoint + `/api/rooms/${id}/boards`,
+      { id },
+      this.getAuthHeader()
+    );
   }
 
   getBoard(id: number): Observable<{ board: Board }> {
     return this.http.get<{ board: Board }>(
-      this.endpoint + `/api/rooms/${id}/boards`, this.getAuthHeader()
+      this.endpoint + `/api/rooms/${id}/boards`,
+      this.getAuthHeader()
     );
   }
 
   getPieces(id: number): Observable<{ pieces: Piece[] }> {
     return this.http.get<{ pieces: Piece[]; pieceCount: number }>(
-      this.endpoint + `/api/rooms/${id}/boards/pieces`, this.getAuthHeader()
+      this.endpoint + `/api/rooms/${id}/boards/pieces`,
+      this.getAuthHeader()
     );
   }
 
   makeMove(id: number, x1: number, y1: number, x2: number, y2: number) {
-    return this.http.patch(this.endpoint + `/api/rooms/${id}/boards`, {
-      startx: x1,
-      starty: y1,
-      endx: x2,
-      endy: y2,
-      
-    }, this.getAuthHeader());
+    return this.http.patch(
+      this.endpoint + `/api/rooms/${id}/boards`,
+      {
+        startx: x1,
+        starty: y1,
+        endx: x2,
+        endy: y2,
+      },
+      this.getAuthHeader()
+    );
   }
 
   joinRoom(roomId: number, userId: number) {
@@ -110,67 +132,90 @@ export class ApiService {
   }
 
   leaveRoom(roomId: number, userId: number) {
-    return this.http.patch(this.endpoint + `/api/rooms/${roomId}/leave`, {
-      userId: roomId,
-    }, this.getAuthHeader());
+    return this.http.patch(
+      this.endpoint + `/api/rooms/${roomId}/leave`,
+      {
+        userId: roomId,
+      },
+      this.getAuthHeader()
+    );
   }
 
   signIn(username: string, email: string) {
-    return this.http.post<{ token: string }>(this.endpoint + `/users/signin`, {
-      username,
-      email,
-    }, this.getAuthHeader() ).subscribe({
-      next: (data) => {
-        console.log("data: ", data);
-        this.setToken(data.token);
-      },
-      error: (error) => {
-        console.error("There was an error!", error);
-      }
-    });
+    return this.http
+      .post<{ token: string }>(
+        this.endpoint + `/users/signin`,
+        {
+          username,
+          email,
+        },
+        this.getAuthHeader()
+      )
+      .subscribe({
+        next: (data) => {
+          console.log("data: ", data);
+          this.setToken(data.token);
+        },
+        error: (error) => {
+          console.error("There was an error!", error);
+        },
+      });
   }
 
-  signUp(username: string, email:string) {
-    return this.http.post<{ token: string }>(this.endpoint + `/users/signup`, {
-      username,
-      email,
-      headers: this.headers,
-    }, this.getAuthHeader() ).subscribe({
-      next: (data) => {
-        console.log("data: ", data);
-        this.setToken(data.token);
-      },
-      error: (error) => {
-        console.error("There was an error!", error);
-      }
-    });
+  signUp(username: string, email: string) {
+    return this.http
+      .post<{ token: string }>(
+        this.endpoint + `/users/signup`,
+        {
+          username,
+          email,
+          headers: this.headers,
+        },
+        this.getAuthHeader()
+      )
+      .subscribe({
+        next: (data) => {
+          console.log("data: ", data);
+          this.setToken(data.token);
+        },
+        error: (error) => {
+          console.error("There was an error!", error);
+        },
+      });
   }
 
   signOut() {
-    return this.http.get(this.endpoint + `/users/signout`, this.getAuthHeader() ).subscribe({
-      next: (data) => {
-        console.log("data: ", data);
-        this.setToken("");
-      },
-      error: (error) => {
-        console.error("There was an error!", error);
-      }
-    });
-    
+    return this.http
+      .get(this.endpoint + `/users/signout`, this.getAuthHeader())
+      .subscribe({
+        next: (data) => {
+          console.log("data: ", data);
+          this.setToken("");
+        },
+        error: (error) => {
+          console.error("There was an error!", error);
+        },
+      });
   }
 
   me() {
-    console.log("headers: ", this.getAuthHeader())
+    console.log("SCREAMING ahhhhhhhh");
+    console.log("headers: ", this.getAuthHeader());
 
     return this.http.get(this.endpoint + `/users/me`, this.getAuthHeader());
-
   }
 
   getActiveRoom(userId: number) {
-    return this.http.get(this.endpoint + `/users/${userId}/rooms`, this.getAuthHeader());
+    return this.http.get(
+      this.endpoint + `/users/${userId}/rooms`,
+      this.getAuthHeader()
+    );
   }
 
   getUser(userId: number): Observable<{ user: User }> {
-    return this.http.get<{ user: User }>(this.endpoint + `/users/${userId}`, this.getAuthHeader());
+    return this.http.get<{ user: User }>(
+      this.endpoint + `/users/found/${userId}`,
+      this.getAuthHeader()
+    );
   }
 }
