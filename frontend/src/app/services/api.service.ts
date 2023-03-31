@@ -4,6 +4,8 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { Piece } from "../classes/piece";
 import { Room } from "../classes/room";
+import { Board } from "../classes/board";
+import { User } from "../classes/user";
 import { io, Socket } from "socket.io-client";
 import { AuthService } from "@auth0/auth0-angular";
 import { switchMap } from "rxjs/operators";
@@ -78,8 +80,10 @@ export class ApiService {
     return this.http.post(this.endpoint + `/api/rooms/${id}/boards`, { id }, this.getAuthHeader());
   }
 
-  getBoard(id: number) {
-    return this.http.get(this.endpoint + `/api/rooms/${id}/boards`, this.getAuthHeader());
+  getBoard(id: number): Observable<{ board: Board }> {
+    return this.http.get<{ board: Board }>(
+      this.endpoint + `/api/rooms/${id}/boards`, this.getAuthHeader()
+    );
   }
 
   getPieces(id: number): Observable<{ pieces: Piece[] }> {
@@ -94,6 +98,20 @@ export class ApiService {
       starty: y1,
       endx: x2,
       endy: y2,
+      
+    }, this.getAuthHeader());
+  }
+
+  joinRoom(roomId: number, userId: number) {
+    console.log("joinging :" + roomId + " " + userId);
+    return this.http.patch(this.endpoint + `/api/rooms/${roomId}/join`, {
+      userId: userId,
+    });
+  }
+
+  leaveRoom(roomId: number, userId: number) {
+    return this.http.patch(this.endpoint + `/api/rooms/${roomId}/leave`, {
+      userId: roomId,
     }, this.getAuthHeader());
   }
 
@@ -146,5 +164,13 @@ export class ApiService {
 
     return this.http.get(this.endpoint + `/users/me`, this.getAuthHeader());
 
+  }
+
+  getActiveRoom(userId: number) {
+    return this.http.get(this.endpoint + `/users/${userId}/rooms`, this.getAuthHeader());
+  }
+
+  getUser(userId: number): Observable<{ user: User }> {
+    return this.http.get<{ user: User }>(this.endpoint + `/users/${userId}`, this.getAuthHeader());
   }
 }
