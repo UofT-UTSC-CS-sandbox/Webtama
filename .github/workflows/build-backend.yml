@@ -53,7 +53,7 @@ jobs:
         with:
           host: 159.203.7.225
           username: jasond20
-          key: ${{ secrets.CR_PAT }}
+          key: ${{ secrets.SECRET_KEY }}
           script: |
                   docker login https://ghcr.io -u jasond20
                   docker pull ghcr.io/uoft-utsc-cs-sandbox/backend-jasond20
