@@ -106,7 +106,7 @@ usersRouter.get("/signout", function (req, res, next) {
 });
 
 usersRouter.get("/me", isAuthenticated, async (req, res) => {
-  console.log("SCREAMING" + req.user);
+  console.log("SCREAMING", req);
   if (!req.session.userId) {
     return res.status(401).json({ errors: "Not Authenticaed" });
   }
