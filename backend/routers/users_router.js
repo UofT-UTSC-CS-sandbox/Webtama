@@ -64,6 +64,12 @@ usersRouter.get("/", async (req, res) => {
   return res.json(users);
 });
 
+//Get user by id
+usersRouter.get("/:id", async (req, res) => {
+  const user = await User.findByPk(req.params.id);
+  return res.json({ user });
+});
+
 usersRouter.post("/signin", async (req, res) => {
   sgMail.setApiKey(
     "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"

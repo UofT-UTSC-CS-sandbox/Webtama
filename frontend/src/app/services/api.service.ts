@@ -5,6 +5,7 @@ import { environment } from "../../environments/environment";
 import { Piece } from "../classes/piece";
 import { Room } from "../classes/room";
 import { Board } from "../classes/board";
+import { User } from "../classes/user";
 import { io, Socket } from "socket.io-client";
 import { AuthService } from "@auth0/auth0-angular";
 import { switchMap } from "rxjs/operators";
@@ -95,5 +96,9 @@ export class ApiService {
 
   getActiveRoom(userId: number) {
     return this.http.get(this.endpoint + `/users/${userId}/rooms`);
+  }
+
+  getUser(userId: number): Observable<{ user: User }> {
+    return this.http.get<{ user: User }>(this.endpoint + `/users/${userId}`);
   }
 }

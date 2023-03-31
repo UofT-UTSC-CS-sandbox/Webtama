@@ -58,6 +58,7 @@ export class GameComponent implements OnInit {
         roomId: roomId,
         playerName: "Beta",
       });
+      this.updateName(roomId);
       this.apiService.getBoard(roomId).subscribe({
         next: (data) => {
           console.log("board found" + data + "roomId: " + roomId);
@@ -92,10 +93,28 @@ export class GameComponent implements OnInit {
         playerName: "Beta",
       });
       this.apiService.getRoom(roomId).subscribe((roomData) => {
-        if (roomData.room.host === userId || roomData.room.guest === userId) {
+        if (roomData.room.Host === userId || roomData.room.Guest === userId) {
           this.apiService.leaveRoom(roomId, userId).subscribe();
         }
       });
+    });
+  }
+
+  updateName(roomId: number) {
+    console.log("updateName:");
+    this.apiService.getRoom(roomId).subscribe((roomData) => {
+      console.log(roomData);
+      let player1 = document.getElementById("p1Title");
+      let player2 = document.getElementById("p2Title");
+      if (roomData.room.Host) {
+        player1!.innerHTML = "User: " + roomData.room.Host.toString();
+      }
+      if (roomData.room.Guest) {
+        player2!.innerHTML = "User: " + roomData.room.Guest.toString();
+      }
+
+      player1!.style.visibility = "visible";
+      player2!.style.visibility = "visible";
     });
   }
 
@@ -168,10 +187,10 @@ export class GameComponent implements OnInit {
   checkTurn(userId: number, roomId: number): boolean {
     this.apiService.getRoom(roomId).subscribe((roomData) => {
       this.apiService.getBoard(roomId).subscribe((boardData) => {
-        if (roomData.room.host === userId && boardData.board.turn % 2 === 0) {
+        if (roomData.room.Host === userId && boardData.board.turn % 2 === 0) {
           return true;
         }
-        if (roomData.room.guest === userId && boardData.board.turn % 2 !== 0) {
+        if (roomData.room.Guest === userId && boardData.board.turn % 2 !== 0) {
           return true;
         }
         return false;
