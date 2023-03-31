@@ -3,6 +3,7 @@ import { Router } from "express";
 import multer from "multer";
 import bcrypt from "bcrypt";
 import pkg from "@sendgrid/mail"
+import { isAuthenticated } from "../middleware/helpers.js";
 
 export const usersRouter = Router();
 const upload = multer({ dest: "uploads/" });
@@ -35,6 +36,7 @@ usersRouter.get("/", async (req, res) => {
 });
 
 usersRouter.post("/signin", async (req, res) => {
+  console.log("req.headers", req.headers);
   console.log(req.body);
   let user = await User.findOne({
     where: {
@@ -69,7 +71,8 @@ usersRouter.get("/signout", function (req, res, next) {
   return res.json({ message: "Signed out." });
 });
 
-usersRouter.get("/me", async (req, res) => {
+usersRouter.get("/me", isAuthenticated, async (req, res) => {
+  console.log("req.headers", req.headers);
   if (!req.session.userId) {
     return res.status(401).json({ error: "Not authorized." });
   }

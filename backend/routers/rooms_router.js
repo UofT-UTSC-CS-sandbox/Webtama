@@ -32,6 +32,7 @@ export const roomRouter = Router();
 
 // Endpoint for creating a new game room
 roomRouter.post("/", isAuthenticated, async (req, res, next) => {
+  console.log("req.header", req.headers);
   if (!req.body.name) {
     return res.status(400).json({ error: "Room name is required." });
   }

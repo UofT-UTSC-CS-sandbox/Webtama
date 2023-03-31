@@ -44,7 +44,7 @@ export class ApiService {
         });
       }
     });
-    console.log("headers: ", this.headers);
+    console.log("headers: ", this.getAuthHeader());
   }
 
   private getAuthHeader() {
@@ -142,7 +142,7 @@ export class ApiService {
   }
 
   me() {
-    console.log("headers: ", this.headers)
+    console.log("headers: ", this.getAuthHeader())
 
     return this.http.get(this.endpoint + `/users/me`, this.getAuthHeader());
 
