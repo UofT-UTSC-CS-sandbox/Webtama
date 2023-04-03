@@ -54,6 +54,5 @@ jobs:
           username: root
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
-            docker ps -aq | xargs docker stop | xargs docker rm
             docker pull ghcr.io/uoft-utsc-cs-sandbox/backend-webtama
             docker run -d -p 3000:3000 ghcr.io/uoft-utsc-cs-sandbox/backend-webtama
