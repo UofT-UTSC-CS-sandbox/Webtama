@@ -1,4 +1,4 @@
-name: Publish Angular Skeleton to GHCR
+name: Publish Backend Skeleton to GHCR
 
 on:
   push:
