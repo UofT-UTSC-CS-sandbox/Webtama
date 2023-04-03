@@ -50,7 +50,7 @@ jobs:
       - name: Deploy NodeJS app
         uses: appleboy/ssh-action@master
         with:
-          host: 165.22.225.198
+          host: 159.203.54.94
           username: jasond20
           key: ${{ secrets.SECRET_KEY }}
           script: |
