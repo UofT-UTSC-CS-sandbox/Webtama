@@ -52,7 +52,7 @@ jobs:
         with:
           host: 165.227.32.234
           username: root
-          key: ${{ secrets.SECRET_KEY }}
+          key: ${{ secrets.PRIVATE_KEY }}
           script: |
             docker pull ghcr.io/uoft-utsc-cs-sandbox/backend-webtama
             docker run -d -p 3000:3000 ghcr.io/uoft-utsc-cs-sandbox/backend-webtama
