@@ -6,8 +6,8 @@ on:
     branches:
       - main
     # Only run this workflow if the commit has modified files from frontend
-    #paths:
-    #  - backend/**
+    paths:
+      - backend/**
 
 env:
   IMAGE_NAME: backend-webtama
@@ -50,10 +50,10 @@ jobs:
       - name: Deploy NodeJS app
         uses: appleboy/ssh-action@master
         with:
-          host: 159.203.54.94
+          host: 165.227.32.234
           username: jasond20
           key: ${{ secrets.SECRET_KEY }}
           script: |
-            docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "${{ secrets.SECRET_KEY }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
             docker pull ghcr.io/uoft-utsc-cs-sandbox/backend-jasond20
             docker run -d -p 80:80 ghcr.io/uoft-utsc-cs-sandbox/backend-jasond20
