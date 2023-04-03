@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
-import { ApiService } from 'src/app/services/api.service';
+import { Component, OnInit } from "@angular/core";
+import { AuthService } from "@auth0/auth0-angular";
+import { ApiService } from "src/app/services/api.service";
 
 @Component({
-  selector: 'app-login-button',
+  selector: "app-login-button",
   template: `
     <button class="button__login" (click)="handleLogin()">Log In</button>
   `,
@@ -14,9 +14,8 @@ export class LoginButtonComponent {
   handleLogin(): void {
     this.auth.loginWithRedirect({
       appState: {
-        target: '/',
+        target: "/",
       },
     });
-  
   }
 }

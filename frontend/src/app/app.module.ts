@@ -29,7 +29,7 @@ import { SharedModule } from "./shared/shared.module";
       authorizationParams: {
         redirect_uri: "http://localhost:4200/callback",
         audience: "https://dev-0rubju8i61qqpmgv.us.auth0.com/api/v2/",
-        scope: "read:current_user update:current_user_metadata"
+        scope: "read:current_user update:current_user_metadata",
       },
     }),
   ],
