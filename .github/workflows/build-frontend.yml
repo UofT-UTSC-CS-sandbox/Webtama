@@ -51,9 +51,9 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: 165.227.32.234
-          username: jasond20
+          username: root
           key: ${{ secrets.SECRET_KEY }}
           script: |
-            docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "${{ secrets.SECRET_KEY }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
             docker pull ghcr.io/uoft-utsc-cs-sandbox/frontend-jasond20
             docker run -d -p 4200:4200 ghcr.io/uoft-utsc-cs-sandbox/frontend-jasond20
