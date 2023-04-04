@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.use(express.static("static"));
 const corsOptions = {
   // origin: "http://localhost:4200",
-  origin: "http://webtama.works/:4200",
+  origin: "http://webtama.works",
   credentials: true,
 };
 app.use(cors(corsOptions));
