@@ -12,6 +12,7 @@
 
 table {
   border: 3px solid white;
+  margin-bottom: 0;
 }
 td {
   width: 5.5vw;
@@ -60,6 +61,7 @@ td {
 #cards {
   width: 90%;
   padding: 1%;
+  margin-top: 0;
   background-color: var(--Base);
   color: var(--lightBase);
   border: 2.5px solid var(--lightBase);
@@ -90,17 +92,18 @@ td {
 h1,
 h2 {
   visibility: hidden;
+  margin-bottom: 2%;
 }
 
 .card:hover {
   background-color: var(--darkBase);
-  color: var(--mainColor);
+  color: var(--lightBase);
   border-color: var(--lightBase);
 }
 
 .card:active {
   box-shadow: 0 1px #666;
-  transform: translateY(3px);
+  transform: translateY(2px);
 }
 
 .info {

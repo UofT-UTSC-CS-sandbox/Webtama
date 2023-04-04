@@ -199,6 +199,31 @@ export class GameComponent implements OnInit {
     return false;
   }
 
+  checkWin() {
+    const kings = document.querySelectorAll(".king");
+    if (kings.length === 1) {
+      if (kings[0].classList.contains("aTeam")) {
+        return 1;
+      }
+      return 2;
+    }
+    for (let i = 0; i < kings.length; i++) {
+      if (
+        kings[i].classList.contains("aTeam") &&
+        kings[i].getAttribute("data-y") === "5"
+      ) {
+        return 1;
+      } else if (
+        kings[i].classList.contains("bTeam") &&
+        kings[i].getAttribute("data-y") === "0"
+      ) {
+        return 2;
+      }
+    }
+
+    return 0;
+  }
+
   cleanBoard() {
     let pieces = document.querySelectorAll("p");
     pieces.forEach((piece) => {
