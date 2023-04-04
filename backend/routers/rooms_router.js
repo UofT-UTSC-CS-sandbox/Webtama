@@ -3,6 +3,7 @@ import { Room } from "../models/rooms.js";
 import { User } from "../models/users.js";
 import { isAuthenticated } from "../middleware/helpers.js";
 import { Board } from "../models/boards.js";
+import { cards, shuffle } from "../models/cards.js";
 import { Piece } from "../models/pieces.js";
 // import { getUserInfo } from "../middleware/helpers.js";
 
@@ -32,7 +33,6 @@ roomRouter.patch("/match", async (req, res, next) => {
   });
 
   if (rooms.length === 0) {
-    console.log("PLEASE GOOOOOOOOOD");
     return res.status(404).json({ error: "No rooms found." });
   }
 
@@ -67,7 +67,6 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
       .status(404)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
-  console.log(req.body);
   const user = await User.findByPk(req.body.userId);
   if (!user) {
     return res
@@ -266,4 +265,25 @@ roomRouter.get("/:id/boards/pieces", async (req, res, next) => {
   }
   const pieces = await Piece.findAll({ where: { BoardId: board.id } });
   return res.json({ pieces });
+});
+
+roomRouter.patch("/:id/boards/draw", async (req, res, next) => {
+  let room = await Room.findByPk(req.params.id);
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+  const board = await Board.findOne({ where: { RoomId: req.params.id } });
+
+  if (!board.card1) {
+    board.card1 = shuffle();
+  }
+  while (!board.card2 || board.card2 === board.card1) {
+    board.card2 = shuffle();
+  }
+
+  await board.save();
+  await board.reload();
+  return res.json(board);
 });

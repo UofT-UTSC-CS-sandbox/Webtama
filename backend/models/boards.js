@@ -7,4 +7,12 @@ export const Board = sequelize.define("Board", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  card1: {
+    type: DataTypes.ARRAY(DataTypes.JSON),
+    allowNull: true,
+  },
+  card2: {
+    type: DataTypes.ARRAY(DataTypes.JSON),
+    allowNull: true,
+  },
 });

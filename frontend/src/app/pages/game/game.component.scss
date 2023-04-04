@@ -54,41 +54,51 @@ td {
   background-color: indigo;
 }
 
+#cards {
+  width: 90%;
+  height: 20%;
+  background-color: var(--Base);
+  color: var(--lightBase);
+  border: 2px solid var(--lightBase);
+}
+
+.card {
+  width: 47%;
+  height: 95%;
+  padding: 1%;
+  border-radius: 1em;
+  border-color: var(--lightBase);
+}
+
 /* Interact.css*/
 
-h1 {
+h1,
+h2 {
   visibility: hidden;
 }
 
-.kiaButton,
-.slide {
+.kiaButton {
+  display: inline;
   color: white;
   background-color: var(--mainColor);
-  /* center the button */
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
   border-color: #0f1225;
-  font-size: 84%;
-  width: 18vw;
-  height: 5vh;
-  margin: 1%, auto;
+  font-size: 120%;
+  margin: 1%;
   padding: 1%, 0;
-  border-radius: 12em;
   border: 1.5px solid;
-  transition-duration: 0.35s;
+  transition-duration: 0.25s;
   box-shadow: 0 3px #999;
   cursor: pointer;
 }
 
 .kiaButton:hover,
-.slide:hover {
-  background-color: white;
+.card:hover {
+  background-color: var(--darkBase);
   color: var(--mainColor);
 }
 
 .kiaButton:active,
-.slide:active {
+.card:active {
   box-shadow: 0 1px #666;
   transform: translateY(3px);
 }
