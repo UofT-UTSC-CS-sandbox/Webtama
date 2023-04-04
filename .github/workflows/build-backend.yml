@@ -54,6 +54,6 @@ jobs:
           username: root
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
-            docker-compose down
-            docker-compose pull
-            docker-compose up -d
+            docker stop $(docker ps -a -q --filter "ancestor=ghcr.io/uoft-utsc-cs-sandbox/backend-webtama")
+            docker pull ghcr.io/uoft-utsc-cs-sandbox/backend-webtama
+            docker run -d -p 3000:3000 ghcr.io/uoft-utsc-cs-sandbox/backend-webtama
