@@ -1,0 +1,64 @@
+version: '3.7'
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs 
+      - ./vhost:/etc/nginx/vhost.d 
+      - ./html:/usr/share/nginx/html
+  nginx-proxy-acme:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+      - ./vhost:/etc/nginx/vhost.d
+      - ./html:/usr/share/nginx/html
+      - ./acme:/etc/acme.sh
+    environment:
+        - DEFAULT_EMAIL=jasoncndai@gmail.com
+    
+  frontend:
+    image: ghcr.io/uoft-utsc-cs-sandbox/frontend-webtama
+    container_name: frontend
+    restart: always
+    expose:
+      - 80
+    environment:
+      - VIRTUAL_HOST=webtama.works
+      - LETSENCRYPT_HOST=webtama.works
+    image: ghcr.io/uoft-utsc-cs-sandbox/backend-webtama
+    container_name: backend
+    restart: always
+    expose:
+      - 3000
+    environment:
+      - VIRTUAL_HOST=api.webtama.works
+      - LETSENCRYPT_HOST=api.webtama.works
+      
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion:2.0
+    container_name: nginx-proxy-le
+    restart: always
+    environment:
+      - DEFAULT_EMAIL=jasoncndai@gmail.com
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    network_mode: bridge
+    
+volumes:
+  nginx_conf_ssl:
+  letsencrypt_certs:
+  certbot_acme_challenge:
+  
+
