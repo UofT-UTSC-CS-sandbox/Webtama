@@ -18,7 +18,8 @@ app.use(bodyParser.json());
 
 app.use(express.static("static"));
 const corsOptions = {
-  origin: "http://localhost:4200",
+  // origin: "http://localhost:4200",
+  origin: "http://webtama.works/:4200",
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -76,7 +77,8 @@ app.use("/api/rooms", roomRouter);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:4200",
+    // origin: "http://localhost:4200",
+    origin: "http://webtama.works:4200",
     methods: ["GET", "POST"],
   },
 });

@@ -1,0 +1,117 @@
+version: '3.7'
+
+services:
+  cli:
+    build: ./cli
+    image: evgeniy-khyst/letsencrypt-docker-compose-cli
+    user: ${CURRENT_USER}
+    group_add:
+      - ${DOCKER_GROUP}
+    environment:
+      - COMPOSE_PROJECT_NAME
+      - CURRENT_USER
+      - DOCKER_GROUP
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/workdir
+    profiles:
+      - config
+      
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs 
+      - ./vhost:/etc/nginx/vhost.d 
+      - ./html:/usr/share/nginx/html
+  nginx-proxy-acme:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+      - ./vhost:/etc/nginx/vhost.d
+      - ./html:/usr/share/nginx/html
+      - ./acme:/etc/acme.sh
+    environment:
+        - DEFAULT_EMAIL=<your_email>
+        
+  certbot:
+    build: ./certbot
+    image: evgeniy-khyst/certbot
+    environment:
+      - DRY_RUN
+    volumes:
+      - ./config.json:/letsencrypt-docker-compose/config.json:ro
+      - letsencrypt_certs:/etc/letsencrypt
+      - certbot_acme_challenge:/var/www/certbot
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'test -n "$$(ls -A /etc/letsencrypt/live/)" || test "$$DRY_RUN" == "true" || exit 1',
+        ]
+      interval: 30s
+      timeout: 30s
+      start_period: 30s
+      retries: 5
+    depends_on:
+      nginx:
+        condition: service_healthy
+    restart: unless-stopped
+
+  cron:
+    build: ./cron
+    image: evgeniy-khyst/cron
+    environment:
+      - COMPOSE_PROJECT_NAME
+      - DRY_RUN
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/workdir:ro
+    depends_on:
+      certbot:
+        condition: service_healthy
+    restart: unless-stopped
+    
+  frontend:
+    image: ghcr.io/uoft-utsc-cs-sandbox/frontend-<your github username>
+    container_name: frontend
+    restart: always
+    expose:
+      - 80
+    environment:
+      - VIRTUAL_HOST=<your_domain>
+      - LETSENCRYPT_HOST=<your_domain>
+  backend:
+    image: ghcr.io/uoft-utsc-cs-sandbox/backend-<your github username>
+    container_name: backend
+    restart: always
+    expose:
+      - 3000
+    environment:
+      - VIRTUAL_HOST=api.<your_domain>
+      - LETSENCRYPT_HOST=api.<your_domain>
+      
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion:2.0
+    container_name: nginx-proxy-le
+    restart: always
+    environment:
+      - DEFAULT_EMAIL=you@example.com
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    network_mode: bridge
+    
+volumes:
+  nginx_conf_ssl:
+  letsencrypt_certs:
+  certbot_acme_challenge:

@@ -2,22 +2,22 @@ import { User } from "../models/users.js";
 import { Router } from "express";
 import multer from "multer";
 import bcrypt from "bcrypt";
-import sgMail from "@sendgrid/mail";
+// import sgMail from "@sendgrid/mail";
 
 export const usersRouter = Router();
 const upload = multer({ dest: "uploads/" });
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-const msg = {
-  to: "jasoncndai@gmail.com",
-  from: "keia.r.ahmati@gmail.com",
-  subject: "user login",
-  text: "user yokiayo logged in!",
-  html: "<strong>and easy to do anywhere, even with Node.js</strong>",
-};
+// const msg = {
+//   to: "jasoncndai@gmail.com",
+//   from: "keia.r.ahmati@gmail.com",
+//   subject: "user login",
+//   text: "user yokiayo logged in!",
+//   html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+// };
 
-sgMail.send(msg).then(() => {});
+// sgMail.send(msg).then(() => {});
 
 usersRouter.post("/signup", async (req, res) => {
   const user = User.build({
@@ -30,14 +30,14 @@ usersRouter.post("/signup", async (req, res) => {
   const salt = bcrypt.genSaltSync(10);
   user.password = bcrypt.hashSync(password, salt);
   */
-  sgMail
-    .send(msg)
-    .then(() => {
-      console.log("Email sent");
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  // sgMail
+  //   .send(msg)
+  //   .then(() => {
+  //     console.log("Email sent");
+  //   })
+  //   .catch((error) => {
+  //     console.error(error);
+  //   });
 
   try {
     await user.save();
