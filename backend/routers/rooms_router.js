@@ -6,6 +6,7 @@ import { Board } from "../models/boards.js";
 import { cards, shuffle } from "../models/cards.js";
 import { Piece } from "../models/pieces.js";
 import { where } from "sequelize";
+// import { json } from "body-parser";
 // import { getUserInfo } from "../middleware/helpers.js";
 
 export const roomRouter = Router();
@@ -292,12 +293,14 @@ roomRouter.patch("/:id/boards/draw", async (req, res, next) => {
 
   if (!board.card1) {
     console.log("tryna get card1");
-    board.card1 = shuffle();
+    const card1 = shuffle();
+    board.card1 = JSON.stringify(card1);
   }
   while (!board.card2 || board.card2 === board.card1) {
     console.log(board.card1);
     console.log("tryna get card 2");
-    board.card2 = shuffle();
+    const card2 = shuffle();
+    board.card2 = JSON.stringify(card2);
   }
 
   console.log("shuffle");
