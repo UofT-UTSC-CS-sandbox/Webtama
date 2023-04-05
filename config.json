@@ -6,6 +6,14 @@
       "wwwSubdomain": true,
       "testCert": true,
       "rsaKeySize": 4096,
+      "requestHandler": "staticContent"
+    },
+    {
+      "domain": "webtama.works",
+      "email": "jasoncndai@gmail.com",
+      "wwwSubdomain": true,
+      "testCert": true,
+      "rsaKeySize": 4096,
       "requestHandler": "reverseProxy",
       "upstream": "webtama.works:3000",
       "websockets": false,
