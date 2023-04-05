@@ -190,11 +190,6 @@ export class GameComponent implements OnInit {
         this.squareSelect(roomId, startx, starty, startx + x, starty + y);
       });
     }
-    let cards = document.querySelectorAll(".card");
-    cards.forEach((card) => {
-      let new_card = card.cloneNode(true);
-      card.parentNode!.replaceChild(new_card, card);
-    });
   }
 
   removeSquareListeners() {
@@ -247,6 +242,12 @@ export class GameComponent implements OnInit {
           endy,
         });
       });
+
+    let cards = document.querySelectorAll(".card");
+    cards.forEach((card) => {
+      let new_card = card.cloneNode(true);
+      card.parentNode!.replaceChild(new_card, card);
+    });
 
     this.loadAudio("move");
   }
