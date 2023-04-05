@@ -33,8 +33,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "3000:3000"
-      - "4200:4200"
     healthcheck:
       test: ["CMD", "nc", "-z", "nginx", "80"]
       interval: 30s
@@ -97,7 +95,7 @@ services:
     container_name: frontend
     restart: always
     expose:
-      - 4200
+      - 80
     environment:
       - VIRTUAL_HOST=webtama.works
       - LETSENCRYPT_HOST=webtama.works
