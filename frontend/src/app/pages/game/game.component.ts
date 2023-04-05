@@ -164,22 +164,24 @@ export class GameComponent implements OnInit {
     } else {
       cardElement = document.getElementById("card2");
     }
-    for (let i = 0; i < cardElement!.getAttribute("data-card")!.length; i++) {
-      const x = cardElement!.getAttribute("data-card")![i][0];
-      const y = cardElement!.getAttribute("data-card")![i][1];
-      // if (startx + x > 5 || startx + x < 0 || starty + y > 5 || starty + y < 0)
-      //   continue;
-      // let square = document.querySelector(
-      //   `[data-row="${starty + y}"][data-col="${startx + x}"]`
-      // );
-      // let child = square!.firstElementChild;
-      // if (child !== null && child.classList.contains(team)) {
-      //   continue;
-      // }
-      // square!.classList.add("selected");
-      // square!.addEventListener("click", (e) => {
-      //   this.squareSelect;
-      // });
+
+    let moveArray = JSON.parse(cardElement!.getAttribute("data-card")!);
+    for (let i = 0; i < moveArray.length; i++) {
+      const x = moveArray[i][0];
+      const y = moveArray[i][1];
+      if (startx + x > 5 || startx + x < 0 || starty + y > 5 || starty + y < 0)
+        continue;
+      let square = document.querySelector(
+        `[data-row="${starty + y}"][data-col="${startx + x}"]`
+      );
+      let child = square!.firstElementChild;
+      if (child !== null && child.classList.contains(team)) {
+        continue;
+      }
+      square!.classList.add("selected");
+      square!.addEventListener("click", (e) => {
+        this.squareSelect;
+      });
     }
   }
 
@@ -341,9 +343,9 @@ export class GameComponent implements OnInit {
         let card1Element = document.getElementById("card1")!;
         let card2Element = document.getElementById("card2")!;
         card1Element!.innerHTML = card1[0].toUpperCase();
-        card1Element!.setAttribute("data-card", card1[1]);
+        card1Element!.setAttribute("data-card", JSON.stringify(card1[1]));
         card2Element!.innerHTML = card2[0].toUpperCase();
-        card2Element!.setAttribute("data-card", card2[1]);
+        card2Element!.setAttribute("data-card", JSON.stringify(card2[1]));
         console.log("card elements");
         console.log(card1Element.getAttribute("data-card"));
         console.log(card1Element.getAttribute("data-card")!.length);
