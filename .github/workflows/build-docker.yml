@@ -49,6 +49,7 @@ jobs:
           username: root
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
+            docker pull ghcr.io/uoft-utsc-cs-sandbox/docker-compose
             docker compose down
             docker compose build
             docker compose up -d
