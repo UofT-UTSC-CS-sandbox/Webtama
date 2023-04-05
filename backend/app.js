@@ -68,37 +68,40 @@ app.post('/create-checkout-session', async (req, res) => {
       },
     ],
     mode: 'payment',
-    success_url: 'http://localhost:4200',
+    success_url: `http://localhost:4200?paymentId={CHECKOUT_SESSION_ID}`,
     cancel_url: 'http://localhost:4200',
   });
   return res.json(session.id);
 });
 
 // Find your endpoint's secret in your Dashboard's webhook settings
-const endpointSecret = 'whsec_...';
+const endpointSecret = 'whsec_d4f160cfaa691bec75a1f1b0a84a626ca7f05593170cafbdcbf7313b9a31dc28';
 
-const fulfillOrder = (lineItems) => {
+const fulfillOrder = (session) =>{
   // TODO: fill me in
-  console.log("Fulfilling order", lineItems);
+  console.log("Fulfilling order");
 }
 
 app.post('/webhook', bodyParser.raw({type: 'application/json'}), async (request, response) => {
   const payload = request.body;
   const sig = request.headers['stripe-signature'];
-
+  /** 
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
   } catch (err) {
+    console.log(err.message);
     return response.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   // Handle the checkout.session.completed event
-  if (event.type === 'checkout.session.completed') {
+  */
+  if (payload.type === 'payment_intent.succeeded') {
+    /** 
     // Retrieve the session. If you require line items in the response, you may include them by expanding line_items.
     const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
-      session.id,
+      payload.data.object.id,
       {
         expand: ['line_items'],
       }
@@ -106,7 +109,9 @@ app.post('/webhook', bodyParser.raw({type: 'application/json'}), async (request,
     const lineItems = session.line_items;
 
     // Fulfill the purchase...
-    fulfillOrder(lineItems);
+    */
+    fulfillOrder();
+    
   }
 
   response.status(200).end();

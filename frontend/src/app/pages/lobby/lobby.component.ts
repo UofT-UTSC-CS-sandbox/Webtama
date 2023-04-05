@@ -60,8 +60,6 @@ export class LobbyComponent implements OnInit {
         console.log(res);
       });
     });
-
-
   }
 
   checkAuth() {
