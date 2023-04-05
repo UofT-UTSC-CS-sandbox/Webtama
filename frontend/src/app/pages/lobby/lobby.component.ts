@@ -6,6 +6,8 @@ import { ViewEncapsulation } from "@angular/core";
 import { HttpClient } from '@angular/common/http';
 import { switchMap } from 'rxjs/operators';
 import { StripeService } from 'ngx-stripe';
+import { JSON } from "sequelize";
+import { Json } from "sequelize/types/utils";
 
 @Component({
   selector: "app-lobby",
@@ -51,10 +53,15 @@ export class LobbyComponent implements OnInit {
 
   checkout() {
     // Check the server.js tab to see an example implementation
-    console.log("checkout");
-    this.apiService.checkout().subscribe((data) => {
-      console.log(data);
+    const session = this.apiService.checkout();
+    session.subscribe((data) => {
+      const id = data as string;
+      this.stripeService.redirectToCheckout({ sessionId: id }).subscribe((res) => {
+        console.log(res);
+      });
     });
+
+
   }
 
   checkAuth() {
