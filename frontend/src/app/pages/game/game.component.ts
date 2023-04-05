@@ -351,6 +351,10 @@ export class GameComponent implements OnInit {
         }
       });
       this.apiService.draw(roomId).subscribe();
+      this.apiService.getBoard(roomId).subscribe((data) => {
+        document.getElementById("card1")!.innerHTML = data.board.card1[0];
+        document.getElementById("card2")!.innerHTML = data.board.card2[0];
+      });
     });
   }
 }
