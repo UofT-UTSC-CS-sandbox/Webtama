@@ -21,11 +21,16 @@ export class GameComponent implements OnInit {
     this.socket = io("http://localhost:3000");
   }
 
-  async loadAudio() {
+  async loadAudio(event: string) {
     const audioCtx = new AudioContext();
     let buffer: AudioBuffer;
 
-    const audio = new Audio("http://localhost:4200/assets/audio/moveSound.mp3");
+    let audio = new Audio("http://localhost:4200/assets/audio/moveSound.mp3");
+    if (event === "win") {
+      audio = new Audio("http://localhost:4200/assets/audio/win.wav");
+    } else if (event === "jeer") {
+      audio = new Audio("http://localhost:4200/assets/audio/jeer.wav");
+    }
 
     const source = audioCtx.createMediaElementSource(audio);
     source.connect(audioCtx.destination);
@@ -33,11 +38,12 @@ export class GameComponent implements OnInit {
   }
 
   async getRoomId() {
-    let userId: number = 1;
-    // this.apiService.me().subscribe((data) => {
-    //   userId = data as number;
-    // });
+    let userId: string = "-1";
     let roomId: number = -1;
+
+    this.apiService.me().subscribe((data) => {
+      userId = data as string;
+    });
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       roomId = data as number;
       return roomId;
@@ -49,8 +55,12 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this.cleanBoard();
     //dynamic
-    let userId: number = 1;
+    let userId: string = "-1";
     let roomId: number = -1;
+
+    this.apiService.me().subscribe((data) => {
+      userId = data as string;
+    });
 
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       roomId = data as number;
@@ -68,6 +78,7 @@ export class GameComponent implements OnInit {
           console.log(err.status);
           if (err.status === 404) {
             this.apiService.createBoard(roomId).subscribe();
+            this.apiService.draw(roomId).subscribe();
             this.apiService.socket.emit("move", { roomId: roomId });
           }
         },
@@ -76,18 +87,27 @@ export class GameComponent implements OnInit {
 
     this.apiService.socket.on("game state updated", (data) => {
       this.cleanBoard();
-      console.log("game state updated");
       this.updateBoard();
+    });
+
+    this.apiService.socket.on("jeer", (data) => {
+      document.getElementById("crowdJeer")!.innerHTML = data.message;
+      this.loadAudio("jeer");
+    });
+    this.apiService.socket.on("player joined", (data) => {
+      this.updateName(roomId);
     });
   }
 
   ngOnDestroy() {
     //dynamic
-    let userId: number = 1;
+    let userId: string = "-1";
+    let roomId: number = -1;
 
+    this.apiService.me().subscribe((data) => {
+      userId = data as string;
+    });
     this.apiService.getActiveRoom(userId).subscribe((data) => {
-      let roomId: number = data as number;
-
       this.apiService.socket.emit("leave room", {
         roomId: roomId,
         playerName: "Beta",
@@ -118,7 +138,7 @@ export class GameComponent implements OnInit {
     });
   }
 
-  pieceSelect(x: number, y: number) {
+  pieceSelect(x: number, y: number, roomId: number) {
     let piece = document.querySelector(
       `[data-x="${x}"][data-y="${y}"]`
     ) as HTMLElement;
@@ -127,17 +147,10 @@ export class GameComponent implements OnInit {
     let pieces = document.querySelectorAll("p");
     pieces.forEach((piece) => {
       let new_piece = piece.cloneNode(true);
-      if (piece.parentNode !== null)
-        piece.parentNode.replaceChild(new_piece, piece);
+      piece.parentNode!.replaceChild(new_piece, piece);
     });
 
     let squares = document.querySelectorAll("td");
-    let userId: number = 1;
-    let roomId: number = -1;
-
-    this.apiService.getActiveRoom(userId).subscribe((data) => {
-      roomId = data as number;
-    });
     squares.forEach((square) => {
       const squareX = square.getAttribute("data-col");
       const squareY = square.getAttribute("data-row");
@@ -149,6 +162,57 @@ export class GameComponent implements OnInit {
         this.makeMove(roomId, x, y, parseInt(squareX), parseInt(squareY));
       });
     });
+  }
+
+  cardSelect(
+    roomId: number,
+    card: string,
+    startx: number,
+    starty: number,
+    team: string
+  ) {
+    // const cardElement = document.getElementById(card);
+    // cardElement!.innerHTML = data.board.card[0];
+    this.apiService.getBoard(roomId).subscribe((data) => {
+      for (let i = 0; i < data.board.card[1].length; i++) {
+        const x = data.board.card[1][i][0];
+        const y = data.board.card[1][i][1];
+        if (
+          startx + x > 5 ||
+          startx + x < 0 ||
+          starty + y > 5 ||
+          starty + y < 0
+        )
+          continue;
+        let square = document.querySelector(
+          `[data-row="${starty + y}"][data-col="${startx + x}"]`
+        );
+        let child = square!.firstElementChild;
+        if (child !== null && child.classList.contains(team)) {
+          continue;
+        }
+        square!.classList.add("selected");
+        square!.addEventListener("click", (e) => {
+          this.squareSelect;
+        });
+      }
+    });
+  }
+
+  squareSelect(
+    roomId: number,
+    startx: number,
+    starty: number,
+    x: number,
+    y: number
+  ) {
+    let squares = document.querySelectorAll("td");
+    squares.forEach((square) => {
+      square.classList.remove("selected");
+      let new_square = square.cloneNode(true);
+      square.parentNode!.replaceChild(new_square, square);
+    });
+    this.makeMove(roomId, startx, starty, x, y);
   }
 
   makeMove(
@@ -181,10 +245,10 @@ export class GameComponent implements OnInit {
         });
       });
 
-    this.loadAudio();
+    this.loadAudio("move");
   }
 
-  checkTurn(userId: number, roomId: number): boolean {
+  checkTurn(userId: string, roomId: number): boolean {
     this.apiService.getRoom(roomId).subscribe((roomData) => {
       this.apiService.getBoard(roomId).subscribe((boardData) => {
         if (roomData.room.Host === userId && boardData.board.turn % 2 === 0) {
@@ -201,10 +265,16 @@ export class GameComponent implements OnInit {
 
   checkWin() {
     const kings = document.querySelectorAll(".king");
+    let jeer = document.getElementById("crowdJeer")!;
     if (kings.length === 1) {
       if (kings[0].classList.contains("aTeam")) {
+        jeer.innerHTML =
+          document.getElementById("p1Title")!.innerHTML + " wins!";
+        this.loadAudio("win");
         return 1;
       }
+      jeer.innerHTML = document.getElementById("p2Title")!.innerHTML + " wins!";
+      this.loadAudio("win");
       return 2;
     }
     for (let i = 0; i < kings.length; i++) {
@@ -212,15 +282,20 @@ export class GameComponent implements OnInit {
         kings[i].classList.contains("aTeam") &&
         kings[i].getAttribute("data-y") === "5"
       ) {
+        jeer.innerHTML =
+          document.getElementById("p1Title")!.innerHTML + " wins!";
+        this.loadAudio("win");
         return 1;
       } else if (
         kings[i].classList.contains("bTeam") &&
         kings[i].getAttribute("data-y") === "0"
       ) {
+        jeer.innerHTML =
+          document.getElementById("p2Title")!.innerHTML + " wins!";
+        this.loadAudio("win");
         return 2;
       }
     }
-
     return 0;
   }
 
@@ -232,9 +307,12 @@ export class GameComponent implements OnInit {
   }
 
   updateBoard() {
-    //dynamic
-    let userId: number = 1;
+    let userId: string = "-1";
     let roomId: number = -1;
+
+    this.apiService.me().subscribe((data) => {
+      userId = data as string;
+    });
 
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       roomId = data as number;
@@ -258,7 +336,7 @@ export class GameComponent implements OnInit {
             e.stopPropagation();
             const x = piece.xpos;
             const y = piece.ypos;
-            this.pieceSelect(x, y);
+            this.pieceSelect(x, y, roomId);
           };
 
           display.addEventListener("click", pieceEvent);
@@ -272,6 +350,7 @@ export class GameComponent implements OnInit {
           square.appendChild(display);
         }
       });
+      this.apiService.draw(roomId).subscribe();
     });
   }
 }

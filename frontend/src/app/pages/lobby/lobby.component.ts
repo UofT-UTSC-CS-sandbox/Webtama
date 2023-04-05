@@ -62,9 +62,9 @@ export class LobbyComponent implements OnInit {
   }
 
   match() {
-    let userId: number = -1;
+    let userId = "-1";
     this.apiService.me().subscribe((userData) => {
-      userId = userData as number;
+      userId = userData as string;
       console.log("userId: ", userId);
 
       let foundRoom: number = -1;
@@ -85,10 +85,10 @@ export class LobbyComponent implements OnInit {
     joinBtn.classList.add("joinButton");
     joinBtn.setAttribute("roomId", roomId.toString());
     joinBtn.innerHTML = "Join";
-    let userId = 1;
-    // this.apiService.me().subscribe((data) => {
-    //   userId = data as number;
-    // });
+    let userId = "-1";
+    this.apiService.me().subscribe((data) => {
+      userId = data.userId as string;
+    });
     joinBtn.addEventListener("click", () => {
       this.joinRoom(roomId, userId);
     });
@@ -97,7 +97,7 @@ export class LobbyComponent implements OnInit {
     lobbyList.appendChild(display);
   }
 
-  joinRoom(roomId: number, userId: number) {
+  joinRoom(roomId: number, userId: String) {
     this.apiService.joinRoom(roomId, userId).subscribe((data) => {
       console.log(data);
       this.goToGame();

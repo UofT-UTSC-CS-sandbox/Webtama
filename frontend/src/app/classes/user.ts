@@ -6,4 +6,5 @@ export interface User {
   mmr: number;
   premium: boolean;
   activeRoom: number;
+  authId: string;
 }

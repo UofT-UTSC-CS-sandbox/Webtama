@@ -22,10 +22,8 @@ export class ApiService {
   private accessToken: string;
 
   constructor(private http: HttpClient, private authService: AuthService) {
-    //console.log(this.endpoint);
     this.headers = new HttpHeaders({
       "Content-Type": "application/json",
-      // 'Cookie': document.cookie
     });
     this.accessToken = "";
     this.socket = io(this.endpoint);
@@ -97,7 +95,7 @@ export class ApiService {
     );
   }
 
-  getBoard(id: number): Observable<{ board: Board }> {
+  getBoard(id: number): Observable<any> {
     return this.http.get<{ board: Board }>(
       this.endpoint + `/api/rooms/${id}/boards`,
       this.getAuthHeader()
@@ -124,18 +122,26 @@ export class ApiService {
     );
   }
 
-  joinRoom(roomId: number, userId: number) {
+  draw(id: number) {
+    return this.http.patch(
+      this.endpoint + `/api/rooms/${id}/boards/draw`,
+      {},
+      this.getAuthHeader()
+    );
+  }
+
+  joinRoom(roomId: number, userId: String) {
     console.log("joinging :" + roomId + " " + userId);
     return this.http.patch(this.endpoint + `/api/rooms/${roomId}/join`, {
       userId: userId,
     });
   }
 
-  leaveRoom(roomId: number, userId: number) {
+  leaveRoom(roomId: number, userId: string) {
     return this.http.patch(
       this.endpoint + `/api/rooms/${roomId}/leave`,
       {
-        userId: roomId,
+        userId: userId,
       },
       this.getAuthHeader()
     );
@@ -198,14 +204,13 @@ export class ApiService {
       });
   }
 
-  me() {
-    console.log("SCREAMING ahhhhhhhh");
+  me(): Observable<any> {
     console.log("headers: ", this.getAuthHeader());
 
     return this.http.get(this.endpoint + `/users/me`, this.getAuthHeader());
   }
 
-  getActiveRoom(userId: number) {
+  getActiveRoom(userId: String) {
     return this.http.get(
       this.endpoint + `/users/${userId}/rooms`,
       this.getAuthHeader()

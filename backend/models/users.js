@@ -20,8 +20,13 @@ export const User = sequelize.define("User", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  activeRoom:{
+  activeRoom: {
     type: DataTypes.INTEGER,
     defaultValue: null,
-  }
+  },
+  authId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
 });

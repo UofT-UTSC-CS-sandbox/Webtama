@@ -5,6 +5,7 @@ import { isAuthenticated } from "../middleware/helpers.js";
 import { Board } from "../models/boards.js";
 import { cards, shuffle } from "../models/cards.js";
 import { Piece } from "../models/pieces.js";
+import { where } from "sequelize";
 // import { getUserInfo } from "../middleware/helpers.js";
 
 export const roomRouter = Router();
@@ -67,7 +68,11 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
       .status(404)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
-  const user = await User.findByPk(req.body.userId);
+  const user = await User.findOne({
+    where: {
+      authId: req.body.userId,
+    },
+  });
   if (!user) {
     return res
       .status(404)
@@ -95,7 +100,11 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
       .status(405)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
-  const user = await User.findByPk(req.body.userId);
+  const user = await User.findOne({
+    where: {
+      authId: req.body.userId,
+    },
+  });
   if (!user) {
     return res
       .status(405)

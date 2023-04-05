@@ -25,6 +25,7 @@ usersRouter.post("/signup", isAuthenticated, userInfo, async (req, res) => {
   const user = User.build({
     username: req.user.identities[0].username,
     email: req.user.identities[0].email,
+    authId: req.user.identities[0].user_id,
   });
   // generate password - salted and hashed
   /** 
@@ -80,7 +81,6 @@ usersRouter.post("/signin", async (req, res) => {
   //     console.error(error);
   //   });
 
-  console.log(req.body);
   let user = await User.findOne({
     where: {
       email: req.body.email,
@@ -98,6 +98,7 @@ usersRouter.post("/signin", async (req, res) => {
   }
   req.session.userId = user.id;
   req.session.save();
+  console.log("USER", user);
   return res.json(user);
 });
 
@@ -114,13 +115,4 @@ usersRouter.get("/me", isAuthenticated, userInfo, async (req, res) => {
   return res.json({
     userId: req.user.identities[0].user_id,
   });
-});
-
-usersRouter.get("/:id/rooms", async (req, res) => {
-  const user = await User.findByPk(req.params.id);
-  if (!user) {
-    return res.status(404).json({ error: "User not found." });
-  }
-  const roomId = user.activeRoom;
-  return res.json(roomId);
 });
