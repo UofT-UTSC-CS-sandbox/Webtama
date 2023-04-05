@@ -3,6 +3,9 @@ import { Router } from "@angular/router";
 import { ApiService } from "../../services/api.service";
 import { AuthService } from "@auth0/auth0-angular";
 import { ViewEncapsulation } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
+import { switchMap } from 'rxjs/operators';
+import { StripeService } from 'ngx-stripe';
 
 @Component({
   selector: "app-lobby",
@@ -17,7 +20,9 @@ export class LobbyComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient,
+    private stripeService: StripeService
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +46,14 @@ export class LobbyComponent implements OnInit {
           this.match();
         });
       },
+    });
+  }
+
+  checkout() {
+    // Check the server.js tab to see an example implementation
+    console.log("checkout");
+    this.apiService.checkout().subscribe((data) => {
+      console.log(data);
     });
   }
 

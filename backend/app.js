@@ -10,6 +10,7 @@ import cors from "cors";
 import { Server } from "socket.io";
 import sgMail from "@sendgrid/mail";
 import Twilio from "twilio";
+import Stripe from "stripe";
 
 const PORT = 3000;
 export const app = express();
@@ -17,8 +18,8 @@ const httpServer = http.createServer(app);
 app.use(bodyParser.json());
 
 app.use(express.static("static"));
-const corsOptions = {
-  origin: "http://localhost:4200",
+let corsOptions = {
+  origin: ["http://localhost:4200",],
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -51,8 +52,29 @@ app.use(
   })
 );
 
+
 app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
+
+
+const stripe = new Stripe("sk_test_51MtDc1HEHppe6KHvbhT7kiix08CN8rZVjUCZl6yacwdB9QGf5ulQxD5DgkjOHbyqoWImyDff5SrKrzCNGs8PK5Ud00jFsKaY4I");
+app.post('/create-checkout-session', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price: 'price_1MtE4fHEHppe6KHvEGJ9uucy',
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: 'https://example.com/success',
+    cancel_url: 'https://example.com/cancel',
+  });
+  console.log(session.url);
+  res.redirect(303, session.url);
+});
+
 // app.use("/api/rooms", boardRouter);
 
 // Socket.io

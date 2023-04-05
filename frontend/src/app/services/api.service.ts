@@ -218,4 +218,7 @@ export class ApiService {
       this.getAuthHeader()
     );
   }
+  checkout() {
+    return this.http.post(this.endpoint + `/create-checkout-session`, this.getAuthHeader());
+  }
 }

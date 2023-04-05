@@ -17,6 +17,7 @@
   "homepage": "https://github.com/choyiny/microblog#readme",
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
+    "@stripe/stripe-js": "^1.52.0",
     "auth0-js": "^9.20.2",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
@@ -28,11 +29,13 @@
     "ioredis": "^5.3.1",
     "jwks-rsa": "^3.0.1",
     "multer": "^1.4.5-lts.1",
+    "ngx-stripe": "^8.2.0",
     "sequelize": "^6.25.3",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",
     "socket.io-redis": "^6.1.1",
     "sqlite3": "^5.1.4",
+    "stripe": "^11.17.0",
     "twilio": "^4.9.0"
   },
   "devDependencies": {
