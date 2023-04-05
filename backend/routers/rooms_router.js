@@ -138,7 +138,6 @@ roomRouter.post("/:id/boards/", async (req, res, next) => {
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
   const board = await Board.create({
-    turn: 0,
     RoomId: req.params.id,
   });
 

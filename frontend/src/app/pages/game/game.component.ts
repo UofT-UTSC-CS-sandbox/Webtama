@@ -54,7 +54,7 @@ export class GameComponent implements OnInit {
         roomId = data as number;
         this.apiService.socket.emit("join room", {
           roomId: roomId,
-          playerName: "Beta",
+          playerName: GLOBALUSER,
         });
         this.updateName(roomId);
         this.apiService.getBoard(roomId).subscribe({
@@ -126,28 +126,32 @@ export class GameComponent implements OnInit {
   }
 
   pieceSelect(x: number, y: number, roomId: number) {
-    let piece = document.querySelector(
-      `[data-x="${x}"][data-y="${y}"]`
-    ) as HTMLElement;
-    piece.classList.add("selected");
-
-    let pieces = document.querySelectorAll("p");
-    pieces.forEach((piece) => {
-      let new_piece = piece.cloneNode(true);
-      piece.parentNode!.replaceChild(new_piece, piece);
-    });
-
-    let squares = document.querySelectorAll("td");
-    squares.forEach((square) => {
-      const squareX = square.getAttribute("data-col");
-      const squareY = square.getAttribute("data-row");
-      if (squareX === null || squareY === null) {
-        console.log("Square not found");
+    this.checkTurn(GLOBALUSER, roomId).then((data) => {
+      if (data === "false") {
+        console.log("not your turn");
+        console.log(data + " " + GLOBALUSER + " " + roomId);
         return;
+      } else {
+        let piece = document.querySelector(
+          `[data-x="${x}"][data-y="${y}"]`
+        ) as HTMLElement;
+        piece.classList.add("selected");
+
+        let pieces = document.querySelectorAll("p");
+        pieces.forEach((piece) => {
+          let new_piece = piece.cloneNode(true);
+          piece.parentNode!.replaceChild(new_piece, piece);
+        });
+
+        let card1 = document.getElementById("card1");
+        let card2 = document.getElementById("card2");
+        card1!.addEventListener("click", (e) => {
+          this.cardSelect(roomId, 1, x, y, data);
+        });
+        card2!.addEventListener("click", (e) => {
+          this.cardSelect(roomId, 2, x, y, data);
+        });
       }
-      square.addEventListener("click", (e) => {
-        this.makeMove(roomId, x, y, parseInt(squareX), parseInt(squareY));
-      });
     });
   }
 
@@ -165,6 +169,9 @@ export class GameComponent implements OnInit {
       cardElement = document.getElementById("card2");
     }
 
+    this.removeSquareListeners();
+    console.log("cardSelect: " + card + " " + startx + " " + starty + " ");
+
     let moveArray = JSON.parse(cardElement!.getAttribute("data-card")!);
     for (let i = 0; i < moveArray.length; i++) {
       const x = moveArray[i][0];
@@ -174,15 +181,30 @@ export class GameComponent implements OnInit {
       let square = document.querySelector(
         `[data-row="${starty + y}"][data-col="${startx + x}"]`
       );
-      let child = square!.firstElementChild;
-      if (child !== null && child.classList.contains(team)) {
-        continue;
-      }
+      // let child = square!.firstElementChild;
+      // if (child !== null && child.classList.contains(team)) {
+      //   continue;
+      // }
       square!.classList.add("selected");
       square!.addEventListener("click", (e) => {
-        this.squareSelect;
+        this.squareSelect(roomId, startx, starty, startx + x, starty + y);
       });
     }
+    let cards = document.querySelectorAll(".card");
+    cards.forEach((card) => {
+      let new_card = card.cloneNode(true);
+      card.parentNode!.replaceChild(new_card, card);
+    });
+  }
+
+  removeSquareListeners() {
+    let squares = document.querySelectorAll("td");
+    squares.forEach((square) => {
+      console.log("call");
+      square.classList.remove("selected");
+      let new_square = square.cloneNode(true);
+      square.parentNode!.replaceChild(new_square, square);
+    });
   }
 
   squareSelect(
@@ -192,12 +214,7 @@ export class GameComponent implements OnInit {
     x: number,
     y: number
   ) {
-    let squares = document.querySelectorAll("td");
-    squares.forEach((square) => {
-      square.classList.remove("selected");
-      let new_square = square.cloneNode(true);
-      square.parentNode!.replaceChild(new_square, square);
-    });
+    this.removeSquareListeners();
     this.makeMove(roomId, startx, starty, x, y);
   }
 
@@ -234,19 +251,22 @@ export class GameComponent implements OnInit {
     this.loadAudio("move");
   }
 
-  checkTurn(userId: number, roomId: number): boolean {
+  async checkTurn(userId: number, roomId: number): Promise<any> {
     this.apiService.getRoom(roomId).subscribe((roomData) => {
       this.apiService.getBoard(roomId).subscribe((boardData) => {
-        if (roomData.room.Host === userId && boardData.board.turn % 2 === 0) {
-          return true;
+        const host = roomData.room.Host as number;
+        const guest = roomData.room.Guest as number;
+        if (host == userId && boardData.turn % 2 === 0) {
+          console.log("host turn");
+          return "aTeam";
         }
-        if (roomData.room.Guest === userId && boardData.board.turn % 2 !== 0) {
-          return true;
+        if (guest == userId && boardData.turn % 2 !== 0) {
+          console.log("guest turn");
+          return "bTeam";
         }
-        return false;
+        return "false";
       });
     });
-    return false;
   }
 
   checkWin() {
@@ -335,20 +355,14 @@ export class GameComponent implements OnInit {
       });
       this.apiService.draw(roomId).subscribe();
       this.apiService.getBoard(roomId).subscribe((data) => {
-        console.log("These are the cards");
         const card1 = JSON.parse(data.card1);
         const card2 = JSON.parse(data.card2);
-        console.log(card1);
-        console.log(card2);
         let card1Element = document.getElementById("card1")!;
         let card2Element = document.getElementById("card2")!;
         card1Element!.innerHTML = card1[0].toUpperCase();
         card1Element!.setAttribute("data-card", JSON.stringify(card1[1]));
         card2Element!.innerHTML = card2[0].toUpperCase();
         card2Element!.setAttribute("data-card", JSON.stringify(card2[1]));
-        console.log("card elements");
-        console.log(card1Element.getAttribute("data-card"));
-        console.log(card1Element.getAttribute("data-card")!.length);
       });
     });
   }

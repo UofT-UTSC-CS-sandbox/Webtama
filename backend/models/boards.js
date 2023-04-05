@@ -5,7 +5,7 @@ import { Room } from "./rooms.js";
 export const Board = sequelize.define("Board", {
   turn: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    defaultValue: 0,
   },
   card1: {
     type: DataTypes.STRING,
