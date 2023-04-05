@@ -21,36 +21,6 @@ const upload = multer({ dest: "uploads/" });
 
 // sgMail.send(msg).then(() => {});
 
-usersRouter.post("/signup", isAuthenticated, userInfo, async (req, res) => {
-  const user = User.build({
-    username: req.user.nickname,
-    email: req.user.name,
-    authId: req.user.identities[0].user_id,
-  });
-  // generate password - salted and hashed
-  /** 
-  const password = req.body.password;
-  const salt = bcrypt.genSaltSync(10);
-  user.password = bcrypt.hashSync(password, salt);
-  */
-  // sgMail
-  //   .send(msg)
-  //   .then(() => {
-  //     console.log("Email sent");
-  //   })
-  //   .catch((error) => {
-  //     console.error(error);
-  //   });
-
-  try {
-    await user.save();
-  } catch (err) {
-    return res.status(422).json({ error: "User creation failed." });
-  }
-  req.session.userId = user.id;
-  req.session.save();
-});
-
 //Get all users
 usersRouter.get("/", async (req, res) => {
   const users = await User.findAll();
@@ -63,30 +33,22 @@ usersRouter.get("/found/:id", async (req, res) => {
   return res.json({ user });
 });
 
-usersRouter.post("/signin", isAuthenticated, userInfo, async (req, res) => {
-  console.log("SIGN in scream");
-  console.log("SIGN in scream");
-  console.log("SIGN in scream");
-  console.log("SIGN in scream");
-  console.log(req.user);
-  let user = await User.findOne({
-    where: {
-      email: req.user.email,
-    },
-  });
-
-  if (user === null) {
-    return res.status(401).json({ error: "Incorrect username or password." });
-  }
-  req.session.userId = user.id;
-  req.session.save();
-  console.log("USER", user);
-  return res.json(user);
-});
-
 usersRouter.get("/signout", function (req, res, next) {
   req.session.destroy();
   return res.json({ message: "Signed out." });
+});
+
+usersRouter.patch("/:id/ratings", async (req, res) => {
+  const user = await User.findByPk(req.params.id);
+  if (!user) {
+    return res.status(404).json({ error: "User not found." });
+  }
+
+  const { rating } = req.body;
+  user.rating += rating;
+  user.save();
+  user.reload();
+  return res.json(user);
 });
 
 usersRouter.get("/:id/rooms", async (req, res) => {

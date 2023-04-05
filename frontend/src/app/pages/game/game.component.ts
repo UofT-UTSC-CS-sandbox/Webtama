@@ -153,37 +153,34 @@ export class GameComponent implements OnInit {
 
   cardSelect(
     roomId: number,
-    card: string,
+    card: number,
     startx: number,
     starty: number,
     team: string
   ) {
-    // const cardElement = document.getElementById(card);
-    // cardElement!.innerHTML = data.board.card[0];
-    this.apiService.getBoard(roomId).subscribe((data) => {
-      for (let i = 0; i < data.board.card[1].length; i++) {
-        const x = data.board.card[1][i][0];
-        const y = data.board.card[1][i][1];
-        if (
-          startx + x > 5 ||
-          startx + x < 0 ||
-          starty + y > 5 ||
-          starty + y < 0
-        )
-          continue;
-        let square = document.querySelector(
-          `[data-row="${starty + y}"][data-col="${startx + x}"]`
-        );
-        let child = square!.firstElementChild;
-        if (child !== null && child.classList.contains(team)) {
-          continue;
-        }
-        square!.classList.add("selected");
-        square!.addEventListener("click", (e) => {
-          this.squareSelect;
-        });
-      }
-    });
+    let cardElement;
+    if (card === 1) {
+      cardElement = document.getElementById("card1");
+    } else {
+      cardElement = document.getElementById("card2");
+    }
+    for (let i = 0; i < cardElement!.getAttribute("data-card")!.length; i++) {
+      const x = cardElement!.getAttribute("data-card")![i][0];
+      const y = cardElement!.getAttribute("data-card")![i][1];
+      // if (startx + x > 5 || startx + x < 0 || starty + y > 5 || starty + y < 0)
+      //   continue;
+      // let square = document.querySelector(
+      //   `[data-row="${starty + y}"][data-col="${startx + x}"]`
+      // );
+      // let child = square!.firstElementChild;
+      // if (child !== null && child.classList.contains(team)) {
+      //   continue;
+      // }
+      // square!.classList.add("selected");
+      // square!.addEventListener("click", (e) => {
+      //   this.squareSelect;
+      // });
+    }
   }
 
   squareSelect(
@@ -336,10 +333,20 @@ export class GameComponent implements OnInit {
       });
       this.apiService.draw(roomId).subscribe();
       this.apiService.getBoard(roomId).subscribe((data) => {
-        console.log("This is the board");
-        console.log(data);
-        document.getElementById("card1")!.innerHTML = data.card1;
-        document.getElementById("card2")!.innerHTML = data.card2;
+        console.log("These are the cards");
+        const card1 = JSON.parse(data.card1);
+        const card2 = JSON.parse(data.card2);
+        console.log(card1);
+        console.log(card2);
+        let card1Element = document.getElementById("card1")!;
+        let card2Element = document.getElementById("card2")!;
+        card1Element!.innerHTML = card1[0].toUpperCase();
+        card1Element!.setAttribute("data-card", card1[1]);
+        card2Element!.innerHTML = card2[0].toUpperCase();
+        card2Element!.setAttribute("data-card", card2[1]);
+        console.log("card elements");
+        console.log(card1Element.getAttribute("data-card"));
+        console.log(card1Element.getAttribute("data-card")!.length);
       });
     });
   }

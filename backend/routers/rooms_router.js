@@ -6,12 +6,8 @@ import { Board } from "../models/boards.js";
 import { cards, shuffle } from "../models/cards.js";
 import { Piece } from "../models/pieces.js";
 import { where } from "sequelize";
-// import { json } from "body-parser";
-// import { getUserInfo } from "../middleware/helpers.js";
 
 export const roomRouter = Router();
-
-// roomRouter.use(getUserInfo);
 
 roomRouter.post("/", async (req, res, next) => {
   if (!req.body.name) {
@@ -231,8 +227,6 @@ roomRouter.patch("/:id/boards", async (req, res, next) => {
       .status(404)
       .json({ error: `Piece(id=${req.params.id}) not found.` });
   }
-
-  //check if the piece lands on another piece
   const piece2 = await Piece.findOne({
     where: {
       xpos: req.body.endx,
@@ -244,13 +238,10 @@ roomRouter.patch("/:id/boards", async (req, res, next) => {
   if (piece2) {
     await piece2.destroy();
   }
-
-  //update piece position
   piece.xpos = req.body.endx;
   piece.ypos = req.body.endy;
   await piece.save();
 
-  //update board
   board.turn = board.turn === 0 ? 1 : 0;
   await board.save();
 
@@ -258,7 +249,6 @@ roomRouter.patch("/:id/boards", async (req, res, next) => {
   return res.json(board);
 });
 
-//get all pieces
 roomRouter.get("/:id/boards/pieces", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
   if (!room) {
