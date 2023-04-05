@@ -130,14 +130,14 @@ export class ApiService {
     );
   }
 
-  joinRoom(roomId: number, userId: String) {
+  joinRoom(roomId: number, userId: number) {
     console.log("joinging :" + roomId + " " + userId);
     return this.http.patch(this.endpoint + `/api/rooms/${roomId}/join`, {
       userId: userId,
     });
   }
 
-  leaveRoom(roomId: number, userId: string) {
+  leaveRoom(roomId: number, userId: number) {
     return this.http.patch(
       this.endpoint + `/api/rooms/${roomId}/leave`,
       {
@@ -147,14 +147,10 @@ export class ApiService {
     );
   }
 
-  signIn(username: string, email: string) {
+  signIn() {
     return this.http
       .post<{ token: string }>(
         this.endpoint + `/users/signin`,
-        {
-          username,
-          email,
-        },
         this.getAuthHeader()
       )
       .subscribe({
@@ -168,15 +164,10 @@ export class ApiService {
       });
   }
 
-  signUp(username: string, email: string) {
+  signUp() {
     return this.http
       .post<{ token: string }>(
         this.endpoint + `/users/signup`,
-        {
-          username,
-          email,
-          headers: this.headers,
-        },
         this.getAuthHeader()
       )
       .subscribe({
@@ -205,12 +196,10 @@ export class ApiService {
   }
 
   me(): Observable<any> {
-    console.log("headers: ", this.getAuthHeader());
-
     return this.http.get(this.endpoint + `/users/me`, this.getAuthHeader());
   }
 
-  getActiveRoom(userId: String) {
+  getActiveRoom(userId: number) {
     return this.http.get(
       this.endpoint + `/users/${userId}/rooms`,
       this.getAuthHeader()

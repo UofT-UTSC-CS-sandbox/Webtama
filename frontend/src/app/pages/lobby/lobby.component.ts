@@ -22,6 +22,10 @@ export class LobbyComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkAuth();
+    // this.apiService.signIn();
+    // this.apiService.me().subscribe((data) => {
+    //
+    // });
 
     this.apiService.getRooms().subscribe({
       next: (data) => {
@@ -57,14 +61,16 @@ export class LobbyComponent implements OnInit {
     this.apiService.addRoom("Roomy ").subscribe((data) => {
       roomId = data as number;
       this.showRoom(roomId);
+      let title = document.getElementById("lobbyInfo")!;
+      title.innerHTML = "";
       return roomId;
     });
   }
 
   match() {
-    let userId = "-1";
+    let userId = -1;
     this.apiService.me().subscribe((userData) => {
-      userId = userData as string;
+      userId = userData as number;
       console.log("userId: ", userId);
 
       let foundRoom: number = -1;
@@ -85,19 +91,19 @@ export class LobbyComponent implements OnInit {
     joinBtn.classList.add("joinButton");
     joinBtn.setAttribute("roomId", roomId.toString());
     joinBtn.innerHTML = "Join";
-    let userId = "-1";
+    let userId = -1;
     this.apiService.me().subscribe((data) => {
-      userId = data.userId as string;
+      userId = data as number;
+      joinBtn.addEventListener("click", () => {
+        this.joinRoom(roomId, userId);
+      });
+      display.appendChild(joinBtn);
+      const lobbyList = document.getElementById("lobbyList")!;
+      lobbyList.appendChild(display);
     });
-    joinBtn.addEventListener("click", () => {
-      this.joinRoom(roomId, userId);
-    });
-    display.appendChild(joinBtn);
-    const lobbyList = document.getElementById("lobbyList")!;
-    lobbyList.appendChild(display);
   }
 
-  joinRoom(roomId: number, userId: String) {
+  joinRoom(roomId: number, userId: number) {
     this.apiService.joinRoom(roomId, userId).subscribe((data) => {
       console.log(data);
       this.goToGame();

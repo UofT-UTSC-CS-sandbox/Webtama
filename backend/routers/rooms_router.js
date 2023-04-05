@@ -70,7 +70,7 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
   }
   const user = await User.findOne({
     where: {
-      authId: req.body.userId,
+      id: req.body.userId,
     },
   });
   if (!user) {
@@ -102,7 +102,7 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
   }
   const user = await User.findOne({
     where: {
-      authId: req.body.userId,
+      email: req.body.userId,
     },
   });
   if (!user) {

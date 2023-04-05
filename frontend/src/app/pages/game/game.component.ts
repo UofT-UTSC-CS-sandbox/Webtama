@@ -38,11 +38,11 @@ export class GameComponent implements OnInit {
   }
 
   async getRoomId() {
-    let userId: string = "-1";
+    let userId: number = -1;
     let roomId: number = -1;
 
     this.apiService.me().subscribe((data) => {
-      userId = data as string;
+      userId = data as number;
     });
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       roomId = data as number;
@@ -55,33 +55,34 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this.cleanBoard();
     //dynamic
-    let userId: string = "-1";
+    let userId: number = -1;
     let roomId: number = -1;
 
     this.apiService.me().subscribe((data) => {
-      userId = data as string;
-    });
+      userId = data as number;
+      console.log("init user id: " + userId);
 
-    this.apiService.getActiveRoom(userId).subscribe((data) => {
-      roomId = data as number;
-      this.apiService.socket.emit("join room", {
-        roomId: roomId,
-        playerName: "Beta",
-      });
-      this.updateName(roomId);
-      this.apiService.getBoard(roomId).subscribe({
-        next: (data) => {
-          console.log("board found" + data + "roomId: " + roomId);
-          this.apiService.socket.emit("move", { roomId: roomId });
-        },
-        error: (err) => {
-          console.log(err.status);
-          if (err.status === 404) {
-            this.apiService.createBoard(roomId).subscribe();
-            this.apiService.draw(roomId).subscribe();
+      this.apiService.getActiveRoom(userId).subscribe((data) => {
+        roomId = data as number;
+        this.apiService.socket.emit("join room", {
+          roomId: roomId,
+          playerName: "Beta",
+        });
+        this.updateName(roomId);
+        this.apiService.getBoard(roomId).subscribe({
+          next: (data) => {
+            console.log("board found" + data + "roomId: " + roomId);
             this.apiService.socket.emit("move", { roomId: roomId });
-          }
-        },
+          },
+          error: (err) => {
+            console.log(err);
+            if (err.status === 404) {
+              this.apiService.createBoard(roomId).subscribe();
+              this.apiService.draw(roomId).subscribe();
+              this.apiService.socket.emit("move", { roomId: roomId });
+            }
+          },
+        });
       });
     });
 
@@ -101,11 +102,11 @@ export class GameComponent implements OnInit {
 
   ngOnDestroy() {
     //dynamic
-    let userId: string = "-1";
+    let userId: number = -1;
     let roomId: number = -1;
 
     this.apiService.me().subscribe((data) => {
-      userId = data as string;
+      userId = data as number;
     });
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       this.apiService.socket.emit("leave room", {
@@ -248,7 +249,7 @@ export class GameComponent implements OnInit {
     this.loadAudio("move");
   }
 
-  checkTurn(userId: string, roomId: number): boolean {
+  checkTurn(userId: number, roomId: number): boolean {
     this.apiService.getRoom(roomId).subscribe((roomData) => {
       this.apiService.getBoard(roomId).subscribe((boardData) => {
         if (roomData.room.Host === userId && boardData.board.turn % 2 === 0) {
@@ -307,53 +308,52 @@ export class GameComponent implements OnInit {
   }
 
   updateBoard() {
-    let userId: string = "-1";
+    let userId: number = -1;
     let roomId: number = -1;
 
     this.apiService.me().subscribe((data) => {
-      userId = data as string;
-    });
+      userId = data as number;
+      this.apiService.getActiveRoom(userId).subscribe((data) => {
+        roomId = data as number;
+        this.apiService.getPieces(roomId).subscribe((data) => {
+          this.cleanBoard();
+          for (let i = 0; i < data.pieces.length; i++) {
+            const piece = data.pieces[i];
+            let square = document.querySelector(
+              `[data-row="${piece.ypos}"][data-col="${piece.xpos}"]`
+            );
+            if (square === null) {
+              console.error("Square not found");
+              return;
+            }
+            const display = document.createElement("p");
+            display.setAttribute("data-x", piece.xpos.toString());
+            display.setAttribute("data-y", piece.ypos.toString());
 
-    this.apiService.getActiveRoom(userId).subscribe((data) => {
-      roomId = data as number;
-      this.apiService.getPieces(roomId).subscribe((data) => {
-        this.cleanBoard();
-        for (let i = 0; i < data.pieces.length; i++) {
-          const piece = data.pieces[i];
-          let square = document.querySelector(
-            `[data-row="${piece.ypos}"][data-col="${piece.xpos}"]`
-          );
-          if (square === null) {
-            console.error("Square not found");
-            return;
+            let pieceEvent = (e: Event) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const x = piece.xpos;
+              const y = piece.ypos;
+              this.pieceSelect(x, y, roomId);
+            };
+
+            display.addEventListener("click", pieceEvent);
+
+            display.classList.add(piece.type);
+            if (piece.side == 0) {
+              display.classList.add("aTeam");
+            } else {
+              display.classList.add("bTeam");
+            }
+            square.appendChild(display);
           }
-          const display = document.createElement("p");
-          display.setAttribute("data-x", piece.xpos.toString());
-          display.setAttribute("data-y", piece.ypos.toString());
-
-          let pieceEvent = (e: Event) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const x = piece.xpos;
-            const y = piece.ypos;
-            this.pieceSelect(x, y, roomId);
-          };
-
-          display.addEventListener("click", pieceEvent);
-
-          display.classList.add(piece.type);
-          if (piece.side == 0) {
-            display.classList.add("aTeam");
-          } else {
-            display.classList.add("bTeam");
-          }
-          square.appendChild(display);
-        }
-      });
-      this.apiService.draw(roomId).subscribe();
-      this.apiService.getBoard(roomId).subscribe((data) => {
-        document.getElementById("card1")!.innerHTML = data.board.card1[0];
-        document.getElementById("card2")!.innerHTML = data.board.card2[0];
+        });
+        this.apiService.draw(roomId).subscribe();
+        this.apiService.getBoard(roomId).subscribe((data) => {
+          document.getElementById("card1")!.innerHTML = data.board.card1[0];
+          document.getElementById("card2")!.innerHTML = data.board.card2[0];
+        });
       });
     });
   }

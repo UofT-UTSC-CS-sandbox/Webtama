@@ -10,11 +10,11 @@ export const Room = sequelize.define("Room", {
     unique: false,
   },
   Host: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
   Guest: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
 });

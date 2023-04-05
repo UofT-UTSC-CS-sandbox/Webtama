@@ -23,8 +23,8 @@ const upload = multer({ dest: "uploads/" });
 
 usersRouter.post("/signup", isAuthenticated, userInfo, async (req, res) => {
   const user = User.build({
-    username: req.user.identities[0].username,
-    email: req.user.identities[0].email,
+    username: req.user.nickname,
+    email: req.user.name,
     authId: req.user.identities[0].user_id,
   });
   // generate password - salted and hashed
@@ -63,36 +63,18 @@ usersRouter.get("/found/:id", async (req, res) => {
   return res.json({ user });
 });
 
-usersRouter.post("/signin", async (req, res) => {
-  // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  // const msg = {
-  //   to: user.email, // Change to your recipient
-  //   from: "jasoncndai@gmail.com", // Change to your verified sender
-  //   subject: "Sending with SendGrid is Fun",
-  //   text: "and easy to do anywhere, even with Node.js",
-  //   html: "<strong>and easy to do anywhere, even with Node.js</strong>",
-  // };
-  // sgMail
-  //   .send(msg)
-  //   .then(() => {
-  //     console.log("Email sent");
-  //   })
-  //   .catch((error) => {
-  //     console.error(error);
-  //   });
-
+usersRouter.post("/signin", isAuthenticated, userInfo, async (req, res) => {
+  console.log("SIGN in scream");
+  console.log("SIGN in scream");
+  console.log("SIGN in scream");
+  console.log("SIGN in scream");
+  console.log(req.user);
   let user = await User.findOne({
     where: {
-      email: req.body.email,
+      email: req.user.email,
     },
   });
-  if (user === null) {
-    user = await User.findOne({
-      where: {
-        username: req.body.username,
-      },
-    });
-  }
+
   if (user === null) {
     return res.status(401).json({ error: "Incorrect username or password." });
   }
@@ -107,12 +89,52 @@ usersRouter.get("/signout", function (req, res, next) {
   return res.json({ message: "Signed out." });
 });
 
+usersRouter.get("/:id/rooms", async (req, res) => {
+  const user = await User.findByPk(req.params.id);
+  if (!user) {
+    return res.status(404).json({ error: "User not found." });
+  }
+
+  const activeRoom = user.activeRoom;
+
+  if (!activeRoom) {
+    return res.status(404).json({ error: "User has no active room." });
+  }
+
+  return res.json(activeRoom);
+});
+
 usersRouter.get("/me", isAuthenticated, userInfo, async (req, res) => {
-  console.log("SCREAMING", req.user.identities[0].user_id);
   if (!req.user.identities[0].user_id) {
     return res.status(401).json({ errors: "Not Authenticaed" });
   }
-  return res.json({
-    userId: req.user.identities[0].user_id,
+
+  let user = await User.findOne({
+    where: {
+      email: req.user.email,
+    },
   });
+
+  if (user === null) {
+    user = User.build({
+      username: req.user.nickname,
+      email: req.user.email,
+      authId: req.user.identities[0].user_id,
+    });
+    try {
+      await user.save();
+    } catch (err) {
+      return res.status(422).json({ error: "User creation failed." });
+    }
+    req.session.userId = user.id;
+    req.session.save();
+  }
+
+  console.log("SCREAMING ME");
+  console.log("SCREAMING ME");
+  console.log("SCREAMING ME");
+  console.log("SCREAMING ME");
+  console.log(user);
+
+  return res.json(user.dataValues.id);
 });
