@@ -281,20 +281,13 @@ roomRouter.patch("/:id/boards/draw", async (req, res, next) => {
   }
 
   if (!board.card1) {
-    console.log("tryna get card1");
     const card1 = shuffle();
     board.card1 = JSON.stringify(card1);
   }
   while (!board.card2 || board.card2 === board.card1) {
-    console.log(board.card1);
-    console.log("tryna get card 2");
     const card2 = shuffle();
     board.card2 = JSON.stringify(card2);
   }
-
-  console.log("shuffle");
-  console.log(board.card1);
-  console.log(board.card2);
 
   await board.save();
   await board.reload();
