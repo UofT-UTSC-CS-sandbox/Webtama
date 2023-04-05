@@ -4,6 +4,8 @@ import { ApiService } from "../../services/api.service";
 import { AuthService } from "@auth0/auth0-angular";
 import { ViewEncapsulation } from "@angular/core";
 
+let userId: number = -1;
+
 @Component({
   selector: "app-lobby",
   templateUrl: "./lobby.component.html",
@@ -22,11 +24,20 @@ export class LobbyComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkAuth();
-    // this.apiService.signIn();
-    // this.apiService.me().subscribe((data) => {
-    //
-    // });
 
+    if (userId === -1) {
+      this.apiService.me().subscribe((data) => {
+        userId = data as number;
+        console.log(data);
+        console.log(userId);
+        this.setup();
+      });
+    } else {
+      this.setup();
+    }
+  }
+
+  setup() {
     this.apiService.getRooms().subscribe({
       next: (data) => {
         if (data.rooms.length === 0) {
@@ -68,17 +79,11 @@ export class LobbyComponent implements OnInit {
   }
 
   match() {
-    let userId = -1;
-    this.apiService.me().subscribe((userData) => {
-      userId = userData as number;
-      console.log("userId: ", userId);
+    let foundRoom: number = -1;
 
-      let foundRoom: number = -1;
-
-      this.apiService.matchmake().subscribe((data) => {
-        foundRoom = data as number;
-        this.joinRoom(foundRoom, userId);
-      });
+    this.apiService.matchmake().subscribe((data) => {
+      foundRoom = data as number;
+      this.joinRoom(foundRoom, userId);
     });
   }
 
@@ -91,16 +96,13 @@ export class LobbyComponent implements OnInit {
     joinBtn.classList.add("joinButton");
     joinBtn.setAttribute("roomId", roomId.toString());
     joinBtn.innerHTML = "Join";
-    let userId = -1;
-    this.apiService.me().subscribe((data) => {
-      userId = data as number;
-      joinBtn.addEventListener("click", () => {
-        this.joinRoom(roomId, userId);
-      });
-      display.appendChild(joinBtn);
-      const lobbyList = document.getElementById("lobbyList")!;
-      lobbyList.appendChild(display);
+
+    joinBtn.addEventListener("click", () => {
+      this.joinRoom(roomId, userId);
     });
+    display.appendChild(joinBtn);
+    const lobbyList = document.getElementById("lobbyList")!;
+    lobbyList.appendChild(display);
   }
 
   joinRoom(roomId: number, userId: number) {

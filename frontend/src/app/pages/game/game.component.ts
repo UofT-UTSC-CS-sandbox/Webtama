@@ -5,6 +5,8 @@ import { io, Socket } from "socket.io-client";
 import { ViewEncapsulation } from "@angular/core";
 import { ApiService } from "../../services/api.service";
 
+let GLOBALUSER: number = -1;
+
 @Component({
   selector: "app-game",
   templateUrl: "./game.component.html",
@@ -37,21 +39,6 @@ export class GameComponent implements OnInit {
     audio.play();
   }
 
-  async getRoomId() {
-    let userId: number = -1;
-    let roomId: number = -1;
-
-    this.apiService.me().subscribe((data) => {
-      userId = data as number;
-    });
-    this.apiService.getActiveRoom(userId).subscribe((data) => {
-      roomId = data as number;
-      return roomId;
-    });
-
-    return roomId;
-  }
-
   ngOnInit() {
     this.cleanBoard();
     //dynamic
@@ -59,6 +46,7 @@ export class GameComponent implements OnInit {
     let roomId: number = -1;
 
     this.apiService.me().subscribe((data) => {
+      GLOBALUSER = data as number;
       userId = data as number;
       console.log("init user id: " + userId);
 
@@ -104,10 +92,8 @@ export class GameComponent implements OnInit {
     //dynamic
     let userId: number = -1;
     let roomId: number = -1;
+    userId = GLOBALUSER;
 
-    this.apiService.me().subscribe((data) => {
-      userId = data as number;
-    });
     this.apiService.getActiveRoom(userId).subscribe((data) => {
       this.apiService.socket.emit("leave room", {
         roomId: roomId,
@@ -311,49 +297,47 @@ export class GameComponent implements OnInit {
     let userId: number = -1;
     let roomId: number = -1;
 
-    this.apiService.me().subscribe((data) => {
-      userId = data as number;
-      this.apiService.getActiveRoom(userId).subscribe((data) => {
-        roomId = data as number;
-        this.apiService.getPieces(roomId).subscribe((data) => {
-          this.cleanBoard();
-          for (let i = 0; i < data.pieces.length; i++) {
-            const piece = data.pieces[i];
-            let square = document.querySelector(
-              `[data-row="${piece.ypos}"][data-col="${piece.xpos}"]`
-            );
-            if (square === null) {
-              console.error("Square not found");
-              return;
-            }
-            const display = document.createElement("p");
-            display.setAttribute("data-x", piece.xpos.toString());
-            display.setAttribute("data-y", piece.ypos.toString());
-
-            let pieceEvent = (e: Event) => {
-              e.preventDefault();
-              e.stopPropagation();
-              const x = piece.xpos;
-              const y = piece.ypos;
-              this.pieceSelect(x, y, roomId);
-            };
-
-            display.addEventListener("click", pieceEvent);
-
-            display.classList.add(piece.type);
-            if (piece.side == 0) {
-              display.classList.add("aTeam");
-            } else {
-              display.classList.add("bTeam");
-            }
-            square.appendChild(display);
+    userId = GLOBALUSER;
+    this.apiService.getActiveRoom(userId).subscribe((data) => {
+      roomId = data as number;
+      this.apiService.getPieces(roomId).subscribe((data) => {
+        this.cleanBoard();
+        for (let i = 0; i < data.pieces.length; i++) {
+          const piece = data.pieces[i];
+          let square = document.querySelector(
+            `[data-row="${piece.ypos}"][data-col="${piece.xpos}"]`
+          );
+          if (square === null) {
+            console.error("Square not found");
+            return;
           }
-        });
-        this.apiService.draw(roomId).subscribe();
-        this.apiService.getBoard(roomId).subscribe((data) => {
-          document.getElementById("card1")!.innerHTML = data.board.card1[0];
-          document.getElementById("card2")!.innerHTML = data.board.card2[0];
-        });
+          const display = document.createElement("p");
+          display.setAttribute("data-x", piece.xpos.toString());
+          display.setAttribute("data-y", piece.ypos.toString());
+
+          let pieceEvent = (e: Event) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const x = piece.xpos;
+            const y = piece.ypos;
+            this.pieceSelect(x, y, roomId);
+          };
+
+          display.addEventListener("click", pieceEvent);
+
+          display.classList.add(piece.type);
+          if (piece.side == 0) {
+            display.classList.add("aTeam");
+          } else {
+            display.classList.add("bTeam");
+          }
+          square.appendChild(display);
+        }
+      });
+      this.apiService.draw(roomId).subscribe();
+      this.apiService.getBoard(roomId).subscribe((data) => {
+        document.getElementById("card1")!.innerHTML = data.board.card1[0];
+        document.getElementById("card2")!.innerHTML = data.board.card2[0];
       });
     });
   }
