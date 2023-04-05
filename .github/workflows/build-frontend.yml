@@ -27,9 +27,6 @@ jobs:
 
       - name: Build image
         run: docker build . --file Dockerfile --tag $IMAGE_NAME
-        networks:
-          - letsencrypt-docker-compose
-        restart: unless-stopped
 
       - name: Log into GitHub Container Registry
         # TODO: Create a Personal Access Tokens (PAT) with `read:packages` and `write:packages` scopes and save it as an Actions secret `CR_PAT`
@@ -58,6 +55,4 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
             docker pull ghcr.io/uoft-utsc-cs-sandbox/frontend-webtama
-     
-
             
