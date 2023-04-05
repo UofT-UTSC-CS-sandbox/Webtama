@@ -87,8 +87,8 @@ services:
     expose:
       - 80
     environment:
-      - VIRTUAL_HOST=<your_domain>
-      - LETSENCRYPT_HOST=<your_domain>
+      - VIRTUAL_HOST=webtama.works
+      - LETSENCRYPT_HOST=webtama.works
   backend:
     image: ghcr.io/uoft-utsc-cs-sandbox/backend-webtama
     container_name: backend
