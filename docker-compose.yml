@@ -82,15 +82,6 @@ services:
     restart: unless-stopped
 
   # Replace with your backend image or remove
-  frontend:
-    image: ghcr.io/uoft-utsc-cs-sandbox/frontend-webtama
-    container_name: frontend
-    restart: always
-    expose:
-      - 80
-    environment:
-      - VIRTUAL_HOST=webtama.works
-      - LETSENCRYPT_HOST=webtama.works
   backend:
     image: ghcr.io/uoft-utsc-cs-sandbox/backend-webtama
     container_name: backend
