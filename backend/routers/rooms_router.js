@@ -284,13 +284,25 @@ roomRouter.patch("/:id/boards/draw", async (req, res, next) => {
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
   const board = await Board.findOne({ where: { RoomId: req.params.id } });
+  if (!board) {
+    return res
+      .status(404)
+      .json({ error: `Board(id=${req.params.id}) not found.` });
+  }
 
   if (!board.card1) {
+    console.log("tryna get card1");
     board.card1 = shuffle();
   }
   while (!board.card2 || board.card2 === board.card1) {
+    console.log(board.card1);
+    console.log("tryna get card 2");
     board.card2 = shuffle();
   }
+
+  console.log("shuffle");
+  console.log(board.card1);
+  console.log(board.card2);
 
   await board.save();
   await board.reload();

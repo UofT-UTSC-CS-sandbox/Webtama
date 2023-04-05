@@ -59,6 +59,6 @@ export const cards = [
 ];
 
 export function shuffle() {
-  const index = Math.floor(Math.random() * cards.length);
+  const index = Math.floor(Math.random() * (cards.length - 1));
   return cards[index];
 }
