@@ -109,8 +109,13 @@ export class GameComponent implements OnInit {
         console.log("Room", roomData);
         let host = roomData.room.Host as number;
         let guest = roomData.room.Guest as number;
-        if (host === userId || guest === userId) {
-          this.apiService.leaveRoom(roomId, userId).subscribe();
+        console.log("Host", host);
+        console.log("Guest", guest);
+        console.log("User", userId);
+        console.log("Host === User", host == userId);
+        console.log("Guest === User", guest == userId);
+        if (host == userId || guest == userId) {
+          console.log(this.apiService.leaveRoom(roomId, userId).subscribe());
         }
       });
     });
