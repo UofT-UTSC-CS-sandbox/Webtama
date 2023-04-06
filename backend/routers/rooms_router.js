@@ -5,11 +5,9 @@ import { isAuthenticated } from "../middleware/helpers.js";
 import { Board } from "../models/boards.js";
 import { cards, shuffle } from "../models/cards.js";
 import { Piece } from "../models/pieces.js";
-// import { getUserInfo } from "../middleware/helpers.js";
+import { where } from "sequelize";
 
 export const roomRouter = Router();
-
-// roomRouter.use(getUserInfo);
 
 roomRouter.post("/", async (req, res, next) => {
   if (!req.body.name) {
@@ -67,7 +65,11 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
       .status(404)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
-  const user = await User.findByPk(req.body.userId);
+  const user = await User.findOne({
+    where: {
+      id: req.body.userId,
+    },
+  });
   if (!user) {
     return res
       .status(404)
@@ -95,7 +97,11 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
       .status(405)
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
-  const user = await User.findByPk(req.body.userId);
+  const user = await User.findOne({
+    where: {
+      email: req.body.userId,
+    },
+  });
   if (!user) {
     return res
       .status(405)
@@ -132,7 +138,6 @@ roomRouter.post("/:id/boards/", async (req, res, next) => {
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
   const board = await Board.create({
-    turn: 0,
     RoomId: req.params.id,
   });
 
@@ -221,8 +226,6 @@ roomRouter.patch("/:id/boards", async (req, res, next) => {
       .status(404)
       .json({ error: `Piece(id=${req.params.id}) not found.` });
   }
-
-  //check if the piece lands on another piece
   const piece2 = await Piece.findOne({
     where: {
       xpos: req.body.endx,
@@ -234,13 +237,10 @@ roomRouter.patch("/:id/boards", async (req, res, next) => {
   if (piece2) {
     await piece2.destroy();
   }
-
-  //update piece position
   piece.xpos = req.body.endx;
   piece.ypos = req.body.endy;
   await piece.save();
 
-  //update board
   board.turn = board.turn === 0 ? 1 : 0;
   await board.save();
 
@@ -248,7 +248,6 @@ roomRouter.patch("/:id/boards", async (req, res, next) => {
   return res.json(board);
 });
 
-//get all pieces
 roomRouter.get("/:id/boards/pieces", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
   if (!room) {
@@ -275,12 +274,19 @@ roomRouter.patch("/:id/boards/draw", async (req, res, next) => {
       .json({ error: `Room(id=${req.params.id}) not found.` });
   }
   const board = await Board.findOne({ where: { RoomId: req.params.id } });
+  if (!board) {
+    return res
+      .status(404)
+      .json({ error: `Board(id=${req.params.id}) not found.` });
+  }
 
   if (!board.card1) {
-    board.card1 = shuffle();
+    const card1 = shuffle();
+    board.card1 = JSON.stringify(card1);
   }
   while (!board.card2 || board.card2 === board.card1) {
-    board.card2 = shuffle();
+    const card2 = shuffle();
+    board.card2 = JSON.stringify(card2);
   }
 
   await board.save();

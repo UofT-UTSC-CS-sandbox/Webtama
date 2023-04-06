@@ -22,10 +22,8 @@ export class ApiService {
   private accessToken: string;
 
   constructor(private http: HttpClient, private authService: AuthService) {
-    //console.log(this.endpoint);
     this.headers = new HttpHeaders({
       "Content-Type": "application/json",
-      // 'Cookie': document.cookie
     });
     this.accessToken = "";
     this.socket = io(this.endpoint);
@@ -97,7 +95,7 @@ export class ApiService {
     );
   }
 
-  getBoard(id: number): Observable<{ board: Board }> {
+  getBoard(id: number): Observable<any> {
     return this.http.get<{ board: Board }>(
       this.endpoint + `/api/rooms/${id}/boards`,
       this.getAuthHeader()
@@ -124,6 +122,14 @@ export class ApiService {
     );
   }
 
+  draw(id: number) {
+    return this.http.patch(
+      this.endpoint + `/api/rooms/${id}/boards/draw`,
+      {},
+      this.getAuthHeader()
+    );
+  }
+
   joinRoom(roomId: number, userId: number) {
     console.log("joinging :" + roomId + " " + userId);
     return this.http.patch(this.endpoint + `/api/rooms/${roomId}/join`, {
@@ -135,20 +141,16 @@ export class ApiService {
     return this.http.patch(
       this.endpoint + `/api/rooms/${roomId}/leave`,
       {
-        userId: roomId,
+        userId: userId,
       },
       this.getAuthHeader()
     );
   }
 
-  signIn(username: string, email: string) {
+  signIn() {
     return this.http
       .post<{ token: string }>(
         this.endpoint + `/users/signin`,
-        {
-          username,
-          email,
-        },
         this.getAuthHeader()
       )
       .subscribe({
@@ -162,15 +164,10 @@ export class ApiService {
       });
   }
 
-  signUp(username: string, email: string) {
+  signUp() {
     return this.http
       .post<{ token: string }>(
         this.endpoint + `/users/signup`,
-        {
-          username,
-          email,
-          headers: this.headers,
-        },
         this.getAuthHeader()
       )
       .subscribe({
@@ -182,6 +179,10 @@ export class ApiService {
           console.error("There was an error!", error);
         },
       });
+  }
+
+  win(userId: number) {
+    return this.http.patch(this.endpoint + `/${userId}/ratings`, {});
   }
 
   signOut() {
@@ -198,10 +199,7 @@ export class ApiService {
       });
   }
 
-  me() {
-    console.log("SCREAMING ahhhhhhhh");
-    console.log("headers: ", this.getAuthHeader());
-
+  me(): Observable<any> {
     return this.http.get(this.endpoint + `/users/me`, this.getAuthHeader());
   }
 

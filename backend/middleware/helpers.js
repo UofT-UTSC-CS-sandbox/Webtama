@@ -2,7 +2,6 @@ import { expressjwt as jwt } from "express-jwt";
 import jwksRsa from "jwks-rsa";
 import axios from "axios";
 
-
 export const isAuthenticated = jwt({
   algorithms: ["RS256"],
   audience: "https://dev-0rubju8i61qqpmgv.us.auth0.com/api/v2/",
@@ -22,11 +21,9 @@ export const isAuthenticated = jwt({
       req.headers.authorization.split(" ")[0] === "Bearer"
     ) {
       return req.headers.authorization.split(" ")[1];
-    } 
+    }
     return null;
   },
-
-
 });
 
 export const userInfo = async (req, res, next) => {
@@ -47,7 +44,8 @@ const getAccessToken = async (req, res, next) => {
     data: new URLSearchParams({
       grant_type: "client_credentials",
       client_id: "JrGMWEt5X5zaA95E7OoTCllPcWOLlpvu",
-      client_secret: "VzeYEN6nSzeXnTfvY8DPb8QWawRi-b7-ST9PVV2pmpGSzsUY1EIFApjLvBTzJMwF",
+      client_secret:
+        "VzeYEN6nSzeXnTfvY8DPb8QWawRi-b7-ST9PVV2pmpGSzsUY1EIFApjLvBTzJMwF",
       audience: "https://dev-0rubju8i61qqpmgv.us.auth0.com/api/v2/",
     }),
   };
@@ -57,14 +55,14 @@ const getAccessToken = async (req, res, next) => {
 };
 
 const getUserInfo = async (req, res, next) => {
-  const userInfoUrl = "https://dev-0rubju8i61qqpmgv.us.auth0.com/api/v2/users/" + req.auth.sub;
+  const userInfoUrl =
+    "https://dev-0rubju8i61qqpmgv.us.auth0.com/api/v2/users/" + req.auth.sub;
   const accessToken = await getAccessToken();
   const response = await axios.get(userInfoUrl, {
     headers: {
       Authorization: `Bearer ${accessToken.access_token}`,
     },
   });
-  console.log(response.data);
+  // console.log(response.data);
   return response.data;
 };
-

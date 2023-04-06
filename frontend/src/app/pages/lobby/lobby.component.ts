@@ -9,6 +9,8 @@ import { StripeService } from 'ngx-stripe';
 import { JSON } from "sequelize";
 import { Json } from "sequelize/types/utils";
 
+let userId: number = -1;
+
 @Component({
   selector: "app-lobby",
   templateUrl: "./lobby.component.html",
@@ -30,6 +32,19 @@ export class LobbyComponent implements OnInit {
   ngOnInit(): void {
     this.checkAuth();
 
+    if (userId === -1) {
+      this.apiService.me().subscribe((data) => {
+        userId = data as number;
+        console.log(data);
+        console.log(userId);
+        this.setup();
+      });
+    } else {
+      this.setup();
+    }
+  }
+
+  setup() {
     this.apiService.getRooms().subscribe({
       next: (data) => {
         if (data.rooms.length === 0) {
@@ -75,22 +90,18 @@ export class LobbyComponent implements OnInit {
     this.apiService.addRoom("Roomy ").subscribe((data) => {
       roomId = data as number;
       this.showRoom(roomId);
+      let title = document.getElementById("lobbyInfo")!;
+      title.innerHTML = "";
       return roomId;
     });
   }
 
   match() {
-    let userId: number = -1;
-    this.apiService.me().subscribe((userData) => {
-      userId = userData as number;
-      console.log("userId: ", userId);
+    let foundRoom: number = -1;
 
-      let foundRoom: number = -1;
-
-      this.apiService.matchmake().subscribe((data) => {
-        foundRoom = data as number;
-        this.joinRoom(foundRoom, userId);
-      });
+    this.apiService.matchmake().subscribe((data) => {
+      foundRoom = data as number;
+      this.joinRoom(foundRoom, userId);
     });
   }
 
@@ -103,10 +114,7 @@ export class LobbyComponent implements OnInit {
     joinBtn.classList.add("joinButton");
     joinBtn.setAttribute("roomId", roomId.toString());
     joinBtn.innerHTML = "Join";
-    let userId = 1;
-    // this.apiService.me().subscribe((data) => {
-    //   userId = data as number;
-    // });
+
     joinBtn.addEventListener("click", () => {
       this.joinRoom(roomId, userId);
     });
