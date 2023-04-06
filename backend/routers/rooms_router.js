@@ -283,9 +283,6 @@ roomRouter.patch("/:id/boards/turns", async (req, res, next) => {
       .json({ error: `Board(id=${req.params.id}) not found.` });
   }
 
-  console.log("TURN CHECKING");
-  console.log(req.body);
-
   const user = await User.findOne({ where: { id: req.body.userId } });
   if (!user) {
     return res
@@ -300,6 +297,48 @@ roomRouter.patch("/:id/boards/turns", async (req, res, next) => {
   } else {
     return res.json("false");
   }
+});
+
+roomRouter.get("/:id/boards/wins", async (req, res, next) => {
+  const room = await Room.findByPk(req.params.id);
+  const board = await Board.findOne({ where: { RoomId: req.params.id } });
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+  if (!board) {
+    return res
+      .status(404)
+      .json({ error: `Board(id=${req.params.id}) not found.` });
+  }
+  const pieces = await Piece.findAll({ where: { BoardId: board.id } });
+
+  const kings = pieces.filter((piece) => piece.type === "king");
+  console.log("winning");
+  console.log(kings);
+  if (kings.length === 1) {
+    if (kings[0].side == 1) {
+      return res.json(1);
+    } else if (kings[0].side == 0) {
+      return res.json(2);
+    }
+  }
+  //0 is b team, 1 is a team
+
+  for (let i = 0; i < kings.length; i++) {
+    const king = kings[i];
+    const kingy = king.ypos;
+    const kingSide = king.side;
+
+    if (kingSide == 0 && kingy == 5) {
+      return res.json(2);
+    } else if (kingSide == 1 && kingy == 1) {
+      return res.json(1);
+    }
+  }
+
+  return res.json(-1);
 });
 
 roomRouter.patch("/:id/boards/draw", async (req, res, next) => {
@@ -350,10 +389,6 @@ roomRouter.patch("/:id/boards/play", async (req, res, next) => {
   } else if (req.body.card === 2) {
     board.card2 = null;
   }
-  console.log("PLAYING");
-  console.log(req.body);
-  console.log(board.card1);
-  console.log(board.card2);
   await board.save();
   await board.reload();
   return res.json(board);

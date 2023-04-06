@@ -271,42 +271,17 @@ export class GameComponent implements OnInit {
   }
 
   checkWin() {
-    console.log("checking win");
-
-    // let kings = Array.from(document.querySelectorAll("king"));
-    // const kings = this.kingElements.toArray();
-    let pieces = document.querySelectorAll("p");
-    let kings: HTMLElement[] = [];
-    pieces.forEach((piece) => {
-      console.log("found" + piece);
-      if (piece.classList.contains("king")) {
-        kings.push(piece);
-      }
+    this.apiService.getActiveRoom(GLOBALUSER).subscribe((activeRoom) => {
+      this.apiService.checkWin(activeRoom as number).subscribe((data) => {
+        if (data == -1) {
+          console.log("no winner yet");
+          return;
+        } else {
+          console.log("winner: " + data);
+          this.doWin(data as number);
+        }
+      });
     });
-    if (kings.length === 1) {
-      if (kings[0].classList.contains("aTeam")) {
-        this.doWin(1);
-      } else if (kings[0].classList.contains("bTeam")) {
-        this.doWin(2);
-      }
-    }
-    console.log(kings);
-    for (let i = 0; i < kings.length; i++) {
-      console.log("checking king: " + i);
-      console.log(kings[i]);
-      if (
-        kings[i].classList.contains("aTeam") &&
-        kings[i].getAttribute("data-y") == "5"
-      ) {
-        this.doWin(1);
-      } else if (
-        kings[i].classList.contains("bTeam") &&
-        kings[i].getAttribute("data-y") == "0"
-      ) {
-        this.doWin(2);
-      }
-    }
-    return 0;
   }
 
   doWin(winner: number) {
@@ -387,9 +362,6 @@ export class GameComponent implements OnInit {
         card2Element!.innerHTML = card2[0].toUpperCase();
         card2Element!.setAttribute("data-card", JSON.stringify(card2[1]));
       });
-      setTimeout(() => {
-        this.checkWin();
-      }, 0);
     });
   }
 }

@@ -146,6 +146,13 @@ export class ApiService {
     );
   }
 
+  checkWin(roomId: number) {
+    return this.http.get(
+      this.endpoint + `/api/rooms/${roomId}/boards/wins`,
+      this.getAuthHeader()
+    );
+  }
+
   joinRoom(roomId: number, userId: number) {
     console.log("joinging :" + roomId + " " + userId);
     return this.http.patch(this.endpoint + `/api/rooms/${roomId}/join`, {
