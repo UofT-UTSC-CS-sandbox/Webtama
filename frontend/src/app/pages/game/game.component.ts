@@ -63,9 +63,11 @@ export class GameComponent implements OnInit {
           error: (err) => {
             console.log(err);
             if (err.status === 404) {
-              this.apiService.createBoard(roomId).subscribe();
-              this.apiService.draw(roomId).subscribe();
-              this.apiService.socket.emit("move", { roomId: roomId });
+              this.apiService.createBoard(roomId).subscribe(() => {
+                this.apiService.draw(roomId).subscribe(() => {
+                  this.apiService.socket.emit("move", { roomId: roomId });
+                });
+              });
             }
           },
         });
@@ -230,12 +232,14 @@ export class GameComponent implements OnInit {
         ) as HTMLElement;
         piece.classList.remove("selected");
         this.apiService.playCard(roomId, card).subscribe((data) => {
-          this.apiService.socket.emit("move", {
-            roomId: 1,
-            startx,
-            starty,
-            endx,
-            endy,
+          this.apiService.draw(roomId).subscribe((newBoard) => {
+            this.apiService.socket.emit("move", {
+              roomId: 1,
+              startx,
+              starty,
+              endx,
+              endy,
+            });
           });
         });
       });
@@ -356,7 +360,7 @@ export class GameComponent implements OnInit {
           square.appendChild(display);
         }
       });
-      this.apiService.draw(roomId).subscribe();
+
       this.apiService.getBoard(roomId).subscribe((data) => {
         const card1 = JSON.parse(data.card1);
         const card2 = JSON.parse(data.card2);
