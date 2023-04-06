@@ -246,4 +246,11 @@ export class ApiService {
       this.getAuthHeader()
     );
   }
+
+  roomDelete(roomId: number) {
+    return this.http.delete(
+      this.endpoint + `/api/rooms/${roomId}/delete`,
+      this.getAuthHeader()
+    );
+  }
 }

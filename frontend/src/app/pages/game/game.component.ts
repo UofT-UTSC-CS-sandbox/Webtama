@@ -93,7 +93,6 @@ export class GameComponent implements OnInit {
     this.apiService.socket.on("player left", (data) => {
       this.updateName(roomId);
     });
-
   }
 
   ngOnDestroy() {
@@ -314,6 +313,15 @@ export class GameComponent implements OnInit {
           this.apiService.win(roomData.room.Guest as number);
         }
         this.loadAudio("win");
+
+        //set a 5 second delay before redirecting to the lobby
+        setTimeout(() => {
+          this.apiService.getActiveRoom(GLOBALUSER).subscribe((data) => {
+            this.apiService.roomDelete(data as number).subscribe((data) => {
+              this.router.navigate(["/lobby"]);
+            });
+          });
+        }, 5000);
       });
     });
   }
