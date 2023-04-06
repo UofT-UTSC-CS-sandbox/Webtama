@@ -232,9 +232,10 @@ export class ApiService {
       this.getAuthHeader()
     );
   }
-  checkout() {
+  checkout(userId: number) {
     return this.http.post(
       this.endpoint + `/create-checkout-session`,
+      { userId },
       this.getAuthHeader()
     );
   }

@@ -66,14 +66,12 @@ export class LobbyComponent implements OnInit {
 
   checkout() {
     // Check the server.js tab to see an example implementation
-    const session = this.apiService.checkout();
+    const session = this.apiService.checkout(userId);
     session.subscribe((data) => {
       const id = data as string;
       this.stripeService
         .redirectToCheckout({ sessionId: id })
-        .subscribe((res) => {
-          console.log(res);
-        });
+        .subscribe((res) => {});
     });
   }
 
