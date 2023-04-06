@@ -1,10 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit,Inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { ApiService } from "../../services/api.service";
 import { AuthService } from "@auth0/auth0-angular";
 import { ViewEncapsulation } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { switchMap } from "rxjs/operators";
+import { DOCUMENT } from "@angular/common";
 import { StripeService } from "ngx-stripe";
 
 let userId: number = -1;
@@ -18,12 +17,13 @@ let userId: number = -1;
 export class LobbyComponent implements OnInit {
   error: string = ""; // string representing the error message
   isAuthenticated$ = this.authService.isAuthenticated$;
+  notPremium$: boolean = true;
 
   constructor(
     private apiService: ApiService,
     private router: Router,
+    @Inject(DOCUMENT) public document: Document,
     private authService: AuthService,
-    private http: HttpClient,
     private stripeService: StripeService
   ) {}
 
@@ -43,6 +43,11 @@ export class LobbyComponent implements OnInit {
   }
 
   setup() {
+    this.apiService.getUser(userId).subscribe((data) => {
+      console.log("userid: " + userId);
+      console.log(data);
+      this.notPremium$ = !data.user.premium;
+    });
     this.apiService.getRooms().subscribe({
       next: (data) => {
         if (data.rooms.length === 0) {

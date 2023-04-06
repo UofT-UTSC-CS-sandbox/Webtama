@@ -10,6 +10,7 @@ import cors from "cors";
 import { Server } from "socket.io";
 import sgMail from "@sendgrid/mail";
 import Twilio from "twilio";
+import { User } from "./models/users.js";
 import Stripe from "stripe";
 
 const PORT = 3000;
@@ -59,8 +60,10 @@ app.use("/api/rooms", roomRouter);
 
 const stripe = new Stripe("sk_test_51MtDc1HEHppe6KHvbhT7kiix08CN8rZVjUCZl6yacwdB9QGf5ulQxD5DgkjOHbyqoWImyDff5SrKrzCNGs8PK5Ud00jFsKaY4I");
 app.post('/create-checkout-session', async (req, res) => {
+  console.log(req.body.userId);
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
+    metadata: {'userId': `${req.body.userId}`},
     line_items: [
       {
         price: 'price_1MtKfKHEHppe6KHv8l56iixx',
@@ -68,7 +71,7 @@ app.post('/create-checkout-session', async (req, res) => {
       },
     ],
     mode: 'payment',
-    success_url: `http://localhost:4200?paymentId={CHECKOUT_SESSION_ID}`,
+    success_url: `http://localhost:4200`,
     cancel_url: 'http://localhost:4200',
   });
   return res.json(session.id);
@@ -77,44 +80,19 @@ app.post('/create-checkout-session', async (req, res) => {
 // Find your endpoint's secret in your Dashboard's webhook settings
 const endpointSecret = 'whsec_d4f160cfaa691bec75a1f1b0a84a626ca7f05593170cafbdcbf7313b9a31dc28';
 
-const fulfillOrder = (session) =>{
-  // TODO: fill me in
-  console.log("Fulfilling order");
-}
-
-app.post('/webhook', bodyParser.raw({type: 'application/json'}), async (request, response) => {
-  const payload = request.body;
-  const sig = request.headers['stripe-signature'];
-  /** 
-  let event;
-
-  try {
-    event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
-  } catch (err) {
-    console.log(err.message);
-    return response.status(400).send(`Webhook Error: ${err.message}`);
+app.post('/webhook', bodyParser.raw({type: 'application/json'}), async (req, res) => {
+  const payload = req.body;
+  if (payload.type === 'checkout.session.completed') {
+    const user = await User.findByPk(payload.data.object.metadata.userId);
+    if (!user){
+      return res.status(400).end();
+    }else{
+      user.premium = true;
+      await user.save();
+      console.log(user);
+    }
   }
-
-  // Handle the checkout.session.completed event
-  */
-  if (payload.type === 'payment_intent.succeeded') {
-    /** 
-    // Retrieve the session. If you require line items in the response, you may include them by expanding line_items.
-    const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
-      payload.data.object.id,
-      {
-        expand: ['line_items'],
-      }
-    );
-    const lineItems = session.line_items;
-
-    // Fulfill the purchase...
-    */
-    fulfillOrder();
-    
-  }
-
-  response.status(200).end();
+  return res.status(200).end();
 });
 
 // app.use("/api/rooms", boardRouter);
