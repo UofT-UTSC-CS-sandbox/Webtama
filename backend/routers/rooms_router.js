@@ -128,9 +128,7 @@ roomRouter.patch("/:id/leave", async (req, res, next) => {
 });
 
 roomRouter.get("/", async (req, res, next) => {
-  const rooms = await Room.findAll({
-    limit: 10,
-  });
+  const rooms = await Room.findAll({});
   return res.json({ rooms });
 });
 
