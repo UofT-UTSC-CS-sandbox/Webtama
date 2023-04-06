@@ -15,8 +15,8 @@ import { of } from "rxjs";
   providedIn: "root",
 })
 export class ApiService {
-  ///endpoint = "http://localhost:3000";
-  endpoint = environment.apiEndpoint;
+  endpoint = "http://159.203.48.39:3000";
+  // endpoint = environment.apiEndpoint;
   socket: Socket;
 
   constructor(private http: HttpClient) {

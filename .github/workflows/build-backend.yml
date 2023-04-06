@@ -1,4 +1,4 @@
-name: Publish Angular Skeleton to GHCR
+name: Publish Backend Skeleton to GHCR
 
 on:
   push:
@@ -6,9 +6,8 @@ on:
     branches:
       - main
     # Only run this workflow if the commit has modified files from frontend
-    paths:
-      - backend/**
-
+    #paths:
+    #  - backend/**
 
 env:
   IMAGE_NAME: backend-webtama
@@ -31,7 +30,7 @@ jobs:
 
       - name: Log into GitHub Container Registry
         # TODO: Create a Personal Access Tokens (PAT) with `read:packages` and `write:packages` scopes and save it as an Actions secret `CR_PAT`
-        run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.SECRET_KEY }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Push image to GitHub Container Registry
         run: |
@@ -43,7 +42,7 @@ jobs:
           # Strip "v" prefix from tag name
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
           # Use Docker `latest` tag convention
-          [ "$VERSION" == "main" ] &&a VERSION=latest
+          [ "$VERSION" == "main" ] && VERSION=latest
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
@@ -51,10 +50,10 @@ jobs:
       - name: Deploy NodeJS app
         uses: appleboy/ssh-action@master
         with:
-          host: 159.203.7.225
-          username: jasond20
-          key: ${{ secrets.CR_PAT }}
+          host: 165.227.32.234
+          username: root
+          key: ${{ secrets.PRIVATE_KEY }}
           script: |
-                  docker login https://ghcr.io -u jasond20
-                  docker pull ghcr.io/uoft-utsc-cs-sandbox/backend-jasond20
-                  docker run -d -p 80:80 ghcr.io/uoft-utsc-cs-sandbox/backend-jasond20
+            docker stop $(docker ps -a -q --filter "ancestor=ghcr.io/uoft-utsc-cs-sandbox/backend-webtama")
+            docker pull ghcr.io/uoft-utsc-cs-sandbox/backend-webtama
+            docker run -d -p 3000:3000 ghcr.io/uoft-utsc-cs-sandbox/backend-webtama

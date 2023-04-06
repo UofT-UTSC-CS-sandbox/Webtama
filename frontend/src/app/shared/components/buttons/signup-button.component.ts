@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
-import { ApiService } from 'src/app/services/api.service';
+import { Component } from "@angular/core";
+import { AuthService } from "@auth0/auth0-angular";
+import { ApiService } from "src/app/services/api.service";
 
 @Component({
-  selector: 'app-signup-button',
+  selector: "app-signup-button",
   template: `
     <button class="button__sign-up" (click)="handleSignUp()">Sign Up</button>
   `,
@@ -14,13 +14,11 @@ export class SignupButtonComponent {
   handleSignUp(): void {
     this.auth.loginWithRedirect({
       appState: {
-        target: '/profile',
+        target: "/profile",
       },
       authorizationParams: {
-        screen_hint: 'signup',
+        screen_hint: "signup",
       },
     });
-
-  
   }
 }

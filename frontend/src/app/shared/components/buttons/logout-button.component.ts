@@ -1,10 +1,10 @@
-import { Component, Inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { AuthService } from '@auth0/auth0-angular';
-import { ApiService } from 'src/app/services/api.service';
+import { Component, Inject } from "@angular/core";
+import { DOCUMENT } from "@angular/common";
+import { AuthService } from "@auth0/auth0-angular";
+import { ApiService } from "src/app/services/api.service";
 
 @Component({
-  selector: 'app-logout-button',
+  selector: "app-logout-button",
   template: `
     <button class="button__logout" (click)="handleLogout()">Log Out</button>
   `,
@@ -23,6 +23,5 @@ export class LogoutButtonComponent {
         returnTo: this.doc.location.origin,
       },
     });
-    
   }
 }
