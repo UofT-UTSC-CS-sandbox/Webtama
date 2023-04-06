@@ -133,9 +133,9 @@ export class GameComponent implements OnInit {
   }
 
   pieceSelect(x: number, y: number, roomId: number) {
-    this.checkTurn(GLOBALUSER, roomId).then((data) => {
+    this.apiService.checkTurn(roomId, GLOBALUSER).subscribe((data) => {
       if (data === "false") {
-        console.log("not your turn");
+        console.log("not your turn " + GLOBALUSER);
         return;
       } else {
         let piece = document.querySelector(
@@ -152,10 +152,10 @@ export class GameComponent implements OnInit {
         let card1 = document.getElementById("card1");
         let card2 = document.getElementById("card2");
         card1!.addEventListener("click", (e) => {
-          this.cardSelect(roomId, 1, x, y, data);
+          this.cardSelect(roomId, 1, x, y, data as string);
         });
         card2!.addEventListener("click", (e) => {
-          this.cardSelect(roomId, 2, x, y, data);
+          this.cardSelect(roomId, 2, x, y, data as string);
         });
       }
     });
@@ -181,19 +181,34 @@ export class GameComponent implements OnInit {
     for (let i = 0; i < moveArray.length; i++) {
       const x = moveArray[i][0];
       const y = moveArray[i][1];
-      if (startx + x > 5 || startx + x < 0 || starty + y > 5 || starty + y < 0)
+      if (
+        startx + x > 5 ||
+        startx + x < 1 ||
+        starty + y > 5 ||
+        starty + y < 1
+      ) {
         continue;
-      let square = document.querySelector(
-        `[data-row="${starty + y}"][data-col="${startx + x}"]`
-      );
-      // let child = square!.firstElementChild;
-      // if (child !== null && child.classList.contains(team)) {
-      //   continue;
-      // }
-      square!.classList.add("selected");
-      square!.addEventListener("click", (e) => {
-        this.squareSelect(roomId, startx, starty, startx + x, starty + y, card);
-      });
+      } else {
+        console.log(startx + x, starty + y);
+        let square = document.querySelector(
+          `[data-row="${starty + y}"][data-col="${startx + x}"]`
+        );
+        // let child = square!.firstElementChild;
+        // if (child !== null && child.classList.contains(team)) {
+        //   continue;
+        // }
+        square!.classList.add("selected");
+        square!.addEventListener("click", (e) => {
+          this.squareSelect(
+            roomId,
+            startx,
+            starty,
+            startx + x,
+            starty + y,
+            card
+          );
+        });
+      }
     }
   }
 
@@ -262,22 +277,6 @@ export class GameComponent implements OnInit {
     this.loadAudio("move");
   }
 
-  async checkTurn(userId: number, roomId: number): Promise<any> {
-    this.apiService.getRoom(roomId).subscribe((roomData) => {
-      this.apiService.getBoard(roomId).subscribe((boardData) => {
-        const host = roomData.room.Host as number;
-        const guest = roomData.room.Guest as number;
-        if (host == userId && boardData.turn % 2 === 0) {
-          return "aTeam";
-        }
-        if (guest == userId && boardData.turn % 2 !== 0) {
-          return "bTeam";
-        }
-        return "false";
-      });
-    });
-  }
-
   checkWin() {
     const kings = document.querySelectorAll(".king");
     if (kings.length === 1) {
@@ -304,6 +303,7 @@ export class GameComponent implements OnInit {
   }
 
   doWin(winner: number) {
+    console.log("winner is player: " + winner);
     let jeer = document.getElementById("crowdJeer")!;
     this.apiService.getActiveRoom(GLOBALUSER).subscribe((data) => {
       this.apiService.getRoom(data as number).subscribe((roomData) => {
@@ -368,6 +368,8 @@ export class GameComponent implements OnInit {
           }
           square.appendChild(display);
         }
+
+        this.checkWin();
       });
 
       this.apiService.getBoard(roomId).subscribe((data) => {
