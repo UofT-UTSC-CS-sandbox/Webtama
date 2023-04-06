@@ -172,19 +172,34 @@ export class GameComponent implements OnInit {
     for (let i = 0; i < moveArray.length; i++) {
       const x = moveArray[i][0];
       const y = moveArray[i][1];
-      if (startx + x > 5 || startx + x < 0 || starty + y > 5 || starty + y < 0)
+      if (
+        startx + x > 5 ||
+        startx + x < 1 ||
+        starty + y > 5 ||
+        starty + y < 1
+      ) {
         continue;
-      let square = document.querySelector(
-        `[data-row="${starty + y}"][data-col="${startx + x}"]`
-      );
-      // let child = square!.firstElementChild;
-      // if (child !== null && child.classList.contains(team)) {
-      //   continue;
-      // }
-      square!.classList.add("selected");
-      square!.addEventListener("click", (e) => {
-        this.squareSelect(roomId, startx, starty, startx + x, starty + y, card);
-      });
+      } else {
+        console.log(startx + x, starty + y);
+        let square = document.querySelector(
+          `[data-row="${starty + y}"][data-col="${startx + x}"]`
+        );
+        // let child = square!.firstElementChild;
+        // if (child !== null && child.classList.contains(team)) {
+        //   continue;
+        // }
+        square!.classList.add("selected");
+        square!.addEventListener("click", (e) => {
+          this.squareSelect(
+            roomId,
+            startx,
+            starty,
+            startx + x,
+            starty + y,
+            card
+          );
+        });
+      }
     }
   }
 
@@ -279,6 +294,7 @@ export class GameComponent implements OnInit {
   }
 
   doWin(winner: number) {
+    console.log("winner is player: " + winner);
     let jeer = document.getElementById("crowdJeer")!;
     this.apiService.getActiveRoom(GLOBALUSER).subscribe((data) => {
       this.apiService.getRoom(data as number).subscribe((roomData) => {
