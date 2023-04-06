@@ -76,12 +76,22 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
       .json({ error: `User(id=${req.body.userId}) not found.` });
   }
 
+  console.log("JOIN SCREAMING");
+  console.log("JOIN SCREAMING");
+  console.log("JOIN SCREAMING");
+  console.log("JOIN SCREAMING");
+  console.log("JOIN SCREAMING");
+  console.log(user.id);
+  console.log(room.id);
+  console.log(room.Host);
+  console.log(room.Guest);
+
   user.activeRoom = room.id;
   await user.save();
 
-  if (room.Host === null) {
+  if (!room.Host) {
     room.Host = user.id;
-  } else if (room.Guest === null) {
+  } else if (!room.Guest) {
     room.Guest = user.id;
   }
   await room.save();
@@ -90,7 +100,7 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
   return res.json(room);
 });
 
-roomRouter.patch("/:id/join", async (req, res, next) => {
+roomRouter.patch("/:id/leave", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
   if (!room) {
     return res
