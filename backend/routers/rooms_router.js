@@ -325,13 +325,18 @@ roomRouter.get("/:id/boards/wins", async (req, res, next) => {
   }
   const pieces = await Piece.findAll({ where: { BoardId: board.id } });
 
+  const Host = await User.findOne({ where: { id: room.Host } });
+  const Guest = await User.findOne({ where: { id: room.Guest } });
+
   const kings = pieces.filter((piece) => piece.type === "king");
   console.log("winning");
   console.log(kings);
   if (kings.length === 1) {
     if (kings[0].side == 1) {
+      Host.mmr += 10;
       return res.json(1);
     } else if (kings[0].side == 0) {
+      Guest.mmr += 10;
       return res.json(2);
     }
   }
@@ -343,12 +348,18 @@ roomRouter.get("/:id/boards/wins", async (req, res, next) => {
     const kingSide = king.side;
 
     if (kingSide == 0 && kingy == 5) {
+      Guest.mmr += 10;
       return res.json(2);
     } else if (kingSide == 1 && kingy == 1) {
+      Host.mmr += 10;
       return res.json(1);
     }
   }
 
+  Guest.save();
+  Guest.reload();
+  Host.save();
+  Host.reload();
   return res.json(-1);
 });
 
