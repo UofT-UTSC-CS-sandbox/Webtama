@@ -89,6 +89,11 @@ export class GameComponent implements OnInit {
     this.apiService.socket.on("player joined", (data) => {
       this.updateName(roomId);
     });
+
+    this.apiService.socket.on("player left", (data) => {
+      this.updateName(roomId);
+    });
+
   }
 
   ngOnDestroy() {
@@ -98,13 +103,22 @@ export class GameComponent implements OnInit {
     userId = GLOBALUSER;
 
     this.apiService.getActiveRoom(userId).subscribe((data) => {
+      roomId = data as number;
       this.apiService.socket.emit("leave room", {
         roomId: roomId,
-        playerName: "Beta",
+        playerName: userId,
       });
       this.apiService.getRoom(roomId).subscribe((roomData) => {
-        if (roomData.room.Host === userId || roomData.room.Guest === userId) {
-          this.apiService.leaveRoom(roomId, userId).subscribe();
+        console.log("Room", roomData);
+        let host = roomData.room.Host as number;
+        let guest = roomData.room.Guest as number;
+        console.log("Host", host);
+        console.log("Guest", guest);
+        console.log("User", userId);
+        console.log("Host === User", host == userId);
+        console.log("Guest === User", guest == userId);
+        if (host == userId || guest == userId) {
+          console.log(this.apiService.leaveRoom(roomId, userId).subscribe());
         }
       });
     });

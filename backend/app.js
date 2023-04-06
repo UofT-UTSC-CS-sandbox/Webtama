@@ -160,6 +160,16 @@ io.on("connection", (socket) => {
   socket.on("leave room", (data) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
+    // Leave the specified room
+    fetch("http://localhost:3000/api/rooms/" + roomId, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        playerName: playerName,
+      })
+    });
     socket.leave(roomId);
     console.log("leave room", data.roomId, data);
     io.to(roomId).emit("player left", playerName);

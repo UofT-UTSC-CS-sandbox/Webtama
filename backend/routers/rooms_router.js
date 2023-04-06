@@ -79,10 +79,10 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
   user.activeRoom = room.id;
   await user.save();
 
-  if (room.Host === "[NULL]" && room.Guest !== user.id) {
+  if (!room.Host && room.Guest !== user.id) {
     console.log("host is null");
     room.Host = user.id;
-  } else if (room.Guest === "[NULL]" && room.Host !== user.id) {
+  } else if (!room.Guest && room.Host !== user.id) {
     console.log("guest is null");
     room.Guest = user.id;
   }
@@ -93,6 +93,8 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
 });
 
 roomRouter.patch("/:id/leave", async (req, res, next) => {
+  console.log("req.body.userId", req.body.userId);
+  console.log("req.params.id", req.params.id);
   const room = await Room.findByPk(req.params.id);
   if (!room) {
     return res
@@ -101,7 +103,7 @@ roomRouter.patch("/:id/leave", async (req, res, next) => {
   }
   const user = await User.findOne({
     where: {
-      email: req.body.userId,
+      id: req.body.userId,
     },
   });
   if (!user) {
@@ -111,10 +113,19 @@ roomRouter.patch("/:id/leave", async (req, res, next) => {
   }
 
   const userId = req.body.userId;
+  console.log("LEAVE SCREAMING");
+  console.log("LEAVE SCREAMING");
+  console.log("LEAVE SCREAMING");
+  console.log("LEAVE SCREAMING");
+  console.log("LEAVE SCREAMING");
+  console.log(userId);
+  console.log(room.id);
+  console.log(room.Host);
+  console.log(room.Guest);
 
-  if (room.Host === req.body.userId) {
+  if (room.Host == req.body.userId) {
     room.Host = null;
-  } else if (room.Guest === req.body.userId) {
+  } else if (room.Guest == req.body.userId) {
     room.Guest = null;
   }
   user.activeRoom = null;
