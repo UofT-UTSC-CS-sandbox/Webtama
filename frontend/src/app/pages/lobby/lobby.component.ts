@@ -1,4 +1,4 @@
-import { Component, OnInit,Inject } from "@angular/core";
+import { Component, OnInit, Inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { ApiService } from "../../services/api.service";
 import { AuthService } from "@auth0/auth0-angular";
@@ -33,8 +33,6 @@ export class LobbyComponent implements OnInit {
     if (userId === -1) {
       this.apiService.me().subscribe((data) => {
         userId = data as number;
-        console.log(data);
-        console.log(userId);
         this.setup();
       });
     } else {
@@ -44,8 +42,6 @@ export class LobbyComponent implements OnInit {
 
   setup() {
     this.apiService.getUser(userId).subscribe((data) => {
-      console.log("userid: " + userId);
-      console.log(data);
       this.notPremium$ = !data.user.premium;
     });
     this.apiService.getRooms().subscribe({
@@ -128,7 +124,6 @@ export class LobbyComponent implements OnInit {
 
   joinRoom(roomId: number, userId: number) {
     this.apiService.joinRoom(roomId, userId).subscribe((data) => {
-      console.log(data);
       this.goToGame();
     });
   }
