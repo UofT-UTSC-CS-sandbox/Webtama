@@ -3,11 +3,9 @@ import { Router } from "@angular/router";
 import { ApiService } from "../../services/api.service";
 import { AuthService } from "@auth0/auth0-angular";
 import { ViewEncapsulation } from "@angular/core";
-import { HttpClient } from '@angular/common/http';
-import { switchMap } from 'rxjs/operators';
-import { StripeService } from 'ngx-stripe';
-import { JSON } from "sequelize";
-import { Json } from "sequelize/types/utils";
+import { HttpClient } from "@angular/common/http";
+import { switchMap } from "rxjs/operators";
+import { StripeService } from "ngx-stripe";
 
 let userId: number = -1;
 
@@ -71,9 +69,11 @@ export class LobbyComponent implements OnInit {
     const session = this.apiService.checkout();
     session.subscribe((data) => {
       const id = data as string;
-      this.stripeService.redirectToCheckout({ sessionId: id }).subscribe((res) => {
-        console.log(res);
-      });
+      this.stripeService
+        .redirectToCheckout({ sessionId: id })
+        .subscribe((res) => {
+          console.log(res);
+        });
     });
   }
 
