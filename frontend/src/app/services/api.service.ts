@@ -130,6 +130,14 @@ export class ApiService {
     );
   }
 
+  playCard(roomId: number, card: number) {
+    return this.http.patch(
+      this.endpoint + `/api/rooms/${roomId}/boards/play`,
+      { card },
+      this.getAuthHeader()
+    );
+  }
+
   joinRoom(roomId: number, userId: number) {
     console.log("joinging :" + roomId + " " + userId);
     return this.http.patch(this.endpoint + `/api/rooms/${roomId}/join`, {
@@ -217,6 +225,9 @@ export class ApiService {
     );
   }
   checkout() {
-    return this.http.post(this.endpoint + `/create-checkout-session`, this.getAuthHeader());
+    return this.http.post(
+      this.endpoint + `/create-checkout-session`,
+      this.getAuthHeader()
+    );
   }
 }

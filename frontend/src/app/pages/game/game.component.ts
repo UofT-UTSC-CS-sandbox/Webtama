@@ -181,7 +181,7 @@ export class GameComponent implements OnInit {
       // }
       square!.classList.add("selected");
       square!.addEventListener("click", (e) => {
-        this.squareSelect(roomId, startx, starty, startx + x, starty + y);
+        this.squareSelect(roomId, startx, starty, startx + x, starty + y, card);
       });
     }
   }
@@ -200,10 +200,11 @@ export class GameComponent implements OnInit {
     startx: number,
     starty: number,
     x: number,
-    y: number
+    y: number,
+    card: number
   ) {
     this.removeSquareListeners();
-    this.makeMove(roomId, startx, starty, x, y);
+    this.makeMove(roomId, startx, starty, x, y, card);
   }
 
   makeMove(
@@ -211,7 +212,8 @@ export class GameComponent implements OnInit {
     startx: number,
     starty: number,
     endx: number,
-    endy: number
+    endy: number,
+    card: number
   ) {
     let squares = document.querySelectorAll("td");
     squares.forEach((square) => {
@@ -227,12 +229,14 @@ export class GameComponent implements OnInit {
           `[data-x="${startx}"][data-y="${starty}"]`
         ) as HTMLElement;
         piece.classList.remove("selected");
-        this.apiService.socket.emit("move", {
-          roomId: 1,
-          startx,
-          starty,
-          endx,
-          endy,
+        this.apiService.playCard(roomId, card).subscribe((data) => {
+          this.apiService.socket.emit("move", {
+            roomId: 1,
+            startx,
+            starty,
+            endx,
+            endy,
+          });
         });
       });
 

@@ -280,15 +280,48 @@ roomRouter.patch("/:id/boards/draw", async (req, res, next) => {
       .json({ error: `Board(id=${req.params.id}) not found.` });
   }
 
+  console.log("DRAWING");
+  console.log(board.card1);
+  console.log(board.card2);
+
   if (!board.card1) {
     const card1 = shuffle();
     board.card1 = JSON.stringify(card1);
   }
   while (!board.card2 || board.card2 === board.card1) {
     const card2 = shuffle();
+    console.log("CARD2", card2);
     board.card2 = JSON.stringify(card2);
   }
 
+  await board.save();
+  await board.reload();
+  return res.json(board);
+});
+
+roomRouter.patch("/:id/boards/play", async (req, res, next) => {
+  const room = await Room.findByPk(req.params.id);
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+  const board = await Board.findOne({ where: { RoomId: req.params.id } });
+  if (!board) {
+    return res
+      .status(404)
+      .json({ error: `Board(id=${req.params.id}) not found.` });
+  }
+
+  if (req.body.card === 1) {
+    board.card1 = null;
+  } else if (req.body.card === 2) {
+    board.card2 = null;
+  }
+  console.log("PLAYING");
+  console.log(req.body);
+  console.log(board.card1);
+  console.log(board.card2);
   await board.save();
   await board.reload();
   return res.json(board);
