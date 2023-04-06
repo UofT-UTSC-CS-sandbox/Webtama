@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { io, Socket } from "socket.io-client";
 import { ViewEncapsulation } from "@angular/core";
 import { ApiService } from "../../services/api.service";
+import { ViewChildren, QueryList, ElementRef } from "@angular/core";
 
 let GLOBALUSER: number = -1;
 
@@ -15,6 +16,7 @@ let GLOBALUSER: number = -1;
 })
 export class GameComponent implements OnInit {
   socket: Socket;
+  @ViewChildren(".king") kingElements!: QueryList<ElementRef>;
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -77,6 +79,7 @@ export class GameComponent implements OnInit {
     this.apiService.socket.on("game state updated", (data) => {
       this.cleanBoard();
       this.updateBoard();
+      this.checkWin();
     });
 
     this.apiService.socket.on("jeer", (data) => {
@@ -180,7 +183,6 @@ export class GameComponent implements OnInit {
       ) {
         continue;
       } else {
-        console.log(startx + x, starty + y);
         let square = document.querySelector(
           `[data-row="${starty + y}"][data-col="${startx + x}"]`
         );
@@ -269,7 +271,18 @@ export class GameComponent implements OnInit {
   }
 
   checkWin() {
-    const kings = document.querySelectorAll(".king");
+    console.log("checking win");
+
+    // let kings = Array.from(document.querySelectorAll("king"));
+    // const kings = this.kingElements.toArray();
+    let pieces = document.querySelectorAll("p");
+    let kings: HTMLElement[] = [];
+    pieces.forEach((piece) => {
+      console.log("found" + piece);
+      if (piece.classList.contains("king")) {
+        kings.push(piece);
+      }
+    });
     if (kings.length === 1) {
       if (kings[0].classList.contains("aTeam")) {
         this.doWin(1);
@@ -277,15 +290,18 @@ export class GameComponent implements OnInit {
         this.doWin(2);
       }
     }
+    console.log(kings);
     for (let i = 0; i < kings.length; i++) {
+      console.log("checking king: " + i);
+      console.log(kings[i]);
       if (
         kings[i].classList.contains("aTeam") &&
-        kings[i].getAttribute("data-y") === "5"
+        kings[i].getAttribute("data-y") == "5"
       ) {
         this.doWin(1);
       } else if (
         kings[i].classList.contains("bTeam") &&
-        kings[i].getAttribute("data-y") === "0"
+        kings[i].getAttribute("data-y") == "0"
       ) {
         this.doWin(2);
       }
@@ -359,8 +375,6 @@ export class GameComponent implements OnInit {
           }
           square.appendChild(display);
         }
-
-        this.checkWin();
       });
 
       this.apiService.getBoard(roomId).subscribe((data) => {
@@ -373,6 +387,9 @@ export class GameComponent implements OnInit {
         card2Element!.innerHTML = card2[0].toUpperCase();
         card2Element!.setAttribute("data-card", JSON.stringify(card2[1]));
       });
+      setTimeout(() => {
+        this.checkWin();
+      }, 0);
     });
   }
 }
