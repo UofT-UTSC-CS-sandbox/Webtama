@@ -119,6 +119,15 @@ roomRouter.patch("/:id/leave", async (req, res, next) => {
   }
 
   const userId = req.body.userId;
+  console.log("LEAVE SCREAMING");
+  console.log("LEAVE SCREAMING");
+  console.log("LEAVE SCREAMING");
+  console.log("LEAVE SCREAMING");
+  console.log("LEAVE SCREAMING");
+  console.log(userId);
+  console.log(room.id);
+  console.log(room.Host);
+  console.log(room.Guest);
 
   if (room.Host === req.body.userId) {
     room.Host = null;
