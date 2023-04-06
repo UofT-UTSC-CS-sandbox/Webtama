@@ -48,7 +48,6 @@ export class GameComponent implements OnInit {
     this.apiService.me().subscribe((data) => {
       GLOBALUSER = data as number;
       userId = data as number;
-      console.log("init user id: " + userId);
 
       this.apiService.getActiveRoom(userId).subscribe((data) => {
         roomId = data as number;
@@ -59,7 +58,6 @@ export class GameComponent implements OnInit {
         this.updateName(roomId);
         this.apiService.getBoard(roomId).subscribe({
           next: (data) => {
-            console.log("board found" + data + "roomId: " + roomId);
             this.apiService.socket.emit("move", { roomId: roomId });
           },
           error: (err) => {
@@ -108,9 +106,7 @@ export class GameComponent implements OnInit {
   }
 
   updateName(roomId: number) {
-    console.log("updateName:");
     this.apiService.getRoom(roomId).subscribe((roomData) => {
-      console.log(roomData);
       let player1 = document.getElementById("p1Title");
       let player2 = document.getElementById("p2Title");
       if (roomData.room.Host) {
@@ -129,7 +125,6 @@ export class GameComponent implements OnInit {
     this.checkTurn(GLOBALUSER, roomId).then((data) => {
       if (data === "false") {
         console.log("not your turn");
-        console.log(data + " " + GLOBALUSER + " " + roomId);
         return;
       } else {
         let piece = document.querySelector(
@@ -170,7 +165,6 @@ export class GameComponent implements OnInit {
     }
 
     this.removeSquareListeners();
-    console.log("cardSelect: " + card + " " + startx + " " + starty + " ");
 
     let moveArray = JSON.parse(cardElement!.getAttribute("data-card")!);
     for (let i = 0; i < moveArray.length; i++) {
@@ -195,7 +189,6 @@ export class GameComponent implements OnInit {
   removeSquareListeners() {
     let squares = document.querySelectorAll("td");
     squares.forEach((square) => {
-      console.log("call");
       square.classList.remove("selected");
       let new_square = square.cloneNode(true);
       square.parentNode!.replaceChild(new_square, square);
@@ -258,11 +251,9 @@ export class GameComponent implements OnInit {
         const host = roomData.room.Host as number;
         const guest = roomData.room.Guest as number;
         if (host == userId && boardData.turn % 2 === 0) {
-          console.log("host turn");
           return "aTeam";
         }
         if (guest == userId && boardData.turn % 2 !== 0) {
-          console.log("guest turn");
           return "bTeam";
         }
         return "false";
@@ -272,38 +263,46 @@ export class GameComponent implements OnInit {
 
   checkWin() {
     const kings = document.querySelectorAll(".king");
-    let jeer = document.getElementById("crowdJeer")!;
     if (kings.length === 1) {
       if (kings[0].classList.contains("aTeam")) {
-        jeer.innerHTML =
-          document.getElementById("p1Title")!.innerHTML + " wins!";
-        this.loadAudio("win");
-        return 1;
+        this.doWin(1);
+      } else if (kings[0].classList.contains("bTeam")) {
+        this.doWin(2);
       }
-      jeer.innerHTML = document.getElementById("p2Title")!.innerHTML + " wins!";
-      this.loadAudio("win");
-      return 2;
     }
     for (let i = 0; i < kings.length; i++) {
       if (
         kings[i].classList.contains("aTeam") &&
         kings[i].getAttribute("data-y") === "5"
       ) {
-        jeer.innerHTML =
-          document.getElementById("p1Title")!.innerHTML + " wins!";
-        this.loadAudio("win");
-        return 1;
+        this.doWin(1);
       } else if (
         kings[i].classList.contains("bTeam") &&
         kings[i].getAttribute("data-y") === "0"
       ) {
-        jeer.innerHTML =
-          document.getElementById("p2Title")!.innerHTML + " wins!";
-        this.loadAudio("win");
-        return 2;
+        this.doWin(2);
       }
     }
     return 0;
+  }
+
+  doWin(winner: number) {
+    let jeer = document.getElementById("crowdJeer")!;
+    this.apiService.getActiveRoom(GLOBALUSER).subscribe((data) => {
+      this.apiService.getRoom(data as number).subscribe((roomData) => {
+        if (winner === 1) {
+          jeer.innerHTML =
+            document.getElementById("p1Title")!.innerHTML + " wins!";
+          this.apiService.win(roomData.room.Host as number);
+        }
+        if (winner === 2) {
+          jeer.innerHTML =
+            document.getElementById("p2Title")!.innerHTML + " wins!";
+          this.apiService.win(roomData.room.Guest as number);
+        }
+        this.loadAudio("win");
+      });
+    });
   }
 
   cleanBoard() {
@@ -328,7 +327,6 @@ export class GameComponent implements OnInit {
             `[data-row="${piece.ypos}"][data-col="${piece.xpos}"]`
           );
           if (square === null) {
-            console.error("Square not found");
             return;
           }
           const display = document.createElement("p");

@@ -181,6 +181,10 @@ export class ApiService {
       });
   }
 
+  win(userId: number) {
+    return this.http.patch(this.endpoint + `/${userId}/ratings`, {});
+  }
+
   signOut() {
     return this.http
       .get(this.endpoint + `/users/signout`, this.getAuthHeader())
