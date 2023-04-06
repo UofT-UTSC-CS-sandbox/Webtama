@@ -92,11 +92,5 @@ usersRouter.get("/me", isAuthenticated, userInfo, async (req, res) => {
     req.session.save();
   }
 
-  console.log("SCREAMING ME");
-  console.log("SCREAMING ME");
-  console.log("SCREAMING ME");
-  console.log("SCREAMING ME");
-  console.log(user);
-
   return res.json(user.dataValues.id);
 });
