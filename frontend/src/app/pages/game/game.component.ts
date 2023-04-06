@@ -124,9 +124,9 @@ export class GameComponent implements OnInit {
   }
 
   pieceSelect(x: number, y: number, roomId: number) {
-    this.checkTurn(GLOBALUSER, roomId).then((data) => {
+    this.apiService.checkTurn(roomId, GLOBALUSER).subscribe((data) => {
       if (data === "false") {
-        console.log("not your turn");
+        console.log("not your turn " + GLOBALUSER);
         return;
       } else {
         let piece = document.querySelector(
@@ -143,10 +143,10 @@ export class GameComponent implements OnInit {
         let card1 = document.getElementById("card1");
         let card2 = document.getElementById("card2");
         card1!.addEventListener("click", (e) => {
-          this.cardSelect(roomId, 1, x, y, data);
+          this.cardSelect(roomId, 1, x, y, data as string);
         });
         card2!.addEventListener("click", (e) => {
-          this.cardSelect(roomId, 2, x, y, data);
+          this.cardSelect(roomId, 2, x, y, data as string);
         });
       }
     });
@@ -253,22 +253,6 @@ export class GameComponent implements OnInit {
     this.loadAudio("move");
   }
 
-  async checkTurn(userId: number, roomId: number): Promise<any> {
-    this.apiService.getRoom(roomId).subscribe((roomData) => {
-      this.apiService.getBoard(roomId).subscribe((boardData) => {
-        const host = roomData.room.Host as number;
-        const guest = roomData.room.Guest as number;
-        if (host == userId && boardData.turn % 2 === 0) {
-          return "aTeam";
-        }
-        if (guest == userId && boardData.turn % 2 !== 0) {
-          return "bTeam";
-        }
-        return "false";
-      });
-    });
-  }
-
   checkWin() {
     const kings = document.querySelectorAll(".king");
     if (kings.length === 1) {
@@ -359,6 +343,8 @@ export class GameComponent implements OnInit {
           }
           square.appendChild(display);
         }
+
+        this.checkWin();
       });
 
       this.apiService.getBoard(roomId).subscribe((data) => {

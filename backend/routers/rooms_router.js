@@ -76,22 +76,14 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
       .json({ error: `User(id=${req.body.userId}) not found.` });
   }
 
-  console.log("JOIN SCREAMING");
-  console.log("JOIN SCREAMING");
-  console.log("JOIN SCREAMING");
-  console.log("JOIN SCREAMING");
-  console.log("JOIN SCREAMING");
-  console.log(user.id);
-  console.log(room.id);
-  console.log(room.Host);
-  console.log(room.Guest);
-
   user.activeRoom = room.id;
   await user.save();
 
-  if (!room.Host) {
+  if (room.Host === "[NULL]" && room.Guest !== user.id) {
+    console.log("host is null");
     room.Host = user.id;
-  } else if (!room.Guest) {
+  } else if (room.Guest === "[NULL]" && room.Host !== user.id) {
+    console.log("guest is null");
     room.Guest = user.id;
   }
   await room.save();
@@ -251,7 +243,7 @@ roomRouter.patch("/:id/boards", async (req, res, next) => {
   piece.ypos = req.body.endy;
   await piece.save();
 
-  board.turn = board.turn === 0 ? 1 : 0;
+  board.turn++;
   await board.save();
 
   await board.reload();
@@ -276,6 +268,40 @@ roomRouter.get("/:id/boards/pieces", async (req, res, next) => {
   return res.json({ pieces });
 });
 
+roomRouter.patch("/:id/boards/turns", async (req, res, next) => {
+  const room = await Room.findByPk(req.params.id);
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+  const board = await Board.findOne({ where: { RoomId: req.params.id } });
+
+  if (!board) {
+    return res
+      .status(404)
+      .json({ error: `Board(id=${req.params.id}) not found.` });
+  }
+
+  console.log("TURN CHECKING");
+  console.log(req.body);
+
+  const user = await User.findOne({ where: { id: req.body.userId } });
+  if (!user) {
+    return res
+      .status(404)
+      .json({ error: `User(id=${req.params.id}) not found.` });
+  }
+
+  if (room.Host == user.id && board.turn % 2 === 0) {
+    return res.json("aTeam");
+  } else if (room.Guest == user.id && board.turn % 2 !== 0) {
+    return res.json("bTeam");
+  } else {
+    return res.json("false");
+  }
+});
+
 roomRouter.patch("/:id/boards/draw", async (req, res, next) => {
   let room = await Room.findByPk(req.params.id);
   if (!room) {
@@ -289,10 +315,6 @@ roomRouter.patch("/:id/boards/draw", async (req, res, next) => {
       .status(404)
       .json({ error: `Board(id=${req.params.id}) not found.` });
   }
-
-  console.log("DRAWING");
-  console.log(board.card1);
-  console.log(board.card2);
 
   if (!board.card1) {
     const card1 = shuffle();

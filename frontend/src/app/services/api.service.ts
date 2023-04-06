@@ -109,6 +109,14 @@ export class ApiService {
     );
   }
 
+  checkTurn(roomId: number, userId: number) {
+    return this.http.patch(
+      this.endpoint + `/api/rooms/${roomId}/boards/turns`,
+      { userId: userId },
+      this.getAuthHeader()
+    );
+  }
+
   makeMove(id: number, x1: number, y1: number, x2: number, y2: number) {
     return this.http.patch(
       this.endpoint + `/api/rooms/${id}/boards`,
