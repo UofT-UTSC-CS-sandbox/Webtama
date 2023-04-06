@@ -80,10 +80,8 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
   await user.save();
 
   if (!room.Host && room.Guest !== user.id) {
-    console.log("host is null");
     room.Host = user.id;
-  } else if (!room.Guest && room.Host !== user.id) {
-    console.log("guest is null");
+  } else if (room.Guest === "[NULL]" && room.Host !== user.id) {
     room.Guest = user.id;
   }
   await room.save();
@@ -93,8 +91,6 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
 });
 
 roomRouter.patch("/:id/leave", async (req, res, next) => {
-  console.log("req.body.userId", req.body.userId);
-  console.log("req.params.id", req.params.id);
   const room = await Room.findByPk(req.params.id);
   if (!room) {
     return res
@@ -318,14 +314,20 @@ roomRouter.get("/:id/boards/wins", async (req, res, next) => {
   const Guest = await User.findOne({ where: { id: room.Guest } });
 
   const kings = pieces.filter((piece) => piece.type === "king");
-  console.log("winning");
-  console.log(kings);
   if (kings.length === 1) {
     if (kings[0].side == 1) {
-      Host.mmr += 10;
+      if (Host) {
+        Host.mmr += 10;
+        Host.save();
+        Host.reload();
+      }
       return res.json(1);
     } else if (kings[0].side == 0) {
-      Guest.mmr += 10;
+      if (Guest) {
+        Guest.mmr += 10;
+        Guest.save();
+        Guest.reload();
+      }
       return res.json(2);
     }
   }
@@ -337,18 +339,24 @@ roomRouter.get("/:id/boards/wins", async (req, res, next) => {
     const kingSide = king.side;
 
     if (kingSide == 0 && kingy == 5) {
-      Guest.mmr += 10;
+      if (Guest) {
+        Guest.mmr += 10;
+        Guest.save();
+        Guest.reload();
+      }
+
       return res.json(2);
     } else if (kingSide == 1 && kingy == 1) {
-      Host.mmr += 10;
+      if (Host) {
+        Host.mmr += 10;
+        Host.save();
+        Host.reload();
+      }
+
       return res.json(1);
     }
   }
 
-  Guest.save();
-  Guest.reload();
-  Host.save();
-  Host.reload();
   return res.json(-1);
 });
 
@@ -372,7 +380,6 @@ roomRouter.patch("/:id/boards/draw", async (req, res, next) => {
   }
   while (!board.card2 || board.card2 === board.card1) {
     const card2 = shuffle();
-    console.log("CARD2", card2);
     board.card2 = JSON.stringify(card2);
   }
 
@@ -403,4 +410,15 @@ roomRouter.patch("/:id/boards/play", async (req, res, next) => {
   await board.save();
   await board.reload();
   return res.json(board);
+});
+
+roomRouter.delete("/:id/delete", async (req, res, next) => {
+  const room = await Room.findByPk(req.params.id);
+  if (!room) {
+    return res
+      .status(404)
+      .json({ error: `Room(id=${req.params.id}) not found.` });
+  }
+  await room.destroy();
+  return res.json({ message: "Room deleted" });
 });

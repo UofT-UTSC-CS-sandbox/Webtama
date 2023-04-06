@@ -108,14 +108,8 @@ export class GameComponent implements OnInit {
         playerName: userId,
       });
       this.apiService.getRoom(roomId).subscribe((roomData) => {
-        console.log("Room", roomData);
         let host = roomData.room.Host as number;
         let guest = roomData.room.Guest as number;
-        console.log("Host", host);
-        console.log("Guest", guest);
-        console.log("User", userId);
-        console.log("Host === User", host == userId);
-        console.log("Guest === User", guest == userId);
         if (host == userId || guest == userId) {
           console.log(this.apiService.leaveRoom(roomId, userId).subscribe());
         }
@@ -199,10 +193,6 @@ export class GameComponent implements OnInit {
         let square = document.querySelector(
           `[data-row="${starty + y}"][data-col="${startx + x}"]`
         );
-        // let child = square!.firstElementChild;
-        // if (child !== null && child.classList.contains(team)) {
-        //   continue;
-        // }
         square!.classList.add("selected");
         square!.addEventListener("click", (e) => {
           this.squareSelect(
@@ -264,7 +254,7 @@ export class GameComponent implements OnInit {
         this.apiService.playCard(roomId, card).subscribe((data) => {
           this.apiService.draw(roomId).subscribe((newBoard) => {
             this.apiService.socket.emit("move", {
-              roomId: 1,
+              roomId: roomId,
               startx,
               starty,
               endx,
@@ -287,10 +277,8 @@ export class GameComponent implements OnInit {
     this.apiService.getActiveRoom(GLOBALUSER).subscribe((activeRoom) => {
       this.apiService.checkWin(activeRoom as number).subscribe((data) => {
         if (data == -1) {
-          console.log("no winner yet");
           return;
         } else {
-          console.log("winner: " + data);
           this.doWin(data as number);
         }
       });
@@ -298,7 +286,6 @@ export class GameComponent implements OnInit {
   }
 
   doWin(winner: number) {
-    console.log("winner is player: " + winner);
     let jeer = document.getElementById("crowdJeer")!;
     this.apiService.getActiveRoom(GLOBALUSER).subscribe((data) => {
       this.apiService.getRoom(data as number).subscribe((roomData) => {
