@@ -91,18 +91,18 @@ services:
     expose:
       - 3000
     environment:
-      - VIRTUAL_HOST=api.webtama.works
-      - LETSENCRYPT_HOST=api.webtama.works
+      - VIRTUAL_HOST=webtama.works:3000
+      - LETSENCRYPT_HOST=webtama.works:3000
     
   frontend:
     image: ghcr.io/uoft-utsc-cs-sandbox/frontend-webtama
     container_name: frontend
     restart: always
     expose:
-      - 80
+      - 8000
     environment:
-      - VIRTUAL_HOST=webtama.works
-      - LETSENCRYPT_HOST=webtama.works
+      - VIRTUAL_HOST=webtama.works:8000
+      - LETSENCRYPT_HOST=webtama.works:8000
   
 volumes:
   nginx_conf_ssl:
