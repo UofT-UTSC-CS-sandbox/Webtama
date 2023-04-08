@@ -112,22 +112,22 @@ io.on("connection", (socket) => {
     console.log("move roomId:", roomId, data);
     io.to(roomId).emit("game state updated");
     // send sms to player
-    const accountSid = "ACc746786f25d6927c3eb29d72c4775f8a";
-    const authToken = "0dc8051c79979dd0ec148b75ed9963ee";
-    const client = Twilio(accountSid, authToken);
+    // const accountSid = "ACc746786f25d6927c3eb29d72c4775f8a";
+    // const authToken = "0dc8051c79979dd0ec148b75ed9963ee";
+    // const client = Twilio(accountSid, authToken);
 
-    client.messages
-      .create({
-        body:
-          "Move has been made!" +
-          data.startx +
-          data.starty +
-          data.endx +
-          data.endy,
-        from: "+15855951945",
-        to: "+16475703028", //testing phone number
-      })
-      .then((message) => console.log(message.sid));
+    // client.messages
+    //   .create({
+    //     body:
+    //       "Move has been made!" +
+    //       data.startx +
+    //       data.starty +
+    //       data.endx +
+    //       data.endy,
+    //     from: "+15855951945",
+    //     to: "+16475703028", //testing phone number
+    //   })
+    //   .then((message) => console.log(message.sid));
   });
 
   socket.on("disconnect", () => {
