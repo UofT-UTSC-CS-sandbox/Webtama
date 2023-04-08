@@ -91,8 +91,8 @@ services:
     expose:
       - 3000
     environment:
-      - VIRTUAL_HOST=webtama.works:3000
-      - LETSENCRYPT_HOST=webtama.works:3000
+      - VIRTUAL_HOST=api.webtama.works
+      - LETSENCRYPT_HOST=api.webtama.works
     
   frontend:
     image: ghcr.io/uoft-utsc-cs-sandbox/frontend-webtama
@@ -101,8 +101,8 @@ services:
     expose:
       - 80
     environment:
-      - VIRTUAL_HOST=webtama.works:4200
-      - LETSENCRYPT_HOST=webtama.works:4200
+      - VIRTUAL_HOST=webtama.works
+      - LETSENCRYPT_HOST=webtama.works
   
 volumes:
   nginx_conf_ssl:
