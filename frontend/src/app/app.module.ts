@@ -28,8 +28,8 @@ import { SharedModule } from "./shared/shared.module";
       clientId: "dibFRURk5XSOdzcA66JIBCs4n38zwein",
       authorizationParams: {
         // redirect_uri: "http://localhost:4200/callback",
-        // redirect_uri: "http://webtama.works:4200/callback",
-        redirect_uri: "http://webtama.works/callback",
+        redirect_uri: "http://webtama.works:4200/callback",
+        // redirect_uri: "http://webtama.works/callback",
         audience: "https://dev-0rubju8i61qqpmgv.us.auth0.com/api/v2/",
         scope: "read:current_user update:current_user_metadata",
       },

@@ -18,14 +18,15 @@ export class GameComponent implements OnInit {
     private router: Router,
     private apiService: ApiService
   ) {
-    this.socket = io("http://api.webtama.works");
+    // this.socket = io("http://api.webtama.works");
+    this.socket = io("http://webtama.works:3000");
   }
 
   async loadAudio() {
     const audioCtx = new AudioContext();
     let buffer: AudioBuffer;
 
-    const audio = new Audio("http://webtama.works/assets/audio/moveSound.mp3");
+    const audio = new Audio("http://webtama.works:4200/assets/audio/moveSound.mp3");
 
     const source = audioCtx.createMediaElementSource(audio);
     source.connect(audioCtx.destination);
@@ -199,7 +200,7 @@ export class GameComponent implements OnInit {
     return false;
   }
 
-  cleanBoard() {
+  cleanBoard() {pi.webt
     let pieces = document.querySelectorAll("p");
     pieces.forEach((piece) => {
       piece.remove();

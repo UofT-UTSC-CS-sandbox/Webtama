@@ -101,8 +101,8 @@ services:
     expose:
       - 80
     environment:
-      - VIRTUAL_HOST=webtama.works
-      - LETSENCRYPT_HOST=webtama.works
+      - VIRTUAL_HOST=webtama.works:4200
+      - LETSENCRYPT_HOST=webtama.works:4200
   
 volumes:
   nginx_conf_ssl:
