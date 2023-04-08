@@ -26,7 +26,7 @@ export class GameComponent implements OnInit {
     const audioCtx = new AudioContext();
     let buffer: AudioBuffer;
 
-    const audio = new Audio("http://webtama.works:8000/assets/audio/moveSound.mp3");
+    const audio = new Audio("http://webtama.works/assets/audio/moveSound.mp3");
 
     const source = audioCtx.createMediaElementSource(audio);
     source.connect(audioCtx.destination);
@@ -200,7 +200,7 @@ export class GameComponent implements OnInit {
     return false;
   }
 
-  cleanBoard() {pi.webt
+  cleanBoard() {
     let pieces = document.querySelectorAll("p");
     pieces.forEach((piece) => {
       piece.remove();
