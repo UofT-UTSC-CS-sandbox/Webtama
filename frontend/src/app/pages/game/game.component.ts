@@ -18,14 +18,14 @@ export class GameComponent implements OnInit {
     private router: Router,
     private apiService: ApiService
   ) {
-    this.socket = io("http://localhost:3000");
+    this.socket = io("http://api.webtama.works");
   }
 
   async loadAudio() {
     const audioCtx = new AudioContext();
     let buffer: AudioBuffer;
 
-    const audio = new Audio("http://localhost:4200/assets/audio/moveSound.mp3");
+    const audio = new Audio("http://webtama.works/assets/audio/moveSound.mp3");
 
     const source = audioCtx.createMediaElementSource(audio);
     source.connect(audioCtx.destination);
