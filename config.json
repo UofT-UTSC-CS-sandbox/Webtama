@@ -4,18 +4,21 @@
       "domain": "webtama.works",
       "email": "jasoncndai@gmail.com",
       "wwwSubdomain": true,
-      "testCert": true,
+      "testCert": false,
       "rsaKeySize": 4096,
-      "requestHandler": "staticContent"
+      "requestHandler": "reverseProxy",
+      "upstream": "webtama.works:3000",
+      "websockets": false,
+      "dnsResolver": "127.0.0.11"
     },
     {
       "domain": "webtama.works",
       "email": "jasoncndai@gmail.com",
       "wwwSubdomain": true,
-      "testCert": true,
+      "testCert": false,
       "rsaKeySize": 4096,
       "requestHandler": "reverseProxy",
-      "upstream": "webtama.works:3000",
+      "upstream": "api.webtama.works",
       "websockets": false,
       "dnsResolver": "127.0.0.11"
     }
