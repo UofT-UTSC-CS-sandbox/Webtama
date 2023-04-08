@@ -19,8 +19,8 @@ app.use(bodyParser.json());
 app.use(express.static("static"));
 const corsOptions = {
   // origin: "http://localhost:4200",
-  // origin: "http://webtama.works",
-  origin: "http://159.203.48.39",
+  origin: "http://webtama.works",
+  // origin: "http://159.203.48.39",
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -79,8 +79,8 @@ app.use("/api/rooms", roomRouter);
 const io = new Server(httpServer, {
   cors: {
     // origin: "http://localhost:4200",
-    origin: "http://159.203.48.39",
-    // origin: "http://webtama.works",
+    // origin: "http://159.203.48.39",
+    origin: "http://webtama.works",
     methods: ["GET", "POST"],
   },
 });
@@ -137,5 +137,5 @@ io.on("connection", (socket) => {
 
 httpServer.listen(PORT, (err) => {
   if (err) console.log(err);
-  else console.log("HTTP server on http://localhost:%s", PORT);
+  else console.log("HTTP server on http://webtama.works:%s", PORT);
 });

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { environment } from "../../environments/environment";
+import { environment } from "../../environments/environment.prod";
 import { Piece } from "../classes/piece";
 import { Room } from "../classes/room";
 import { Board } from "../classes/board";
@@ -15,8 +15,8 @@ import { of } from "rxjs";
   providedIn: "root",
 })
 export class ApiService {
-  endpoint = "http://159.203.48.39:3000";
-  // endpoint = environment.apiEndpoint;
+  // endpoint = "http://159.203.48.39:3000";
+  endpoint = environment.apiEndpoint;
   socket: Socket;
 
   constructor(private http: HttpClient) {
