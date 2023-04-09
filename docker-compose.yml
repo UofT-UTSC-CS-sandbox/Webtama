@@ -99,10 +99,10 @@ services:
     container_name: frontend
     restart: always
     expose:
-      - 8000
+      - 4200
     environment:
-      - VIRTUAL_HOST=webtama.works:8000
-      - LETSENCRYPT_HOST=webtama.works:8000
+      - VIRTUAL_HOST=webtama.works:4200
+      - LETSENCRYPT_HOST=webtama.works:4200
   
 volumes:
   nginx_conf_ssl:
