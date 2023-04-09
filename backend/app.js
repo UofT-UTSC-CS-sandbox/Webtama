@@ -128,6 +128,7 @@ io.on("connection", (socket) => {
     //     to: "+16475703028", //testing phone number
     //   })
     //   .then((message) => console.log(message.sid));
+    //
   });
 
   socket.on("disconnect", () => {
