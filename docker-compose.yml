@@ -89,7 +89,7 @@ services:
     container_name: backend
     restart: always
     expose:
-      - 3000
+      - 3000:3000
     environment:
       - VIRTUAL_HOST=webtama.works:3000
       - LETSENCRYPT_HOST=webtama.works:3000
@@ -99,7 +99,7 @@ services:
     container_name: frontend
     restart: always
     expose:
-      - 4200
+      - 4200:4200
     environment:
       - VIRTUAL_HOST=webtama.works:4200
       - LETSENCRYPT_HOST=webtama.works:4200
