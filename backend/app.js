@@ -80,7 +80,7 @@ const io = new Server(httpServer, {
   cors: {
     // origin: "http://localhost:4200",
     // origin: "http://159.203.48.39",
-    origin: "http://webtama.works",
+    origin: "http://webtama.works:8000",
     methods: ["GET", "POST"],
   },
 });
