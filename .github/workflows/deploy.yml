@@ -5,7 +5,7 @@ on:
     branches:
       - main
   workflow_run:
-    workflows: ["Build Backend", "Build Frontend"]
+    workflows: [Build Backend, Build Frontend]
     types: [completed]
 
 jobs:
