@@ -114,6 +114,7 @@ io.on("connection", (socket) => {
     console.log("screeaming");
     console.log("screeaming");
     console.log("screeaming");
+    socket.join(roomId);
     io.to(roomId).emit("player joined", playerName);
   });
 
