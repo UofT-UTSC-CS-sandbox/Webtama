@@ -15,7 +15,7 @@ let userId: number = -1;
   encapsulation: ViewEncapsulation.None,
 })
 export class LobbyComponent implements OnInit {
-  error: string = ""; // string representing the error message
+  error: string = "";
   isAuthenticated$ = this.authService.isAuthenticated$;
   notPremium$: boolean = true;
 
@@ -28,6 +28,7 @@ export class LobbyComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log("lobby init");
     this.checkAuth();
 
     if (userId === -1) {
@@ -66,7 +67,6 @@ export class LobbyComponent implements OnInit {
   }
 
   checkout() {
-    // Check the server.js tab to see an example implementation
     const session = this.apiService.checkout(userId);
     session.subscribe((data) => {
       const id = data as string;
