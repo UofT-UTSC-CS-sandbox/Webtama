@@ -12,10 +12,10 @@ export class LoginButtonComponent {
   constructor(private auth: AuthService, private apiService: ApiService) {}
 
   handleLogin(): void {
-    this.auth.loginWithRedirect({
-      appState: {
-        target: "/",
-      },
+    this.auth.loginWithPopup({
+      // appState: {
+      //   target: "/",
+      // },
     });
     // .subscribe((data) => {
     //   this.apiService.signIn();
