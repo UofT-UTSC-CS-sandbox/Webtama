@@ -3,11 +3,11 @@ name: Publish Backend Skeleton to GHCR
 on:
   push:
     # Only run this workflow if it is a commit to main.
-    #branches:
-    #  - main
+    branches:
+      - main
     # Only run this workflow if the commit has modified files from frontend
-    #paths:
-    #  - backend/**
+    paths:
+      - backend/**
 
 env:
   IMAGE_NAME: backend-webtama
