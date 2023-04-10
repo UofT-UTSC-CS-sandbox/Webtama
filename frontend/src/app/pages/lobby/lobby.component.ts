@@ -21,23 +21,18 @@ export class LobbyComponent implements OnInit {
     private apiService: ApiService,
     private router: Router,
     @Inject(DOCUMENT) public document: Document,
-    private authService: AuthService,
-    // private stripeService: StripeService
-  ) {}
+    private authService: AuthService
+  ) // private stripeService: StripeService
+  {}
 
   ngOnInit(): void {
     console.log("lobby init");
     let userId: number = -1;
     this.checkAuth();
-
-    if (userId === -1) {
-      this.apiService.me().subscribe((data) => {
-        userId = data as number;
-        this.setup(userId);
-      });
-    } else {
+    this.apiService.me().subscribe((data) => {
+      userId = data as number;
       this.setup(userId);
-    }
+    });
   }
 
   setup(userId: number) {
