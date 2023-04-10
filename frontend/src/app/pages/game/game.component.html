@@ -5,17 +5,13 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Onitama</title>
     <link href="game.component.scss" rel="stylesheet" type="text/css" />
-    <!--link href="main.css" rel="stylesheet" type="text/css" />-->
   </head>
   <body>
     <h1 id="p1Title">Empty</h1>
-    <!-- set up the onitama board, 5x5 -->
     <table>
       <tr>
         <td data-row="5" data-col="1"></td>
-        <td data-row="5" data-col="2" class="td2">
-          <!-- <p data-x="1" data-y="1" class="pawn aTeam"></p> -->
-        </td>
+        <td data-row="5" data-col="2" class="td2"></td>
         <td data-row="5" data-col="3"></td>
         <td data-row="5" data-col="4" class="td2"></td>
         <td data-row="5" data-col="5"></td>
@@ -50,12 +46,14 @@
       </tr>
     </table>
     <h1 id="p2Title">Empty</h1>
+    <h2 id="crowdJeer"></h2>
+    <div id="cards">
+      <button class="card" id="card1" style="float: left"></button>
+      <button class="card" id="card2" style="float: right"></button>
+    </div>
 
     <footer>
       <a href="/credits.html">credits</a>
     </footer>
-
-    <!-- <script type="text/javascript" src="./js/api-service.js"></script>
-    <script type="text/javascript" src="./js/index.js"></script> -->
   </body>
 </html>

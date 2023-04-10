@@ -7,8 +7,15 @@
   <h1>Choose a game room</h1>
   <div id="lobbyInfo"></div>
   <body>
-    <button class="kiaButton" id="matchmake">Play</button>
-    <button class="kiaButton" id="roomCreate">Create A Room</button>
+    <div>
+      <button class="kiaButton" id="matchmake">Play</button>
+      <button class="kiaButton" id="roomCreate">Create A Room</button>
+    </div>
     <div id="lobbyList"></div>
+    <ng-container *ngIf="notPremium$; else isPremium">
+      <button class="kiaButton" (click)="checkout()" >Premium account</button>
+    </ng-container>
+    <ng-template #isPremium>
+    </ng-template> 
   </body>
 </html>

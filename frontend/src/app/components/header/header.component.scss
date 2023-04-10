@@ -63,3 +63,37 @@ header #title {
   color: #ffffff;
   cursor: pointer;
 }
+
+.kiaButton:hover {
+  background-color: white;
+  color: var(--mainColor);
+}
+
+.kiaButton:active {
+  box-shadow: 0 1px #666;
+  transform: translateY(3px);
+}
+
+.kiaButton {
+  display: inline;
+  color: white;
+  background-color: var(--mainColor);
+  border-color: #0f1225;
+  font-size: 84%;
+  border-radius: 12em;
+  border: 1.5px solid;
+  transition-duration: 0.35s;
+  box-shadow: 0 3px #999;
+  cursor: pointer;
+}
+
+// .joinButton {
+//   width: 5vw;
+//   min-width: 40px;
+//   height: 4vh;
+//   margin-right: 1%;
+//   display: inline;
+//   position: unset;
+//   float: right;
+//   white-space: normal;
+// }

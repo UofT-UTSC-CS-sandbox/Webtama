@@ -17,5 +17,8 @@ export class LoginButtonComponent {
         target: "/",
       },
     });
+    // .subscribe((data) => {
+    //   this.apiService.signIn();
+    // });
   }
 }

@@ -1,8 +1,12 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { ApiService } from "../../services/api.service";
 import { AuthService } from "@auth0/auth0-angular";
 import { ViewEncapsulation } from "@angular/core";
+import { DOCUMENT } from "@angular/common";
+import { StripeService } from "ngx-stripe";
+
+let userId: number = -1;
 
 @Component({
   selector: "app-lobby",
@@ -13,16 +17,33 @@ import { ViewEncapsulation } from "@angular/core";
 export class LobbyComponent implements OnInit {
   error: string = ""; // string representing the error message
   isAuthenticated$ = this.authService.isAuthenticated$;
+  notPremium$: boolean = true;
 
   constructor(
     private apiService: ApiService,
     private router: Router,
-    private authService: AuthService
+    @Inject(DOCUMENT) public document: Document,
+    private authService: AuthService,
+    private stripeService: StripeService
   ) {}
 
   ngOnInit(): void {
     this.checkAuth();
 
+    if (userId === -1) {
+      this.apiService.me().subscribe((data) => {
+        userId = data as number;
+        this.setup();
+      });
+    } else {
+      this.setup();
+    }
+  }
+
+  setup() {
+    this.apiService.getUser(userId).subscribe((data) => {
+      this.notPremium$ = !data.user.premium;
+    });
     this.apiService.getRooms().subscribe({
       next: (data) => {
         if (data.rooms.length === 0) {
@@ -37,7 +58,21 @@ export class LobbyComponent implements OnInit {
         document.getElementById("roomCreate")!.addEventListener("click", () => {
           this.addRoom();
         });
+        document.getElementById("matchmake")!.addEventListener("click", () => {
+          this.match();
+        });
       },
+    });
+  }
+
+  checkout() {
+    // Check the server.js tab to see an example implementation
+    const session = this.apiService.checkout(userId);
+    session.subscribe((data) => {
+      const id = data as string;
+      this.stripeService
+        .redirectToCheckout({ sessionId: id })
+        .subscribe((res) => {});
     });
   }
 
@@ -54,7 +89,18 @@ export class LobbyComponent implements OnInit {
     this.apiService.addRoom("Roomy ").subscribe((data) => {
       roomId = data as number;
       this.showRoom(roomId);
+      let title = document.getElementById("lobbyInfo")!;
+      title.innerHTML = "";
       return roomId;
+    });
+  }
+
+  match() {
+    let foundRoom: number = -1;
+
+    this.apiService.matchmake().subscribe((data) => {
+      foundRoom = data as number;
+      this.joinRoom(foundRoom, userId);
     });
   }
 
@@ -67,10 +113,7 @@ export class LobbyComponent implements OnInit {
     joinBtn.classList.add("joinButton");
     joinBtn.setAttribute("roomId", roomId.toString());
     joinBtn.innerHTML = "Join";
-    let userId = 1;
-    // this.apiService.me().subscribe((data) => {
-    //   userId = data as number;
-    // });
+
     joinBtn.addEventListener("click", () => {
       this.joinRoom(roomId, userId);
     });
@@ -81,7 +124,6 @@ export class LobbyComponent implements OnInit {
 
   joinRoom(roomId: number, userId: number) {
     this.apiService.joinRoom(roomId, userId).subscribe((data) => {
-      console.log(data);
       this.goToGame();
     });
   }

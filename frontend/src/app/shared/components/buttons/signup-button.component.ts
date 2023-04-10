@@ -12,13 +12,17 @@ export class SignupButtonComponent {
   constructor(private auth: AuthService, private apiService: ApiService) {}
 
   handleSignUp(): void {
-    this.auth.loginWithRedirect({
-      appState: {
-        target: "/profile",
-      },
-      authorizationParams: {
-        screen_hint: "signup",
-      },
-    });
+    this.auth
+      .loginWithRedirect({
+        appState: {
+          target: "/profile",
+        },
+        authorizationParams: {
+          screen_hint: "signup",
+        },
+      })
+      .subscribe((data) => {
+        this.apiService.signUp();
+      });
   }
 }
