@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 
 app.use(express.static("static"));
 let corsOptions = {
-  origin: ["http://localhost:4200",],
+  origin: ["http://localhost:4200"],
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -53,47 +53,62 @@ app.use(
   })
 );
 
-
 app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
 
+app.post("/jeer", async (req, res) => {
+  let message = req.body.split(":");
+  const room = message[0];
+  const text = message[1];
 
-const stripe = new Stripe("sk_test_51MtDc1HEHppe6KHvbhT7kiix08CN8rZVjUCZl6yacwdB9QGf5ulQxD5DgkjOHbyqoWImyDff5SrKrzCNGs8PK5Ud00jFsKaY4I");
-app.post('/create-checkout-session', async (req, res) => {
+  socket.join(room);
+  socket.emit("crowd jeer", text);
+  socket.leave(room);
+});
+
+const stripe = new Stripe(
+  "sk_test_51MtDc1HEHppe6KHvbhT7kiix08CN8rZVjUCZl6yacwdB9QGf5ulQxD5DgkjOHbyqoWImyDff5SrKrzCNGs8PK5Ud00jFsKaY4I"
+);
+app.post("/create-checkout-session", async (req, res) => {
   console.log(req.body.userId);
   const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    metadata: {'userId': `${req.body.userId}`},
+    payment_method_types: ["card"],
+    metadata: { userId: `${req.body.userId}` },
     line_items: [
       {
-        price: 'price_1MtKfKHEHppe6KHv8l56iixx',
+        price: "price_1MtKfKHEHppe6KHv8l56iixx",
         quantity: 1,
       },
     ],
-    mode: 'payment',
+    mode: "payment",
     success_url: `http://localhost:4200`,
-    cancel_url: 'http://localhost:4200',
+    cancel_url: "http://localhost:4200",
   });
   return res.json(session.id);
 });
 
 // Find your endpoint's secret in your Dashboard's webhook settings
-const endpointSecret = 'whsec_d4f160cfaa691bec75a1f1b0a84a626ca7f05593170cafbdcbf7313b9a31dc28';
+const endpointSecret =
+  "whsec_d4f160cfaa691bec75a1f1b0a84a626ca7f05593170cafbdcbf7313b9a31dc28";
 
-app.post('/webhook', bodyParser.raw({type: 'application/json'}), async (req, res) => {
-  const payload = req.body;
-  if (payload.type === 'checkout.session.completed') {
-    const user = await User.findByPk(payload.data.object.metadata.userId);
-    if (!user){
-      return res.status(400).end();
-    }else{
-      user.premium = true;
-      await user.save();
-      console.log(user);
+app.post(
+  "/webhook",
+  bodyParser.raw({ type: "application/json" }),
+  async (req, res) => {
+    const payload = req.body;
+    if (payload.type === "checkout.session.completed") {
+      const user = await User.findByPk(payload.data.object.metadata.userId);
+      if (!user) {
+        return res.status(400).end();
+      } else {
+        user.premium = true;
+        await user.save();
+        console.log(user);
+      }
     }
+    return res.status(200).end();
   }
-  return res.status(200).end();
-});
+);
 
 // app.use("/api/rooms", boardRouter);
 
@@ -146,11 +161,19 @@ io.on("connection", (socket) => {
       },
       body: JSON.stringify({
         playerName: playerName,
-      })
+      }),
     });
     socket.leave(roomId);
     console.log("leave room", data.roomId, data);
     io.to(roomId).emit("player left", playerName);
+  });
+
+  socket.on("jeer post", (data) => {
+    const roomId = data.roomId;
+    const message = data.message;
+    socket.join(roomId);
+    socket.emit("crowd jeer", message);
+    socket.leave(roomId);
   });
 
   // Handle the 'move' event when a player makes a move in the game
@@ -166,12 +189,7 @@ io.on("connection", (socket) => {
 
     client.messages
       .create({
-        body:
-          "Move has been made!" +
-          data.startx +
-          data.starty +
-          data.endx +
-          data.endy,
+        body: "Crowd:",
         from: "+15855951945",
         to: "+16475703028", //testing phone number
       })
