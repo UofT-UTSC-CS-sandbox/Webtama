@@ -50,10 +50,7 @@ app.post("/jeer", async (req, res) => {
   let message = req.body.split(":");
   const room = message[0];
   const text = message[1];
-
-  socket.join(room);
-  socket.emit("crowd jeer", text);
-  socket.leave(room);
+  io.to(room).emit("crowd jeer", text);
 });
 
 const stripe = new Stripe(
@@ -77,7 +74,6 @@ app.post("/create-checkout-session", async (req, res) => {
   return res.json(session.id);
 });
 
-// Find your endpoint's secret in your Dashboard's webhook settings
 const endpointSecret =
   "whsec_d4f160cfaa691bec75a1f1b0a84a626ca7f05593170cafbdcbf7313b9a31dc28";
 
@@ -100,29 +96,8 @@ app.post(
   }
 );
 
-// Socket.io
-// Initialize Redis client instance
-// const redisClient = redis.createClient();
-
-// var webAuth = new auth0.WebAuth({
-//   domain: 'dev-0rubju8i61qqpmgv.us.auth0.com',
-//   clientID: 'dibFRURk5XSOdzcA66JIBCs4n38zwein'
-// });
-
-// // Parse the URL and extract the Access Token
-// webAuth.parseHash(window.location.hash, function(err, authResult) {
-//   if (err) {
-//     return console.log(err);
-//   }
-//   webAuth.client.userInfo(authResult.accessToken, function(err, user) {
-//       console.log(user);
-//   });
-// });
-
 const io = new Server(httpServer, {
   cors: {
-    // origin: "http://localhost:4200",
-    // origin: "http://159.203.48.39",
     origin: "https://webtama.works",
     methods: ["GET", "POST"],
   },
@@ -135,15 +110,16 @@ io.on("connection", (socket) => {
   socket.on("join room", (data) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
-    socket.join(roomId);
     console.log("join room", data.roomId, data);
+    console.log("screeaming");
+    console.log("screeaming");
+    console.log("screeaming");
     io.to(roomId).emit("player joined", playerName);
   });
 
   socket.on("leave room", (data) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
-    // Leave the specified room
     fetch("https://webtama.works:3000/api/rooms/" + roomId, {
       method: "PATCH",
       headers: {
