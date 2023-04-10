@@ -7,8 +7,6 @@ import { ApiService } from "../../services/api.service";
 import { ViewChildren, QueryList, ElementRef } from "@angular/core";
 import { environment } from "../../../environments/environment.prod";
 
-let GLOBALUSER: number = -1;
-
 @Component({
   selector: "app-game",
   templateUrl: "./game.component.html",
@@ -45,19 +43,17 @@ export class GameComponent implements OnInit {
 
   ngOnInit() {
     this.cleanBoard();
-    //dynamic
     let userId: number = -1;
     let roomId: number = -1;
 
     this.apiService.me().subscribe((data) => {
-      GLOBALUSER = data as number;
       userId = data as number;
 
       this.apiService.getActiveRoom(userId).subscribe((data) => {
         roomId = data as number;
         this.apiService.socket.emit("join room", {
           roomId: roomId,
-          playerName: GLOBALUSER,
+          playerName: userId,
         });
         this.updateName(roomId);
         this.apiService.getBoard(roomId).subscribe({
@@ -143,10 +139,10 @@ export class GameComponent implements OnInit {
     });
   }
 
-  pieceSelect(x: number, y: number, roomId: number) {
-    this.apiService.checkTurn(roomId, GLOBALUSER).subscribe((data) => {
+  pieceSelect(x: number, y: number, roomId: number, userId: number) {
+    this.apiService.checkTurn(roomId, userId).subscribe((data) => {
       if (data === "false") {
-        console.log("not your turn " + GLOBALUSER);
+        console.log("not your turn " + userId);
         return;
       } else {
         let piece = document.querySelector(
@@ -284,20 +280,25 @@ export class GameComponent implements OnInit {
   }
 
   checkWin() {
-    this.apiService.getActiveRoom(GLOBALUSER).subscribe((activeRoom) => {
-      this.apiService.checkWin(activeRoom as number).subscribe((data) => {
-        if (data == -1) {
-          return;
-        } else {
-          this.doWin(data as number);
-        }
+    let userId: number = 0;
+    this.apiService.me().subscribe((data) => {
+      userId = data as number;
+      this.apiService.getActiveRoom(userId).subscribe((activeRoom) => {
+        this.apiService.checkWin(activeRoom as number).subscribe((data) => {
+          if (data == -1) {
+            return;
+          } else {
+            this.doWin(data as number, userId);
+          }
+        });
       });
     });
   }
 
-  doWin(winner: number) {
+  doWin(winner: number, userId: number) {
     let jeer = document.getElementById("crowdJeer")!;
-    this.apiService.getActiveRoom(GLOBALUSER).subscribe((data) => {
+    jeer.style.visibility = "visible";
+    this.apiService.getActiveRoom(userId).subscribe((data) => {
       this.apiService.getRoom(data as number).subscribe((roomData) => {
         if (winner === 1) {
           jeer.innerHTML =
@@ -311,9 +312,8 @@ export class GameComponent implements OnInit {
         }
         this.loadAudio("win");
 
-        //set a 5 second delay before redirecting to the lobby
         setTimeout(() => {
-          this.apiService.getActiveRoom(GLOBALUSER).subscribe((data) => {
+          this.apiService.getActiveRoom(userId).subscribe((data) => {
             this.apiService.roomDelete(data as number).subscribe((data) => {
               this.router.navigate(["/lobby"]);
             });
@@ -334,52 +334,54 @@ export class GameComponent implements OnInit {
     let userId: number = -1;
     let roomId: number = -1;
 
-    userId = GLOBALUSER;
-    this.apiService.getActiveRoom(userId).subscribe((data) => {
-      roomId = data as number;
-      this.apiService.getPieces(roomId).subscribe((data) => {
-        this.cleanBoard();
-        for (let i = 0; i < data.pieces.length; i++) {
-          const piece = data.pieces[i];
-          let square = document.querySelector(
-            `[data-row="${piece.ypos}"][data-col="${piece.xpos}"]`
-          );
-          if (square === null) {
-            return;
+    this.apiService.me().subscribe((data) => {
+      userId = data as number;
+      this.apiService.getActiveRoom(userId).subscribe((data) => {
+        roomId = data as number;
+        this.apiService.getPieces(roomId).subscribe((data) => {
+          this.cleanBoard();
+          for (let i = 0; i < data.pieces.length; i++) {
+            const piece = data.pieces[i];
+            let square = document.querySelector(
+              `[data-row="${piece.ypos}"][data-col="${piece.xpos}"]`
+            );
+            if (square === null) {
+              return;
+            }
+            const display = document.createElement("p");
+            display.setAttribute("data-x", piece.xpos.toString());
+            display.setAttribute("data-y", piece.ypos.toString());
+
+            let pieceEvent = (e: Event) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const x = piece.xpos;
+              const y = piece.ypos;
+              this.pieceSelect(x, y, roomId, userId);
+            };
+
+            display.addEventListener("click", pieceEvent);
+
+            display.classList.add(piece.type);
+            if (piece.side == 0) {
+              display.classList.add("aTeam");
+            } else {
+              display.classList.add("bTeam");
+            }
+            square.appendChild(display);
           }
-          const display = document.createElement("p");
-          display.setAttribute("data-x", piece.xpos.toString());
-          display.setAttribute("data-y", piece.ypos.toString());
+        });
 
-          let pieceEvent = (e: Event) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const x = piece.xpos;
-            const y = piece.ypos;
-            this.pieceSelect(x, y, roomId);
-          };
-
-          display.addEventListener("click", pieceEvent);
-
-          display.classList.add(piece.type);
-          if (piece.side == 0) {
-            display.classList.add("aTeam");
-          } else {
-            display.classList.add("bTeam");
-          }
-          square.appendChild(display);
-        }
-      });
-
-      this.apiService.getBoard(roomId).subscribe((data) => {
-        const card1 = JSON.parse(data.card1);
-        const card2 = JSON.parse(data.card2);
-        let card1Element = document.getElementById("card1")!;
-        let card2Element = document.getElementById("card2")!;
-        card1Element!.innerHTML = card1[0].toUpperCase();
-        card1Element!.setAttribute("data-card", JSON.stringify(card1[1]));
-        card2Element!.innerHTML = card2[0].toUpperCase();
-        card2Element!.setAttribute("data-card", JSON.stringify(card2[1]));
+        this.apiService.getBoard(roomId).subscribe((data) => {
+          const card1 = JSON.parse(data.card1);
+          const card2 = JSON.parse(data.card2);
+          let card1Element = document.getElementById("card1")!;
+          let card2Element = document.getElementById("card2")!;
+          card1Element!.innerHTML = card1[0].toUpperCase();
+          card1Element!.setAttribute("data-card", JSON.stringify(card1[1]));
+          card2Element!.innerHTML = card2[0].toUpperCase();
+          card2Element!.setAttribute("data-card", JSON.stringify(card2[1]));
+        });
       });
     });
   }

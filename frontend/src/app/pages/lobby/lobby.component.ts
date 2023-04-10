@@ -6,8 +6,6 @@ import { ViewEncapsulation } from "@angular/core";
 import { DOCUMENT } from "@angular/common";
 import { StripeService } from "ngx-stripe";
 
-let userId: number = -1;
-
 @Component({
   selector: "app-lobby",
   templateUrl: "./lobby.component.html",
@@ -29,19 +27,20 @@ export class LobbyComponent implements OnInit {
 
   ngOnInit(): void {
     console.log("lobby init");
+    let userId: number = -1;
     this.checkAuth();
 
     if (userId === -1) {
       this.apiService.me().subscribe((data) => {
         userId = data as number;
-        this.setup();
+        this.setup(userId);
       });
     } else {
-      this.setup();
+      this.setup(userId);
     }
   }
 
-  setup() {
+  setup(userId: number) {
     this.apiService.getUser(userId).subscribe((data) => {
       this.notPremium$ = !data.user.premium;
     });
@@ -52,27 +51,31 @@ export class LobbyComponent implements OnInit {
           title.innerHTML = "No rooms found";
         } else {
           for (let i = 0; i < data.rooms.length; i++) {
-            this.showRoom(data.rooms[i].id);
+            this.showRoom(data.rooms[i].id, userId);
           }
         }
 
         document.getElementById("roomCreate")!.addEventListener("click", () => {
-          this.addRoom();
+          this.addRoom(userId);
         });
         document.getElementById("matchmake")!.addEventListener("click", () => {
-          this.match();
+          this.match(userId);
         });
       },
     });
   }
 
   checkout() {
-    const session = this.apiService.checkout(userId);
-    session.subscribe((data) => {
-      const id = data as string;
-      this.stripeService
-        .redirectToCheckout({ sessionId: id })
-        .subscribe((res) => {});
+    let userId: number = -1;
+    this.apiService.me().subscribe((data) => {
+      userId = data as number;
+      const session = this.apiService.checkout(userId);
+      session.subscribe((data) => {
+        const id = data as string;
+        this.stripeService
+          .redirectToCheckout({ sessionId: id })
+          .subscribe((res) => {});
+      });
     });
   }
 
@@ -84,18 +87,18 @@ export class LobbyComponent implements OnInit {
     });
   }
 
-  addRoom() {
+  addRoom(userId: number) {
     let roomId = -1;
     this.apiService.addRoom("Roomy ").subscribe((data) => {
       roomId = data as number;
-      this.showRoom(roomId);
+      this.showRoom(roomId, userId);
       let title = document.getElementById("lobbyInfo")!;
       title.innerHTML = "";
       return roomId;
     });
   }
 
-  match() {
+  match(userId: number) {
     let foundRoom: number = -1;
 
     this.apiService.matchmake().subscribe((data) => {
@@ -104,7 +107,7 @@ export class LobbyComponent implements OnInit {
     });
   }
 
-  showRoom(roomId: number) {
+  showRoom(roomId: number, userId: number) {
     const display = document.createElement("div");
     display.className = "roomRow";
     display.innerHTML = "Room: " + roomId;
@@ -132,7 +135,6 @@ export class LobbyComponent implements OnInit {
     if (this.isAuthenticated$) {
       this.router.navigate(["/game"]);
     } else {
-      // handle not authenticated case, e.g. show a message or redirect to login page
       console.log("not authenticated");
     }
   }
