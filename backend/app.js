@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 app.use(express.static("static"));
 const corsOptions = {
   // origin: "http://localhost:4200",
-  origin: "http://webtama.works",
+  origin: "https://webtama.works",
   // origin: "http://159.203.48.39",
   credentials: true,
 };
@@ -73,8 +73,8 @@ app.post("/create-checkout-session", async (req, res) => {
       },
     ],
     mode: "payment",
-    success_url: `http://webtama.works`,
-    cancel_url: "http://webtama.works",
+    success_url: `https://webtama.works`,
+    cancel_url: "https://webtama.works",
   });
   return res.json(session.id);
 });
@@ -127,7 +127,7 @@ const io = new Server(httpServer, {
   cors: {
     // origin: "http://localhost:4200",
     // origin: "http://159.203.48.39",
-    origin: "http://webtama.works",
+    origin: "https://webtama.works",
     methods: ["GET", "POST"],
   },
 });
@@ -148,7 +148,7 @@ io.on("connection", (socket) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
     // Leave the specified room
-    fetch("http://webtama.works:3000/api/rooms/" + roomId, {
+    fetch("https://webtama.works:3000/api/rooms/" + roomId, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

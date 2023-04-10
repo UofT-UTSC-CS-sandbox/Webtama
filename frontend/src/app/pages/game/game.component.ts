@@ -31,11 +31,11 @@ export class GameComponent implements OnInit {
     const audioCtx = new AudioContext();
     let buffer: AudioBuffer;
 
-    let audio = new Audio("http://webtama.works/assets/audio/moveSound.mp3");
+    let audio = new Audio("https://webtama.works/assets/audio/moveSound.mp3");
     if (event === "win") {
-      audio = new Audio("http://webtama.works/assets/audio/win.wav");
+      audio = new Audio("https://webtama.works/assets/audio/win.wav");
     } else if (event === "jeer") {
-      audio = new Audio("http://webtama.works/assets/audio/jeer.wav");
+      audio = new Audio("https://webtama.works/assets/audio/jeer.wav");
     }
 
     const source = audioCtx.createMediaElementSource(audio);
