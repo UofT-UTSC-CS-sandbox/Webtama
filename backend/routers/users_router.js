@@ -78,16 +78,16 @@ usersRouter.get("/me", isAuthenticated, userInfo, async (req, res) => {
       email: req.user.email,
       authId: req.user.identities[0].user_id,
     });
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-    const msg = {
-      to: email,
-      from: "keia.r.ahmati@gmail.com",
-      subject: "New Webtama signup!",
-      text: "Thank you for signing up! \n Have fun at webtama",
-      html: "<strong>and easy to do anywhere, even with Node.js</strong>",
-    };
-    sgMail.send(msg).then(() => {});
+    // const msg = {
+    //   to: email,
+    //   from: "keia.r.ahmati@gmail.com",
+    //   subject: "New Webtama signup!",
+    //   text: "Thank you for signing up! \n Have fun at webtama",
+    //   html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+    // };
+    // sgMail.send(msg).then(() => {});
     try {
       await user.save();
     } catch (err) {
