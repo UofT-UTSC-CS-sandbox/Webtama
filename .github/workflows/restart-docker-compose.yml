@@ -20,4 +20,5 @@ jobs:
           username: root
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
-            docker-compose down && docker-compose up -d"
+            docker-compose down
+            docker-compose up -d
