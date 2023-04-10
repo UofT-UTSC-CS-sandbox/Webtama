@@ -195,7 +195,6 @@ roomRouter.get("/:id/boards", async (req, res, next) => {
   return res.json(board);
 });
 
-//move piece/patch board
 roomRouter.patch("/:id/boards", async (req, res, next) => {
   const room = await Room.findByPk(req.params.id);
 
@@ -331,7 +330,6 @@ roomRouter.get("/:id/boards/wins", async (req, res, next) => {
       return res.json(2);
     }
   }
-  //0 is b team, 1 is a team
 
   for (let i = 0; i < kings.length; i++) {
     const king = kings[i];
@@ -356,7 +354,6 @@ roomRouter.get("/:id/boards/wins", async (req, res, next) => {
       return res.json(1);
     }
   }
-
   return res.json(-1);
 });
 
