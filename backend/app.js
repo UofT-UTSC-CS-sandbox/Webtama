@@ -6,9 +6,7 @@ import { usersRouter } from "./routers/users_router.js";
 import { roomRouter } from "./routers/rooms_router.js";
 import session from "express-session";
 import cors from "cors";
-// import { io } from "socket.io-client";
 import { Server } from "socket.io";
-import sgMail from "@sendgrid/mail";
 import Twilio from "twilio";
 import { User } from "./models/users.js";
 import Stripe from "stripe";
@@ -33,17 +31,9 @@ try {
   console.error("Unable to connect to the database:", error);
 }
 
-const accountSid = "AC2476bdfeea3e34264f12f4552759a27f";
-const authToken = "b01d56523b6d91da88a8b75e3ec3b265";
+const accountSid = "ACc746786f25d6927c3eb29d72c4775f8a";
+const authToken = "0dc8051c79979dd0ec148b75ed9963ee";
 const client = Twilio(accountSid, authToken);
-
-client.messages
-  .create({
-    body: "This is the ship that made the Kessel Run in fourteen parsecs?",
-    from: "+14345955403",
-    to: "+14168316858", //testing phone number
-  })
-  .then((message) => console.log(message.sid));
 
 app.use(
   session({
@@ -110,8 +100,6 @@ app.post(
   }
 );
 
-// app.use("/api/rooms", boardRouter);
-
 // Socket.io
 // Initialize Redis client instance
 // const redisClient = redis.createClient();
@@ -153,7 +141,6 @@ io.on("connection", (socket) => {
   socket.on("leave room", (data) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
-    // Leave the specified room
     fetch("http://localhost:3000/api/rooms/" + roomId, {
       method: "PATCH",
       headers: {
@@ -171,27 +158,19 @@ io.on("connection", (socket) => {
   socket.on("jeer post", (data) => {
     const roomId = data.roomId;
     const message = data.message;
-    socket.join(roomId);
-    socket.emit("crowd jeer", message);
-    socket.leave(roomId);
+    io.to(roomId).emit("crowd jeer", message);
   });
 
-  // Handle the 'move' event when a player makes a move in the game
   socket.on("move", (data) => {
     const roomId = data.roomId;
-    // Make a move in the specified game room and notify all players in the room
     console.log("move roomId:", roomId, data);
     io.to(roomId).emit("game state updated");
-    // send sms to player
-    const accountSid = "ACc746786f25d6927c3eb29d72c4775f8a";
-    const authToken = "0dc8051c79979dd0ec148b75ed9963ee";
-    const client = Twilio(accountSid, authToken);
 
     client.messages
       .create({
         body: "Crowd:",
         from: "+15855951945",
-        to: "+16475703028", //testing phone number
+        to: "+16475703028",
       })
       .then((message) => console.log(message.sid));
   });
