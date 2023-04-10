@@ -13,9 +13,8 @@
     </div>
     <div id="lobbyList"></div>
     <ng-container *ngIf="notPremium$; else isPremium">
-      <button class="kiaButton" (click)="checkout()" >Premium account</button>
+      <button class="kiaButton" (click)="checkout()">Premium account</button>
     </ng-container>
-    <ng-template #isPremium>
-    </ng-template> 
+    <ng-template #isPremium> </ng-template>
   </body>
 </html>

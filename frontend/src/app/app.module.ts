@@ -11,7 +11,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { GameComponent } from "./pages/game/game.component";
 import { AuthModule, AuthHttpInterceptor } from "@auth0/auth0-angular";
 import { SharedModule } from "./shared/shared.module";
-import { NgxStripeModule } from 'ngx-stripe';
+import { NgxStripeModule } from "ngx-stripe";
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, GameComponent, LobbyComponent],
@@ -21,7 +21,9 @@ import { NgxStripeModule } from 'ngx-stripe';
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    NgxStripeModule.forRoot('pk_test_51MtDc1HEHppe6KHvYIobWDiOgg8FG4hsFz6U4aFd3jFjuNfDQw9Amuxu8QGhpuy8SxBdYcMRdPqmIZ4pYBuj1xuY00JQfJ46rw'),
+    NgxStripeModule.forRoot(
+      "pk_test_51MtDc1HEHppe6KHvYIobWDiOgg8FG4hsFz6U4aFd3jFjuNfDQw9Amuxu8QGhpuy8SxBdYcMRdPqmIZ4pYBuj1xuY00JQfJ46rw"
+    ),
     BrowserModule,
     SharedModule,
     // Import the module into the application, with configuration

@@ -5,6 +5,7 @@ import { io, Socket } from "socket.io-client";
 import { ViewEncapsulation } from "@angular/core";
 import { ApiService } from "../../services/api.service";
 import { ViewChildren, QueryList, ElementRef } from "@angular/core";
+import { environment } from "../../../environments/environment.prod";
 
 let GLOBALUSER: number = -1;
 
@@ -22,7 +23,7 @@ export class GameComponent implements OnInit {
     private router: Router,
     private apiService: ApiService
   ) {
-    this.socket = io("http://api.webtama.works");
+    this.socket = io(environment.apiEndpoint);
     // this.socket = io("http://webtama.works:3000");
   }
 

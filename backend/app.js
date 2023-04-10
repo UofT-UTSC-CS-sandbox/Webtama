@@ -55,47 +55,52 @@ app.use(
   })
 );
 
-
 app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
 
-
-const stripe = new Stripe("sk_test_51MtDc1HEHppe6KHvbhT7kiix08CN8rZVjUCZl6yacwdB9QGf5ulQxD5DgkjOHbyqoWImyDff5SrKrzCNGs8PK5Ud00jFsKaY4I");
-app.post('/create-checkout-session', async (req, res) => {
+const stripe = new Stripe(
+  "sk_test_51MtDc1HEHppe6KHvbhT7kiix08CN8rZVjUCZl6yacwdB9QGf5ulQxD5DgkjOHbyqoWImyDff5SrKrzCNGs8PK5Ud00jFsKaY4I"
+);
+app.post("/create-checkout-session", async (req, res) => {
   console.log(req.body.userId);
   const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    metadata: {'userId': `${req.body.userId}`},
+    payment_method_types: ["card"],
+    metadata: { userId: `${req.body.userId}` },
     line_items: [
       {
-        price: 'price_1MtKfKHEHppe6KHv8l56iixx',
+        price: "price_1MtKfKHEHppe6KHv8l56iixx",
         quantity: 1,
       },
     ],
-    mode: 'payment',
+    mode: "payment",
     success_url: `http://webtama.works`,
-    cancel_url: 'http://webtama.works',
+    cancel_url: "http://webtama.works",
   });
   return res.json(session.id);
 });
 
 // Find your endpoint's secret in your Dashboard's webhook settings
-const endpointSecret = 'whsec_d4f160cfaa691bec75a1f1b0a84a626ca7f05593170cafbdcbf7313b9a31dc28';
+const endpointSecret =
+  "whsec_d4f160cfaa691bec75a1f1b0a84a626ca7f05593170cafbdcbf7313b9a31dc28";
 
-app.post('/webhook', bodyParser.raw({type: 'application/json'}), async (req, res) => {
-  const payload = req.body;
-  if (payload.type === 'checkout.session.completed') {
-    const user = await User.findByPk(payload.data.object.metadata.userId);
-    if (!user){
-      return res.status(400).end();
-    }else{
-      user.premium = true;
-      await user.save();
-      console.log(user);
+app.post(
+  "/webhook",
+  bodyParser.raw({ type: "application/json" }),
+  async (req, res) => {
+    const payload = req.body;
+    if (payload.type === "checkout.session.completed") {
+      const user = await User.findByPk(payload.data.object.metadata.userId);
+      if (!user) {
+        return res.status(400).end();
+      } else {
+        user.premium = true;
+        await user.save();
+        console.log(user);
+      }
     }
+    return res.status(200).end();
   }
-  return res.status(200).end();
-});
+);
 
 // app.use("/api/rooms", boardRouter);
 
@@ -122,7 +127,7 @@ const io = new Server(httpServer, {
   cors: {
     // origin: "http://localhost:4200",
     // origin: "http://159.203.48.39",
-    origin: "http://webtama.works",
+    origin: "https://webtama.works",
     methods: ["GET", "POST"],
   },
 });
@@ -150,7 +155,7 @@ io.on("connection", (socket) => {
       },
       body: JSON.stringify({
         playerName: playerName,
-      })
+      }),
     });
     socket.leave(roomId);
     console.log("leave room", data.roomId, data);
