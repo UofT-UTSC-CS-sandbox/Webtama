@@ -27,6 +27,7 @@ import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
     AuthModule.forRoot({
       domain: "dev-0rubju8i61qqpmgv.us.auth0.com",
       clientId: "dibFRURk5XSOdzcA66JIBCs4n38zwein",
+      useRefreshTokens: true,
       authorizationParams: {
         // redirect_uri: "http://localhost:4200/callback",
         redirect_uri: "https://webtama.works/#/callback",
