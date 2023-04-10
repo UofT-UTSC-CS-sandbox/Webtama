@@ -16,15 +16,15 @@ let userId: number = -1;
 })
 export class LobbyComponent implements OnInit {
   error: string = "";
-  isAuthenticated$ = this.authService.isAuthenticated$;
-  notPremium$: boolean = true;
+  // isAuthenticated$ = this.authService.isAuthenticated$;
+  // notPremium$: boolean = true;
 
   constructor(
     private apiService: ApiService,
     private router: Router,
-    @Inject(DOCUMENT) public document: Document,
+    // @Inject(DOCUMENT) public document: Document,
     private authService: AuthService,
-    private stripeService: StripeService
+    // private stripeService: StripeService
   ) {}
 
   ngOnInit(): void {
@@ -43,7 +43,7 @@ export class LobbyComponent implements OnInit {
 
   setup() {
     this.apiService.getUser(userId).subscribe((data) => {
-      this.notPremium$ = !data.user.premium;
+      // this.notPremium$ = !data.user.premium;
     });
     this.apiService.getRooms().subscribe({
       next: (data) => {
@@ -70,9 +70,9 @@ export class LobbyComponent implements OnInit {
     const session = this.apiService.checkout(userId);
     session.subscribe((data) => {
       const id = data as string;
-      this.stripeService
-        .redirectToCheckout({ sessionId: id })
-        .subscribe((res) => {});
+      // this.stripeService
+      //   .redirectToCheckout({ sessionId: id })
+      //   .subscribe((res) => {});
     });
   }
 
@@ -129,11 +129,11 @@ export class LobbyComponent implements OnInit {
   }
 
   goToGame() {
-    if (this.isAuthenticated$) {
-      this.router.navigate(["/game"]);
-    } else {
-      // handle not authenticated case, e.g. show a message or redirect to login page
-      console.log("not authenticated");
-    }
+    // if (this.isAuthenticated$) {
+    //   this.router.navigate(["/game"]);
+    // } else {
+    //   // handle not authenticated case, e.g. show a message or redirect to login page
+    //   console.log("not authenticated");
+    // }
   }
 }
