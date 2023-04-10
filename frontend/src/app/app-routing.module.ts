@@ -6,16 +6,16 @@ import { GameComponent } from "./pages/game/game.component";
 
 const routes: Routes = [
   {
-    path: "",
-    component: IndexComponent,
-  },
-  {
     path: "lobby",
     component: LobbyComponent,
   },
   {
     path: "game",
     component: GameComponent,
+  },
+  {
+    path: "",
+    component: IndexComponent,
   },
   {
     path: "**",

@@ -14,7 +14,7 @@ export class LoginButtonComponent {
   handleLogin(): void {
     this.auth.loginWithRedirect({
       appState: {
-        target: "/",
+        target: "/lobby",
       },
     });
     // .subscribe((data) => {
