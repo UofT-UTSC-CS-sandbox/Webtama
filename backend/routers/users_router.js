@@ -9,25 +9,11 @@ import { userInfo } from "../middleware/helpers.js";
 export const usersRouter = Router();
 const upload = multer({ dest: "uploads/" });
 
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-// const msg = {
-//   to: "jasoncndai@gmail.com",
-//   from: "keia.r.ahmati@gmail.com",
-//   subject: "user login",
-//   text: "user yokiayo logged in!",
-//   html: "<strong>and easy to do anywhere, even with Node.js</strong>",
-// };
-
-// sgMail.send(msg).then(() => {});
-
-//Get all users
 usersRouter.get("/", async (req, res) => {
   const users = await User.findAll();
   return res.json(users);
 });
 
-//Get user by id
 usersRouter.get("/found/:id", async (req, res) => {
   const user = await User.findByPk(req.params.id);
   return res.json({ user });
@@ -50,6 +36,8 @@ usersRouter.patch("/:id/ratings", async (req, res) => {
   user.reload();
   return res.json(user);
 });
+
+usersRouter.post("");
 
 usersRouter.get("/:id/rooms", async (req, res) => {
   const user = await User.findByPk(req.params.id);
@@ -85,6 +73,16 @@ usersRouter.get("/me", isAuthenticated, userInfo, async (req, res) => {
     });
     try {
       await user.save();
+      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+      const msg = {
+        to: email,
+        from: "keia.r.ahmati@gmail.com",
+        subject: "New Webtama signup!",
+        text: "Thank you for signing up! \n Have fun at webtama",
+        html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+      };
+      sgMail.send(msg).then(() => {});
     } catch (err) {
       return res.status(422).json({ error: "User creation failed." });
     }

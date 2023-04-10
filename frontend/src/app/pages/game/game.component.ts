@@ -86,7 +86,11 @@ export class GameComponent implements OnInit {
 
     this.apiService.socket.on("jeer", (data) => {
       document.getElementById("crowdJeer")!.innerHTML = data.message;
+      document.getElementById("crowdJeer")!.style.visibility = "visible";
       this.loadAudio("jeer");
+      setTimeout(() => {
+        document.getElementById("crowdJeer")!.style.visibility = "hidden";
+      }, 2000);
     });
     this.apiService.socket.on("player joined", (data) => {
       this.updateName(roomId);
@@ -98,23 +102,23 @@ export class GameComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    //dynamic
     let userId: number = -1;
     let roomId: number = -1;
-    userId = GLOBALUSER;
-
-    this.apiService.getActiveRoom(userId).subscribe((data) => {
-      roomId = data as number;
-      this.apiService.socket.emit("leave room", {
-        roomId: roomId,
-        playerName: userId,
-      });
-      this.apiService.getRoom(roomId).subscribe((roomData) => {
-        let host = roomData.room.Host as number;
-        let guest = roomData.room.Guest as number;
-        if (host == userId || guest == userId) {
-          console.log(this.apiService.leaveRoom(roomId, userId).subscribe());
-        }
+    this.apiService.me().subscribe((data) => {
+      userId = data as number;
+      this.apiService.getActiveRoom(userId).subscribe((data) => {
+        roomId = data as number;
+        this.apiService.socket.emit("leave room", {
+          roomId: roomId,
+          playerName: userId,
+        });
+        this.apiService.getRoom(roomId).subscribe((roomData) => {
+          let host = roomData.room.Host as number;
+          let guest = roomData.room.Guest as number;
+          if (host == userId || guest == userId) {
+            console.log(this.apiService.leaveRoom(roomId, userId).subscribe());
+          }
+        });
       });
     });
   }
@@ -125,9 +129,13 @@ export class GameComponent implements OnInit {
       let player2 = document.getElementById("p2Title");
       if (roomData.room.Host) {
         player1!.innerHTML = "User: " + roomData.room.Host.toString();
+      } else if (!roomData.room.Host) {
+        player1!.innerHTML = "Empty";
       }
       if (roomData.room.Guest) {
         player2!.innerHTML = "User: " + roomData.room.Guest.toString();
+      } else if (!roomData.room.Guest) {
+        player2!.innerHTML = "Empty";
       }
 
       player1!.style.visibility = "visible";
