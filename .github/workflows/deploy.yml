@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - main
+  workflow_run:
+    workflows: ["Build Backend", "Build Frontend"]
+    types: [completed]
 
 jobs:
   deploy:
-    needs: [Build Backend, Build Frontend]
     runs-on: ubuntu-latest
 
     steps:
