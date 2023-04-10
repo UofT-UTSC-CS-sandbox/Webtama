@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 services:
   nginx-proxy:
@@ -27,7 +27,7 @@ services:
     depends_on:
       - nginx-proxy
     environment:
-        - DEFAULT_EMAIL=jasoncndai@gmail.com
+      - DEFAULT_EMAIL=jasoncndai@gmail.com
   frontend:
     image: ghcr.io/uoft-utsc-cs-sandbox/frontend-webtama
     container_name: frontend
@@ -48,4 +48,3 @@ services:
       - VIRTUAL_HOST=api.webtama.works
       - LETSENCRYPT_HOST=api.webtama.works
       - LETSENCRYPT_EMAIL=jasoncndai@gmail.com
-
