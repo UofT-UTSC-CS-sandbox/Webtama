@@ -12,9 +12,9 @@
       <button class="kiaButton" id="roomCreate">Create A Room</button>
     </div>
     <div id="lobbyList"></div>
-    <ng-container *ngIf="notPremium$; else isPremium">
+    <!-- <ng-container *ngIf="notPremium$; else isPremium">
       <button class="kiaButton" (click)="checkout()">Premium account</button>
-    </ng-container>
+    </ng-container> -->
     <ng-template #isPremium> </ng-template>
   </body>
 </html>
