@@ -6,15 +6,15 @@ import { GameComponent } from "./pages/game/game.component";
 
 const routes: Routes = [
   {
-    path: "",
+    path: "#/",
     component: IndexComponent,
   },
   {
-    path: "lobby",
+    path: "#/lobby",
     component: LobbyComponent,
   },
   {
-    path: "game",
+    path: "#/game",
     component: GameComponent,
   },
   {
@@ -23,7 +23,7 @@ const routes: Routes = [
   },
 
   {
-    path: "callback",
+    path: "#/callback",
     loadChildren: () =>
       import("./features/callback/callback.module").then(
         (m) => m.CallbackModule
@@ -38,7 +38,7 @@ const routes: Routes = [
 export class AppRoutingModule {
   constructor(private router: Router) {
     this.router.errorHandler = (error: any) => {
-      this.router.navigate(["/"]);
+      this.router.navigate(["/#/"]);
     };
   }
 }
