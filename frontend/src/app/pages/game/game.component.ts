@@ -75,6 +75,7 @@ export class GameComponent implements OnInit {
     });
 
     this.apiService.socket.on("game state updated", (data) => {
+      console.log("game state updated");
       this.cleanBoard();
       this.updateBoard();
       this.checkWin();
