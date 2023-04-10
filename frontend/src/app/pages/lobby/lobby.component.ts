@@ -130,7 +130,7 @@ export class LobbyComponent implements OnInit {
 
   goToGame() {
     if (this.isAuthenticated$) {
-      this.router.navigate(["/game"]);
+      this.router.navigate(["/#/game"]);
     } else {
       // handle not authenticated case, e.g. show a message or redirect to login page
       console.log("not authenticated");
