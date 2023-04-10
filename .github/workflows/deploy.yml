@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    needs: [build_frontend, build_backend]
+    needs: [build_frontend.push, build_backend.push]
     runs-on: ubuntu-latest
 
     steps:
