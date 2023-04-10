@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { GameComponent } from "./pages/game/game.component";
 import { AuthModule, AuthHttpInterceptor } from "@auth0/auth0-angular";
 import { SharedModule } from "./shared/shared.module";
+import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, GameComponent, LobbyComponent],
@@ -28,7 +29,7 @@ import { SharedModule } from "./shared/shared.module";
       clientId: "dibFRURk5XSOdzcA66JIBCs4n38zwein",
       authorizationParams: {
         // redirect_uri: "http://localhost:4200/callback",
-        redirect_uri: "https://webtama.works/callback",
+        redirect_uri: "https://webtama.works/#/callback",
         // redirect_uri: "http://webtama.works:8000/callback",
         audience: "https://dev-0rubju8i61qqpmgv.us.auth0.com/api/v2/",
         scope: "read:current_user update:current_user_metadata",
@@ -50,6 +51,7 @@ import { SharedModule } from "./shared/shared.module";
       provide: Window,
       useValue: window,
     },
+    {provide : LocationStrategy , useClass: HashLocationStrategy}
   ],
   bootstrap: [AppComponent],
 })
