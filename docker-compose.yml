@@ -48,3 +48,16 @@ services:
       - VIRTUAL_HOST=api.webtama.works
       - LETSENCRYPT_HOST=api.webtama.works
       - LETSENCRYPT_EMAIL=jasoncndai@gmail.com
+    depends_on:
+      - sqlite3
+  sqlite3:
+    container_name: sqlite3_container
+    image: nouchka/sqlite3:latest
+    stdin_open: true
+    tty: true
+    volumes:
+      #Modify following line
+      - /db/:/root/db/
+    ports:
+      - '9000:9000' # expose ports - HOST:CONTAINER
+    restart: unless-stopped
