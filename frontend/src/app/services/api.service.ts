@@ -223,7 +223,11 @@ export class ApiService {
   }
 
   me(): Observable<any> {
-    return this.http.get(this.endpoint + `/users/me`, this.getAuthHeader());
+    const requestOptions = {
+      ...this.getAuthHeader(),
+      withCredentials: true,
+    };
+    return this.http.get(this.endpoint + `/users/me`, requestOptions);
   }
 
   getActiveRoom(userId: number) {
