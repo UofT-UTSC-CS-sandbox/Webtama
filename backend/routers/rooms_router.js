@@ -99,7 +99,8 @@ roomRouter.patch("/:id/leave", async (req, res, next) => {
   }
   const user = await User.findOne({
     where: {
-      id: req.body.userId,
+      // id: req.body.userId,
+      name: req.body.playerName,
     },
   });
   if (!user) {
