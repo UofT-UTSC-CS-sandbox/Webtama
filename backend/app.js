@@ -103,13 +103,12 @@ app.post(
 );
 
 // const io = new Server(httpServer, {
-//   transports: ["websocket"],
 //   cors: {
 //     origin: "https://webtama.works",
 //     methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"],
 //   },
 // });
-const socket = io(httpServer, {
+const io = new Server(httpServer, {
   cors: {
     origin: "https://webtama.works",
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"],
