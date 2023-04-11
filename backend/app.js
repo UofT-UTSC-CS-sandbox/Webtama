@@ -148,6 +148,7 @@ io.on("connection", (socket) => {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
         playerName: playerName,
