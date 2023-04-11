@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static("static"));
 const corsOptions = {
-  origin: "https://api.webtama.works",
+  origin: "https://webtama.works",
   credentials: true,
 };
 app.use(cors(corsOptions));
