@@ -102,11 +102,16 @@ app.post(
   }
 );
 
-const io = new Server(httpServer, {
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: "https://webtama.works",
+//     methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"],
+//   },
+// });
+const io = require('socket.io')(httpServer, {
   cors: {
-    origin: "https://webtama.works",
-    methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"],
-  },
+    origin: '*',
+  }
 });
 // io.adapter(redisAdapter({ host: 'localhost', port: 6379 }));
 
