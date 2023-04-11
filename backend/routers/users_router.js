@@ -67,6 +67,8 @@ usersRouter.get(
   isAuthenticated,
   userInfo,
   async (req, res) => {
+    console.log(res.getHeaders());
+
     if (!req.user.identities[0].user_id) {
       return res.status(401).json({ errors: "Not Authenticaed" });
     }
