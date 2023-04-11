@@ -6,6 +6,7 @@ import { ViewEncapsulation } from "@angular/core";
 import { ApiService } from "../../services/api.service";
 import { ViewChildren, QueryList, ElementRef } from "@angular/core";
 import { environment } from "../../../environments/environment.prod";
+import { AuthService } from "@auth0/auth0-angular";
 
 @Component({
   selector: "app-game",
@@ -22,7 +23,6 @@ export class GameComponent implements OnInit {
     private apiService: ApiService
   ) {
     this.socket = io(environment.apiEndpoint);
-    // this.socket = io("http://webtama.works:3000");
   }
 
   async loadAudio(event: string) {

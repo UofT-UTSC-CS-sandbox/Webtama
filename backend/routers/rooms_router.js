@@ -81,7 +81,7 @@ roomRouter.patch("/:id/join", async (req, res, next) => {
 
   if (!room.Host && room.Guest !== user.id) {
     room.Host = user.id;
-  } else if (room.Guest === "[NULL]" && room.Host !== user.id) {
+  } else if (!room.Guest && room.Host !== user.id) {
     room.Guest = user.id;
   }
   await room.save();
