@@ -139,7 +139,7 @@ io.on("connection", (socket) => {
   socket.on("leave room", (data) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
-    fetch("https://api.webtama.works/api/rooms/" + roomId, {
+    fetch(`https://api.webtama.works/api/rooms/${roomId}/leave`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
