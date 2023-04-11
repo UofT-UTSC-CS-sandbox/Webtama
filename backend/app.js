@@ -105,9 +105,26 @@ app.post(
 const io = new Server(httpServer, {
   cors: {
     origin: "https://webtama.works",
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"],
   },
 });
+
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: "https://webtama.works",
+//     methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"],
+//   },
+//   handlePreflightRequest: (req, res) => {
+//     const headers = {
+//         "Access-Control-Allow-Headers": "Content-Type, Authorization",
+//         "Access-Control-Allow-Origin": "https://webtama.works", //or the specific origin you want to give access to,
+//         "Access-Control-Allow-Credentials": true
+//     };
+//     res.writeHead(200, headers);
+//     res.end();
+//   }
+// });
+
 // io.adapter(redisAdapter({ host: 'localhost', port: 6379 }));
 
 io.on("connection", (socket) => {
@@ -127,10 +144,11 @@ io.on("connection", (socket) => {
   socket.on("leave room", (data) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
-    fetch("https://webtama.works:3000/api/rooms/" + roomId, {
+    fetch("https://api.webtama.works/api/rooms/" + roomId, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
         playerName: playerName,
