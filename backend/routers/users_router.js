@@ -81,7 +81,7 @@ usersRouter.get("/me", isAuthenticated, userInfo, async (req, res) => {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     const usermsg = {
-      to: email,
+      to: req.user.email,
       from: "keia.r.ahmati@gmail.com",
       subject: "New Webtama signup!",
       text: "Thank you for signing up! \n Have fun at webtama",
