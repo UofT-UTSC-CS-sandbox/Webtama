@@ -107,7 +107,7 @@ const io = new Server(httpServer, {
     origin: "https://webtama.works",
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"],
   },
-  transports: ["websocket", "polling", "flashsocket"],
+  transports: ["websocket"],
 });
 
 // const io = new Server(httpServer, {
