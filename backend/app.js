@@ -10,6 +10,7 @@ import { Server } from "socket.io";
 import Twilio from "twilio";
 import { User } from "./models/users.js";
 import Stripe from "stripe";
+import axios from "axios";
 
 const PORT = 3000;
 export const app = express();
@@ -139,16 +140,29 @@ io.on("connection", (socket) => {
   socket.on("leave room", (data) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
-    fetch(`https://api.webtama.works/api/rooms/${roomId}/leave`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify({
+    // fetch(`https://api.webtama.works/api/rooms/${roomId}/leave`, {
+    //   method: "PATCH",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Access-Control-Allow-Origin": "*",
+    //   },
+    //   body: JSON.stringify({
+    //     playerName: playerName,
+    //   }),
+    // });
+    try {
+      const response = axios.patch(`https://api.webtama.works/api/rooms/${roomId}/leave`, {
         playerName: playerName,
-      }),
-    });
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
     io.to(roomId).emit("player left", playerName);
     socket.leave(roomId);
     console.log("leave room", data.roomId, data);
