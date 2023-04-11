@@ -15,6 +15,7 @@ const PORT = 3000;
 export const app = express();
 const httpServer = http.createServer(app);
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static("static"));
 const corsOptions = {
@@ -47,13 +48,15 @@ app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
 
 app.post("/jeers", async (req, res) => {
-  console.log(req.body);
-  let message = req.body.split(":");
+  console.log(req.body.Body);
+  const sms = req.body.Body;
+  let message = sms.split(":");
   const room = message[0];
   const text = message[1];
   socket.join(room);
   io.to(room).emit("jeer", text);
   socket.leave(room);
+  return res.json({ message: "Jeer sent." });
 });
 
 const stripe = new Stripe(
