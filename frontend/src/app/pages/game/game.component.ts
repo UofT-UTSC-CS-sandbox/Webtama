@@ -5,7 +5,7 @@ import { io, Socket } from "socket.io-client";
 import { ViewEncapsulation } from "@angular/core";
 import { ApiService } from "../../services/api.service";
 import { ViewChildren, QueryList, ElementRef } from "@angular/core";
-import { environment } from "../../../environments/environment.prod";
+import { environment } from "../../../environments/environment";
 import { AuthService } from "@auth0/auth0-angular";
 
 @Component({
