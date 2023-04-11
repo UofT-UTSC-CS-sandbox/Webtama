@@ -26,7 +26,9 @@ export class ApiService {
       "Content-Type": "application/json",
     });
     this.accessToken = "";
-    this.socket = io(this.endpoint);
+    this.socket = io(this.endpoint, {
+      path: "/ws/"
+    });
     this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
       if (isAuthenticated) {
         this.authService.getAccessTokenSilently().subscribe((accessToken) => {

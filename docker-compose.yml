@@ -38,6 +38,10 @@ services:
       - VIRTUAL_HOST=webtama.works
       - LETSENCRYPT_HOST=webtama.works
       - LETSENCRYPT_EMAIL=jasoncndai@gmail.com
+    depends_on:
+      - backend
+    links:
+      - backend
   backend:
     image: ghcr.io/uoft-utsc-cs-sandbox/backend-webtama
     container_name: backend
