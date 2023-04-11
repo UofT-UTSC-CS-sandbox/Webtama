@@ -53,9 +53,7 @@ app.post("/jeers", async (req, res) => {
   let message = sms.split(":");
   const room = message[0];
   const text = message[1];
-  socket.join(room);
   io.to(room).emit("jeer", text);
-  socket.leave(room);
   return res.json({ message: "Jeer sent." });
 });
 
@@ -134,9 +132,6 @@ io.on("connection", (socket) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
     console.log("join room", data.roomId, data);
-    console.log("screeaming");
-    console.log("screeaming");
-    console.log("screeaming");
     socket.join(roomId);
     io.to(roomId).emit("player joined", playerName);
   });
