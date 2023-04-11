@@ -105,7 +105,7 @@ app.post(
 const io = new Server(httpServer, {
   cors: {
     origin: "https://webtama.works",
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"],
   },
 });
 // io.adapter(redisAdapter({ host: 'localhost', port: 6379 }));
