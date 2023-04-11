@@ -50,7 +50,9 @@ app.post("/jeer", async (req, res) => {
   let message = req.body.split(":");
   const room = message[0];
   const text = message[1];
-  io.to(room).emit("crowd jeer", text);
+  socket.join(room);
+  io.to(room).emit("jeer", text);
+  socket.leave(room);
 });
 
 const stripe = new Stripe(

@@ -23,7 +23,6 @@ export class GameComponent implements OnInit {
     private apiService: ApiService
   ) {
     this.socket = io(environment.apiEndpoint);
-    // this.socket = io("http://webtama.works:3000");
   }
 
   async loadAudio(event: string) {
