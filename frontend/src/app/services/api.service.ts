@@ -29,7 +29,8 @@ export class ApiService {
     this.socket = io(this.endpoint, {
       withCredentials: true,
       extraHeaders: {
-        "access-control-allow-origin": "https://webtama.works",
+        // "access-control-allow-origin": "https://webtama.works",
+        "access-control-allow-origin": "https://api.webtama.works",
       },
     });
     this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
