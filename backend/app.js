@@ -46,7 +46,8 @@ app.use(
 app.use("/users", usersRouter);
 app.use("/api/rooms", roomRouter);
 
-app.post("/jeer", async (req, res) => {
+app.post("/jeers", async (req, res) => {
+  console.log(req.body);
   let message = req.body.split(":");
   const room = message[0];
   const text = message[1];
@@ -150,7 +151,7 @@ io.on("connection", (socket) => {
 
     client.messages
       .create({
-        body: "Crowd:",
+        body: "some moved",
         from: "+15855951945",
         to: "+16475703028",
       })
