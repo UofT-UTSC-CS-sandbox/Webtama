@@ -154,9 +154,9 @@ io.on("connection", (socket) => {
         playerName: playerName,
       }),
     });
+    io.to(roomId).emit("player left", playerName);
     socket.leave(roomId);
     console.log("leave room", data.roomId, data);
-    io.to(roomId).emit("player left", playerName);
   });
 
   socket.on("jeer post", (data) => {
