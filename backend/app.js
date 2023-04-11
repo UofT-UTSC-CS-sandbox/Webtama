@@ -102,13 +102,29 @@ app.post(
   }
 );
 
-const io = new Server("https://webtama.works", {
+const io = new Server(httpServer, {
   transports: ["websocket"],
   cors: {
     origin: "https://webtama.works",
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"],
   },
 });
+const socket = io(httpServer, {
+  cors: {
+    origin: "https://webtama.works",
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT", "OPTIONS"],
+  },
+  handlePreflightRequest: (req, res) => {
+    const headers = {
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Origin": "https://webtama.works", //or the specific origin you want to give access to,
+        "Access-Control-Allow-Credentials": true
+    };
+    res.writeHead(200, headers);
+    res.end();
+  }
+});
+
 // io.adapter(redisAdapter({ host: 'localhost', port: 6379 }));
 
 io.on("connection", (socket) => {
