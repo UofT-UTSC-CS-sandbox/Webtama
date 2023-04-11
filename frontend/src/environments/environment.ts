@@ -4,6 +4,6 @@
 
 export const environment = {
   production: false,
-  // apiEndpoint: "http://api.webtama.works",
-  apiEndpoint: "http://webtama.works:3000",
+  apiEndpoint: "http://api.webtama.works",
+  // apiEndpoint: "http://webtama.works:3000",
 };

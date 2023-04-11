@@ -31,8 +31,6 @@ import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
         // redirect_uri: "http://localhost:4200/callback",
         redirect_uri: "https://webtama.works/#/callback",
         // redirect_uri: "http://webtama.works:8000/callback",
-        useRefreshTokens: true,
-        cacheLocation: "localstorage",
         audience: "https://dev-0rubju8i61qqpmgv.us.auth0.com/api/v2/",
         scope: "read:current_user update:current_user_metadata",
       },
