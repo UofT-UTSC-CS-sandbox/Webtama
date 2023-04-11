@@ -26,7 +26,12 @@ export class ApiService {
       "Content-Type": "application/json",
     });
     this.accessToken = "";
-    this.socket = io(this.endpoint);
+    this.socket = io(this.endpoint, {
+      withCredentials: true,
+      extraHeaders: {
+        "access-control-allow-origin": "https://webtama.works",
+      },
+    });
     this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
       if (isAuthenticated) {
         this.authService.getAccessTokenSilently().subscribe((accessToken) => {
