@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 
 app.use(express.static("static"));
 const corsOptions = {
-  origin: "http://webtama.works",
+  origin: "https://webtama.works",
   credentials: true,
 };
 app.use(cors(corsOptions));
