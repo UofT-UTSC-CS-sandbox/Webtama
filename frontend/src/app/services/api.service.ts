@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { environment } from "../../environments/environment.prod";
+import { environment } from "../../environments/environment";
 import { Piece } from "../classes/piece";
 import { Room } from "../classes/room";
 import { Board } from "../classes/board";
@@ -26,9 +26,7 @@ export class ApiService {
       "Content-Type": "application/json",
     });
     this.accessToken = "";
-    this.socket = io(this.endpoint, {
-      path: "/ws/"
-    });
+    this.socket = io(this.endpoint);
     this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
       if (isAuthenticated) {
         this.authService.getAccessTokenSilently().subscribe((accessToken) => {
