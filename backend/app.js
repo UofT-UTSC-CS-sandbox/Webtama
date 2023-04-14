@@ -80,7 +80,7 @@ app.post("/create-checkout-session", async (req, res) => {
 });
 
 const endpointSecret =
-  "whsec_d4f160cfaa691bec75a1f1b0a84a626ca7f05593170cafbdcbf7313b9a31dc28";
+  "whsec_13YNdLPuRsjTpRSQScmvwfB6CPusM4Mf";
 
 app.post(
   "/webhook",

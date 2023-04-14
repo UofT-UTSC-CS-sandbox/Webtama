@@ -15,14 +15,15 @@ import { StripeService } from "ngx-stripe";
 export class LobbyComponent implements OnInit {
   error: string = "";
   isAuthenticated$ = this.authService.isAuthenticated$;
-  // notPremium$: boolean = true;
+  notPremium$: boolean = true;
 
   constructor(
     private apiService: ApiService,
     private router: Router,
     @Inject(DOCUMENT) public document: Document,
-    private authService: AuthService
-  ) // private stripeService: StripeService
+    private authService: AuthService,
+    private stripeService: StripeService
+  ) 
   {}
 
   ngOnInit(): void {
@@ -37,7 +38,8 @@ export class LobbyComponent implements OnInit {
 
   setup(userId: number) {
     this.apiService.getUser(userId).subscribe((data) => {
-      // this.notPremium$ = !data.user.premium;
+      console.log(data.user);
+       this.notPremium$ = !data.user.premium;
     });
     this.apiService.getRooms().subscribe({
       next: (data) => {
@@ -67,9 +69,9 @@ export class LobbyComponent implements OnInit {
       const session = this.apiService.checkout(userId);
       session.subscribe((data) => {
         const id = data as string;
-        // this.stripeService
-        //   .redirectToCheckout({ sessionId: id })
-        //   .subscribe((res) => {});
+         this.stripeService
+           .redirectToCheckout({ sessionId: id })
+           .subscribe((res) => {});
       });
     });
   }
