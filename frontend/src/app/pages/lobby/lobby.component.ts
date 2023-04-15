@@ -22,7 +22,7 @@ export class LobbyComponent implements OnInit {
     private router: Router,
     @Inject(DOCUMENT) public document: Document,
     private authService: AuthService,
-    private stripeService: StripeService
+    //private stripeService: StripeService
   ) 
   {}
 
