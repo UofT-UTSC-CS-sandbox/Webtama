@@ -61,7 +61,7 @@ export class LobbyComponent implements OnInit {
       },
     });
   }
-
+  /** 
   checkout() {
     let userId: number = -1;
     this.apiService.me().subscribe((data) => {
@@ -75,6 +75,7 @@ export class LobbyComponent implements OnInit {
       });
     });
   }
+  */ 
 
   checkAuth() {
     this.authService.isAuthenticated$.subscribe((isAuth) => {
