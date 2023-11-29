@@ -73,13 +73,6 @@ usersRouter.get(
       return res.status(401).json({ errors: "Not Authenticaed" });
     }
 
-    console.log(req.user.email);
-    console.log("SCREAMING EMAIL");
-    console.log("SCREAMING");
-    console.log("SCREAMING");
-    console.log("SCREAMING");
-    console.log("SCREAMING");
-
     let user = await User.findOne({
       where: {
         email: req.user.email,

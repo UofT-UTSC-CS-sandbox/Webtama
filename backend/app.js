@@ -20,7 +20,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static("static"));
 const corsOptions = {
-  origin: "https://webtama.works",
+  //origin: "https://webtama.works",
+  origin: "https://localhost:3000",
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -79,8 +80,7 @@ app.post("/create-checkout-session", async (req, res) => {
   return res.json(session.id);
 });
 
-const endpointSecret =
-  "whsec_13YNdLPuRsjTpRSQScmvwfB6CPusM4Mf";
+const endpointSecret = "whsec_13YNdLPuRsjTpRSQScmvwfB6CPusM4Mf";
 
 app.post(
   "/webhook",
@@ -140,26 +140,19 @@ io.on("connection", (socket) => {
   socket.on("leave room", (data) => {
     const roomId = data.roomId;
     const playerName = data.playerName;
-    // fetch(`https://api.webtama.works/api/rooms/${roomId}/leave`, {
-    //   method: "PATCH",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "Access-Control-Allow-Origin": "*",
-    //   },
-    //   body: JSON.stringify({
-    //     playerName: playerName,
-    //   }),
-    // });
     try {
-      const response = axios.patch(`https://api.webtama.works/api/rooms/${roomId}/leave`, {
-        playerName: playerName,
-      }, {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
+      const response = axios.patch(
+        `https://api.webtama.works/api/rooms/${roomId}/leave`,
+        {
+          playerName: playerName,
         },
-      });
-      // console.log(response.data);
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
     } catch (error) {
       console.error(error);
     }
